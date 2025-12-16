@@ -127,7 +127,7 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({ isOpen, onClose }) => {
                         <div className="flex items-center gap-3">
                             <div className="bg-gold-100 p-2 rounded-lg text-gold-600"><BookOpen size={18} /></div>
                             <div>
-                                <p className="font-bold text-coffee-900 text-sm">E-book "Barista Master"</p>
+                                <p className="font-bold text-coffee-900 text-sm">E-book &quot;Barista Master&quot;</p>
                                 <p className="text-xs text-gold-600 font-bold">Curso Digital</p>
                             </div>
                         </div>
