@@ -9,16 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google/genai": "^1.33.0",
+    "lucide-react": "^0.561.0",
     "next": "15.1.0",
     "react": "19.0.0",
-    "react-dom": "19.0.0",
-    "lucide-react": "^0.561.0",
-    "@google/genai": "^1.33.0"
+    "react-dom": "19.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.23",
     "eslint": "^8",
     "eslint-config-next": "15.1.0",
     "postcss": "^8",
