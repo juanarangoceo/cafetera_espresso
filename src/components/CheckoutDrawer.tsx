@@ -4,6 +4,7 @@ import { X, ShieldCheck, Truck, Gift, CheckCircle2, Lock, ArrowRight, CreditCard
 interface CheckoutDrawerProps {
   isOpen: boolean;
   onClose: () => void;
+  checkoutUrl?: string;
 }
 
 const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({ isOpen, onClose }) => {
