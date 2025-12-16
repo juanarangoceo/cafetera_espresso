@@ -63,25 +63,25 @@ const UGC_IMAGES = [
 // --- DATA: Product Gallery (Updated for Bento Grid) ---
 const PRODUCT_IMAGES = [
     {
-        src: "https://images.unsplash.com/photo-1565458189803-7df67b667e89?q=80&w=800&auto=format&fit=crop",
+        src: "https://cdn.shopify.com/s/files/1/0608/6433/1831/files/imagen-2.webp?v=1757995172",
         title: "Acero Inoxidable 304",
         desc: "Cuerpo robusto de grado quirúrgico. No se oxida, no se mancha.",
         span: "md:col-span-2 md:row-span-2" // Hero Image
     },
     {
-        src: "https://images.unsplash.com/photo-1610632380989-680fe40816c6?q=80&w=800&auto=format&fit=crop",
+        src: "https://cdn.shopify.com/s/files/1/0608/6433/1831/files/imagen-3.webp?v=1757995172",
         title: "Manómetro Análogo",
         desc: "Control visual de la presión en tiempo real.",
         span: "md:col-span-1 md:row-span-1"
     },
     {
-        src: "https://images.unsplash.com/photo-1574360773950-707153b6cb65?q=80&w=800&auto=format&fit=crop",
+        src: "https://cdn.shopify.com/s/files/1/0608/6433/1831/files/imagen-4.webp?v=1757995172",
         title: "Vaporizador Pro",
         desc: "Varilla de acero con rotación 360°.",
         span: "md:col-span-1 md:row-span-1"
     },
     {
-        src: "https://images.unsplash.com/photo-1594539655523-8321262d1421?q=80&w=800&auto=format&fit=crop",
+        src: "https://cdn.shopify.com/s/files/1/0608/6433/1831/files/imagen-6.webp?v=1757995173",
         title: "Portafiltro Sólido",
         desc: "Peso balanceado y doble salida.",
         span: "md:col-span-2 md:row-span-1"
@@ -413,7 +413,7 @@ export default function Home() {
 
                             <div className="animate-float will-change-transform">
                                 <img
-                                    src="https://images.unsplash.com/photo-1599395932585-e7a83709b43d?q=80&w=600&auto=format&fit=crop"
+                                    src="https://cdn.shopify.com/s/files/1/0608/6433/1831/files/scuare.jpg?v=1757995325"
                                     alt="Coffee Maker Pro Machine"
                                     className="w-full max-w-[320px] md:max-w-[450px] mx-auto rounded-[2rem] shadow-2xl border-[4px] border-white relative z-10 hover:scale-105 transition-transform duration-500 bg-coffee-200 min-h-[350px] md:min-h-[400px] object-cover"
                                 />
