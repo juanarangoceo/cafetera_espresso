@@ -95,7 +95,7 @@ const RECIPES: Recipe[] = [
         title: 'Tinto Perfecto',
         subtitle: 'El clásico colombiano',
         time: '1 min',
-        image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=600&auto=format&fit=crop',
+        image: '/images/tinto.png',
         ingredients: ['18g de café en grano (Molienda Fina)', '60ml de agua (92°C)', 'Sin azúcar'],
         steps: ['Muele tus granos frescos con el molino de regalo.', 'Compacta con fuerza media usando el tamper.', 'Extrae por 25 segundos para obtener la crema perfecta.'],
         proSecret: 'El secreto no es el azúcar, es la molienda fresca. El café pre-molido pierde el 60% de sus aromas en 15 minutos.'
@@ -105,7 +105,7 @@ const RECIPES: Recipe[] = [
         title: 'Cappuccino de Autor',
         subtitle: 'Textura de terciopelo',
         time: '5 min',
-        image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600&auto=format&fit=crop',
+        image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600&auto=format&fit=crop', // Keeping Unsplash for now (Limit reached)
         ingredients: ['1 Espresso simple', '150ml de leche entera fría', 'Cacao en polvo'],
         steps: ['Extrae el espresso en taza ancha.', 'Purga el vaporizador.', 'Texturiza la leche inclinando la jarra 45 grados hasta que brille.', 'Vierte creando un círculo blanco en el centro.'],
         proSecret: 'Para latte art, la leche no debe hervir. Debe estar a unos 65°C, justo cuando ya no puedes sostener la jarra metálica.'
@@ -115,7 +115,7 @@ const RECIPES: Recipe[] = [
         title: 'Affogato Italiano',
         subtitle: 'Postre y café en uno',
         time: '2 min',
-        image: 'https://images.unsplash.com/photo-1595053826286-2e59efd9ff18?q=80&w=600&auto=format&fit=crop',
+        image: '/images/affogato.png',
         ingredients: ['2 bolas de helado de vainilla', '1 Espresso doble (60ml) intenso', 'Nueces trituradas'],
         steps: ['Sirve el helado en copa congelada.', 'Prepara el espresso doble directamente sobre el helado.', 'Decora con nueces.'],
         proSecret: 'Usa una molienda un poco más fina para este espresso, buscando una extracción "Ristretto" (más corta y dulce) que contraste con el helado.'
@@ -125,7 +125,7 @@ const RECIPES: Recipe[] = [
         title: 'Cold Brew Express',
         subtitle: 'Refrescante y energizante',
         time: '3 min',
-        image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600&auto=format&fit=crop',
+        image: '/images/coldbrew.png',
         ingredients: ['1 Espresso doble', 'Hielo grande', '100ml agua tónica', 'Rodaja de limón'],
         steps: ['Llena el vaso con hielo.', 'Agrega la tónica y el limón.', 'Vierte el espresso suavemente para que flote.'],
         proSecret: 'El gas de la tónica resalta las notas cítricas de los cafés colombianos de altura. Una experiencia sensorial única.'
@@ -424,7 +424,7 @@ export default function Home() {
                                 <div className="absolute -top-3 -right-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md z-30">
                                     ¡GRATIS HOY!
                                 </div>
-                                <img src="https://images.unsplash.com/photo-1585672624536-e35f8e578a57?q=80&w=300&auto=format&fit=crop" className="rounded-xl w-full h-24 md:h-32 object-cover bg-coffee-200" alt="Molino de Café" />
+                                <img src="https://cdn.shopify.com/s/files/1/0608/6433/1831/files/molino_cafe_electrico_raf.webp?v=1758255802" className="rounded-xl w-full h-24 md:h-32 object-cover bg-coffee-200" alt="Molino de Café" />
                                 <div className="text-center pt-2">
                                     <p className="text-sm font-bold text-coffee-900 leading-tight">Molino Automático</p>
                                     <p className="text-xs text-gray-500 line-through">$180.000</p>
