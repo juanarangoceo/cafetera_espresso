@@ -74,12 +74,13 @@ export const HotspotSection: React.FC = () => {
         className="relative w-full max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-2xl bg-coffee-100 group cursor-default border-4 border-white/50 reveal zoom-in"
         onClick={closeAll}
       >
-        <div className="relative w-full aspect-square md:aspect-[4/3]">
+        <div className="relative w-full">
            <Image 
             src={PRODUCT_IMAGE_URL} 
             alt="Detalles de la Cafetera Espresso" 
-            fill
-            className="object-contain md:object-cover"
+            width={1080}
+            height={1080}
+            className="w-full h-auto object-contain"
             sizes="(max-width: 768px) 100vw, 80vw"
             priority={false} // Lazy load this interaction section
           />
