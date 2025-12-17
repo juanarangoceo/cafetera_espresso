@@ -412,15 +412,17 @@ export default function Home() {
                         <div className="relative z-10 perspective-1000">
                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-radial-gradient from-white/80 to-transparent blur-3xl -z-10"></div>
 
-                            <div className="relative aspect-square w-full max-w-[450px] mx-auto bg-gray-200 rounded-[2rem] overflow-hidden shadow-2xl border-[4px] border-white z-10 hover:scale-105 transition-transform duration-500">
+                            <div className="">
                                 <Image
                                     src="https://cdn.shopify.com/s/files/1/0608/6433/1831/files/scuare.jpg?v=1757995325"
                                     alt="Coffee Maker Pro Machine"
-                                    fill
+                                    width={450}
+                                    height={450}
                                     priority
                                     quality={80}
                                     sizes="(max-width: 640px) 100vw, 50vw"
-                                    className="object-cover bg-coffee-200"
+                                    style={{ width: '100%', height: 'auto' }}
+                                    className="max-w-[450px] mx-auto rounded-[2rem] shadow-2xl border-[4px] border-white relative z-10 hover:scale-105 transition-transform duration-500 bg-coffee-200 object-cover"
                                 />
                             </div>
 
