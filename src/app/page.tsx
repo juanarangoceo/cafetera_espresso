@@ -412,19 +412,20 @@ export default function Home() {
                         <div className="relative z-10 perspective-1000">
                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-radial-gradient from-white/80 to-transparent blur-3xl -z-10"></div>
 
-                            <div className="animate-float will-change-transform">
+                            <div className="">
                                 <Image
                                     src="https://cdn.shopify.com/s/files/1/0608/6433/1831/files/scuare.jpg?v=1757995325"
                                     alt="Coffee Maker Pro Machine"
                                     width={450}
                                     height={450}
                                     priority
+                                    sizes="(max-width: 768px) 100vw, 450px"
                                     className="w-full max-w-[320px] md:max-w-[450px] mx-auto rounded-[2rem] shadow-2xl border-[4px] border-white relative z-10 hover:scale-105 transition-transform duration-500 bg-coffee-200 min-h-[350px] md:min-h-[400px] object-cover"
                                 />
                             </div>
 
                             {/* Floating Badge (Delayed Float) */}
-                            <div className="absolute -bottom-6 -right-2 md:-bottom-10 md:-right-12 w-44 md:w-56 bg-white p-3 md:p-2 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-gold-200 transform rotate-[-5deg] animate-float-delayed z-20 cursor-pointer hover:scale-105 transition-transform" onClick={() => scrollToSection(SectionId.BONUS)}>
+                            <div className="absolute -bottom-6 -right-2 md:-bottom-10 md:-right-12 w-44 md:w-56 bg-white p-3 md:p-2 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-gold-200 transform rotate-[-5deg] z-20 cursor-pointer hover:scale-105 transition-transform" onClick={() => scrollToSection(SectionId.BONUS)}>
                                 <div className="absolute -top-3 -right-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md z-30">
                                     ¡GRATIS HOY!
                                 </div>
