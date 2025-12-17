@@ -1,0 +1,94 @@
+import React, { useRef, useEffect, useState } from 'react';
+import { Plus, X, ChevronRight } from 'lucide-react';
+import { ProductFeature, HotspotProps } from '../types';
+
+export const Hotspot: React.FC<HotspotProps> = ({ feature, isOpen, onToggle, onClose }) => {
+  const popupRef = useRef<HTMLDivElement>(null);
+  const [positionClass, setPositionClass] = useState('left-full ml-4');
+
+  // Adjust tooltip position to prevent screen overflow
+  useEffect(() => {
+    if (isOpen && popupRef.current) {
+      const rect = popupRef.current.getBoundingClientRect();
+      const screenWidth = window.innerWidth;
+      
+      // If tooltip goes off the right edge, flip it to the left
+      if (rect.right > screenWidth - 20) {
+        setPositionClass('right-full mr-4');
+      } else {
+         setPositionClass('left-full ml-4');
+      }
+    }
+  }, [isOpen]);
+
+  return (
+    <div
+      className="absolute z-10"
+      style={{ top: `${feature.y}%`, left: `${feature.x}%` }}
+    >
+      {/* Pulse Animation Ring */}
+      <div className={`absolute -inset-4 rounded-full bg-white/30 hotspot-ring ${isOpen ? 'hidden' : 'block'}`} />
+      
+      {/* The Dot Button */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggle(feature.id);
+        }}
+        className={`relative flex items-center justify-center w-8 h-8 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black ${
+          isOpen ? 'bg-black text-white rotate-45' : 'bg-white text-black'
+        }`}
+        aria-label={`View details for ${feature.title}`}
+      >
+        <Plus size={16} strokeWidth={3} />
+      </button>
+
+      {/* Popup / Tooltip */}
+      {isOpen && (
+        <div
+          ref={popupRef}
+          className={`absolute top-1/2 -translate-y-1/2 w-64 md:w-72 bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl p-5 border border-white/20 transform transition-all duration-300 origin-center z-50 animate-in fade-in zoom-in-95 ${positionClass}`}
+          onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside card
+        >
+          {/* Mobile Close Button (visible only on small screens mostly, but good for UX) */}
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
+            className="absolute top-2 right-2 text-gray-400 hover:text-gray-900 md:hidden"
+          >
+            <X size={16} />
+          </button>
+
+          <h3 className="serif text-lg font-semibold text-gray-900 mb-1 leading-tight">
+            {feature.title}
+          </h3>
+          
+          <p className="text-sm text-gray-600 mb-3 leading-relaxed">
+            {feature.description}
+          </p>
+
+          <div className="flex items-center justify-between pt-2 border-t border-gray-100 mt-2">
+            {feature.price && (
+              <span className="font-medium text-gray-900">{feature.price}</span>
+            )}
+            <button className="text-xs font-semibold uppercase tracking-wider text-black flex items-center group hover:underline">
+              More Info
+              <ChevronRight size={14} className="ml-1 transition-transform group-hover:translate-x-1" />
+            </button>
+          </div>
+          
+          {/* Decorative triangle pointer */}
+          <div 
+            className={`absolute top-1/2 -translate-y-1/2 w-0 h-0 border-8 border-transparent ${
+              positionClass.includes('left-full') 
+                ? 'border-r-white/95 -left-4' 
+                : 'border-l-white/95 -right-4'
+            }`}
+          />
+        </div>
+      )}
+    </div>
+  );
+};

@@ -463,7 +463,7 @@ export default function Home() {
             </section>
 
             {/* --- SECTION 2: THE PROBLEM / SOLUTION --- */}
-            <section id={SectionId.FEATURES} className="relative bg-white border-t border-coffee-100 py-16 md:py-24 overflow-hidden">
+            <section id={SectionId.FEATURES} className="relative bg-white border-t border-coffee-100 py-16 md:py-24 overflow-hidden min-h-[500px]">
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="text-center mb-12 md:mb-16 reveal fade-bottom min-h-[300px] flex flex-col justify-center">
                         <div className="inline-block min-h-[36px]"><span className="text-gold-600 font-bold tracking-[0.2em] text-sm uppercase bg-coffee-50 border border-gold-200 px-5 py-2 rounded-full shadow-sm leading-none">La Verdad Incómoda</span></div>
