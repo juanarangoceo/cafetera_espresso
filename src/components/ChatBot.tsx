@@ -5,7 +5,8 @@ import { sendMessageToGemini } from '../app/actions/chat';
 
 const ChatBot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [hasOpened, setHasOpened] = useState(false);
+  // Auto-open logic removed by user request
+  // const [hasOpened, setHasOpened] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'welcome',
@@ -16,18 +17,6 @@ const ChatBot: React.FC = () => {
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  // Auto-open chat after 5 seconds ONLY ON DESKTOP to announce the Gift
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      // Check if window width is greater than mobile breakpoint (768px)
-      if (!hasOpened && !isOpen && window.innerWidth > 768) {
-        setIsOpen(true);
-        setHasOpened(true);
-      }
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, [hasOpened, isOpen]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
