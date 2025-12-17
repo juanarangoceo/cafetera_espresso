@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Coffee Maker Pro | La Excelencia en Casa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              serif: ['"Playfair Display"', 'serif'],
+              sans: ['"Lato"', 'sans-serif'],
+            },
+            colors: {
+              coffee: {
+                50: '#F9F7F5',  /* Porcelain / Warm White */
+                100: '#EBE5DF', /* Steamed Milk */
+                200: '#D6CBC1',
+                300: '#BDB0A6',
+                400: '#948378',
+                500: '#756257', /* Medium Roast */
+                600: '#5D4C42',
+                700: '#4A3B32',
+                800: '#3C2F29',
+                900: '#2C221E', /* Espresso */
+                950: '#1A1412', /* Dark Roast / Almost Black */
+              },
+              gold: {
+                50: '#FBF8EF',
+                100: '#F3EBD4',
+                200: '#E5D3A6',
+                300: '#D6BA79',
+                400: '#C9A555',
+                500: '#B68D40', /* Luxury Bronze/Gold */
+                600: '#9A7131',
+                700: '#7B5628',
+                800: '#674626',
+                900: '#563B23',
+              }
+            },
+            animation: {
+              'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+              'pulse-slow': 'pulse 4s infinite',
+              'float': 'float 8s ease-in-out infinite',
+              'float-delayed': 'float 8s ease-in-out 4s infinite',
+              'steam': 'steam 3s ease-out infinite',
+              'spin-slow': 'spin 12s linear infinite',
+            },
+            keyframes: {
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-12px)' }, /* Reduced movement for smoother look */
+              },
+              steam: {
+                '0%': { opacity: '0', transform: 'translateY(0) scale(1)' },
+                '50%': { opacity: '0.5', transform: 'translateY(-10px) scale(1.1)' },
+                '100%': { opacity: '0', transform: 'translateY(-20px) scale(1.2)' },
+              }
+            },
+            backgroundImage: {
+              'bean-pattern': "url('https://www.transparenttextures.com/patterns/coffee.png')",
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+      }
+      .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+      }
+      .glass {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+      /* Noise Texture for Organic Feel */
+      .bg-noise {
+        position: relative;
+      }
+      .bg-noise::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 0;
+      }
+      .content-relative {
+        position: relative;
+        z-index: 1;
+      }
+      
+      /* --- SCROLL REVEAL ANIMATIONS --- */
+      .reveal {
+        opacity: 0;
+        transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); /* Faster transition */
+      }
+
+      .reveal.fade-bottom {
+        transform: translateY(30px); /* Reduced distance */
+      }
+
+      .reveal.fade-left {
+        transform: translateX(-30px);
+      }
+
+      .reveal.fade-right {
+        transform: translateX(30px);
+      }
+      
+      .reveal.zoom-in {
+        transform: scale(0.95);
+      }
+
+      .reveal.active {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+      }
+      
+      /* Stagger delays for grids */
+      .delay-100 { transition-delay: 0.1s; }
+      .delay-200 { transition-delay: 0.2s; }
+      .delay-300 { transition-delay: 0.3s; }
+      .delay-400 { transition-delay: 0.4s; }
+
+      details > summary {
+        list-style: none;
+      }
+      details > summary::-webkit-details-marker {
+        display: none;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.33.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.561.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

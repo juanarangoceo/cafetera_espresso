@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { ShoppingBag, Star, Check, ShieldCheck, Truck, Zap, Thermometer, Settings, Menu, X, ArrowRight, PlayCircle, Coffee, Droplets, Gauge, Package, Touchpad, Box, ChefHat, Heart, ChevronRight, Users, Award, MapPin, BookOpen, Gift, Sparkles, CheckCircle2, Lock, Banknote, CreditCard, Info, Smartphone, Tablet, Wind, Speaker, Timer, XCircle, TrendingUp, DollarSign, Calculator, AlertTriangle, Loader2, Quote, Instagram, Flame, TimerReset, Camera, Maximize2, Shield, GraduationCap, Play, MonitorPlay, Receipt, Clock, MousePointerClick } from 'lucide-react';
 import ChatBot from '../components/ChatBot';
 import Countdown from '../components/Countdown';
@@ -407,14 +408,17 @@ export default function Home() {
                     </div>
 
                     {/* Main Image - CSS Animated Float (Smoother than JS Scroll) */}
-                    <div className="relative order-1 lg:order-2 reveal zoom-in">
+                    <div className="relative order-1 lg:order-2">
                         <div className="relative z-10 perspective-1000">
                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-radial-gradient from-white/80 to-transparent blur-3xl -z-10"></div>
 
                             <div className="animate-float will-change-transform">
-                                <img
+                                <Image
                                     src="https://cdn.shopify.com/s/files/1/0608/6433/1831/files/scuare.jpg?v=1757995325"
                                     alt="Coffee Maker Pro Machine"
+                                    width={450}
+                                    height={450}
+                                    priority
                                     className="w-full max-w-[320px] md:max-w-[450px] mx-auto rounded-[2rem] shadow-2xl border-[4px] border-white relative z-10 hover:scale-105 transition-transform duration-500 bg-coffee-200 min-h-[350px] md:min-h-[400px] object-cover"
                                 />
                             </div>
@@ -424,7 +428,7 @@ export default function Home() {
                                 <div className="absolute -top-3 -right-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md z-30">
                                     ¡GRATIS HOY!
                                 </div>
-                                <img src="https://cdn.shopify.com/s/files/1/0608/6433/1831/files/molino_cafe_electrico_raf.webp?v=1758255802" className="rounded-xl w-full h-24 md:h-32 object-cover bg-coffee-200" alt="Molino de Café" />
+                                <img src="https://cdn.shopify.com/s/files/1/0608/6433/1831/files/molino_cafe_electrico_raf.webp?v=1758255802" className="rounded-xl w-full h-24 md:h-32 object-cover bg-coffee-200" alt="Molino de Café" loading="lazy" />
                                 <div className="text-center pt-2">
                                     <p className="text-sm font-bold text-coffee-900 leading-tight">Molino Automático</p>
                                     <p className="text-xs text-gray-500 line-through">$180.000</p>
@@ -554,6 +558,7 @@ export default function Home() {
                                 <img
                                     src={img.src}
                                     alt={img.title}
+                                    loading="lazy"
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-6 md:p-8 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
@@ -586,7 +591,7 @@ export default function Home() {
                         {RECIPES.map((recipe, index) => (
                             <div key={recipe.id} className={`bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group border border-coffee-100 hover:border-gold-300 flex flex-col cursor-pointer reveal fade-bottom`} style={{ transitionDelay: `${index * 100}ms` }} onClick={() => setSelectedRecipe(recipe)}>
                                 <div className="h-56 overflow-hidden relative">
-                                    <img src={recipe.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-90 bg-coffee-100" alt={recipe.title} />
+                                    <img src={recipe.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-90 bg-coffee-100" alt={recipe.title} loading="lazy" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-80"></div>
                                     <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded text-sm font-bold text-gold-600 shadow-sm">{recipe.time}</div>
                                 </div>
@@ -663,6 +668,7 @@ export default function Home() {
                                     src="https://images.unsplash.com/photo-1516053360634-8671b4028ce3?q=80&w=800&auto=format&fit=crop"
                                     className="w-full h-auto rounded-[2.5rem] shadow-2xl shadow-black/50 border border-white/10 bg-gradient-to-br from-gray-800 to-black p-2"
                                     alt="Molino Premium"
+                                    loading="lazy"
                                 />
 
                                 {/* Floating Badge */}
@@ -703,6 +709,7 @@ export default function Home() {
                                         src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=800&auto=format&fit=crop"
                                         className="w-full h-full object-cover opacity-90"
                                         alt="Ebook Cover on Tablet"
+                                        loading="lazy"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6 text-white">
                                         <p className="text-gold-400 font-bold uppercase tracking-widest text-xs mb-1">Masterclass Oficial</p>
@@ -786,7 +793,7 @@ export default function Home() {
                                 style={{ aspectRatio: '3/4', transitionDelay: `${index * 100}ms` }}
                             >
                                 <div className="absolute inset-0 bg-coffee-900">
-                                    <img src={item.image} className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110 opacity-90" alt={item.title} />
+                                    <img src={item.image} className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110 opacity-90" alt={item.title} loading="lazy" />
                                 </div>
 
                                 {/* Gradient Overlay for Text Readability */}
@@ -933,7 +940,7 @@ export default function Home() {
                         <p className="text-coffee-800 text-lg mb-6 leading-relaxed italic">"{t.text}"</p>
                         <div className="flex items-center gap-4 mt-auto">
                             <div className="w-14 h-14 rounded-full bg-coffee-200 overflow-hidden border-2 border-white shadow-sm shrink-0">
-                                <img src={t.image} alt={t.name} className="w-full h-full object-cover bg-coffee-300" />
+                                <img src={t.image} alt={t.name} className="w-full h-full object-cover bg-coffee-300" loading="lazy" />
                             </div>
                             <div>
                                 <h4 className="font-bold text-coffee-900 leading-none text-lg">{t.name}</h4>
@@ -962,7 +969,7 @@ export default function Home() {
                     <div className="grid grid-cols-3 md:grid-cols-6 gap-3 md:gap-4">
                         {UGC_IMAGES.map((img, i) => (
                             <div key={i} className="aspect-square bg-coffee-800 rounded-xl overflow-hidden relative group cursor-pointer border border-white/5">
-                                <img src={img} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500 bg-coffee-800" alt="Cliente Feliz" />
+                                <img src={img} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500 bg-coffee-800" alt="Cliente Feliz" loading="lazy" />
                             </div>
                         ))}
                     </div>
