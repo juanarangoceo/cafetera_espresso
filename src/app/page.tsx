@@ -426,17 +426,7 @@ export default function Home() {
                                 />
                             </div>
 
-                            {/* Floating Badge (Delayed Float) */}
-                            <div className="absolute -bottom-6 -right-2 md:-bottom-10 md:-right-12 w-44 md:w-56 bg-white p-3 md:p-2 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-gold-200 transform rotate-[-5deg] z-20 cursor-pointer hover:scale-105 transition-transform" onClick={() => scrollToSection(SectionId.BONUS)}>
-                                <div className="absolute -top-3 -right-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md z-30">
-                                    ¡GRATIS HOY!
-                                </div>
-                                <img src="https://cdn.shopify.com/s/files/1/0608/6433/1831/files/molino_cafe_electrico_raf.webp?v=1758255802" className="rounded-xl w-full h-24 md:h-32 object-cover bg-coffee-200" alt="Molino de Café" loading="lazy" />
-                                <div className="text-center pt-2">
-                                    <p className="text-sm font-bold text-coffee-900 leading-tight">Molino Automático</p>
-                                    <p className="text-xs text-gray-500 line-through">$180.000</p>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                 </div>
