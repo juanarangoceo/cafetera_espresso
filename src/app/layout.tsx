@@ -28,6 +28,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="es" className={`${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
+            <head>
+                <link rel="preconnect" href="https://www.transparenttextures.com" />
+            </head>
             <body className="font-sans antialiased text-coffee-900 bg-coffee-50" suppressHydrationWarning>
                 {children}
             </body>

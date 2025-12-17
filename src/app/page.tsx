@@ -419,9 +419,10 @@ export default function Home() {
                                     width={450}
                                     height={450}
                                     priority
+                                    fetchPriority="high"
                                     quality={80}
                                     sizes="(max-width: 640px) 100vw, 50vw"
-                                    style={{ width: '100%', height: 'auto' }}
+                                    style={{ width: '100%', height: 'auto', aspectRatio: '1 / 1' }}
                                     className="max-w-[450px] mx-auto rounded-[2rem] shadow-2xl border-[4px] border-white relative z-10 hover:scale-105 transition-transform duration-500 bg-coffee-200 object-cover"
                                 />
                             </div>
@@ -465,8 +466,8 @@ export default function Home() {
             <section id={SectionId.FEATURES} className="relative bg-white border-t border-coffee-100 py-16 md:py-24 overflow-hidden">
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="text-center mb-12 md:mb-16 reveal fade-bottom">
-                        <span className="text-gold-600 font-bold tracking-[0.2em] text-sm uppercase bg-coffee-50 border border-gold-200 px-5 py-2 rounded-full shadow-sm">La Verdad Incómoda</span>
-                        <h2 className="text-4xl md:text-5xl font-serif font-bold text-coffee-900 mt-6 leading-tight">
+                        <div className="inline-block min-h-[36px]"><span className="text-gold-600 font-bold tracking-[0.2em] text-sm uppercase bg-coffee-50 border border-gold-200 px-5 py-2 rounded-full shadow-sm leading-none">La Verdad Incómoda</span></div>
+                        <h2 className="text-4xl md:text-5xl font-serif font-bold text-coffee-900 mt-6 leading-tight min-h-[1.1em]">
                             Tu café casero sabe mal<br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-coffee-600 to-coffee-400">por estas 3 razones.</span>
                         </h2>
