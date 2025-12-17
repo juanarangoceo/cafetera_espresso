@@ -10,6 +10,7 @@ import VideoPlayer from '../components/VideoPlayer';
 import RecipeModal from '../components/RecipeModal';
 import PolicyModal from '../components/PolicyModal';
 import CheckoutDrawer from '../components/CheckoutDrawer';
+import { HotspotSection } from '../components/HotspotSection';
 import { SectionId, Recipe, Policy } from '../types';
 
 // --- CONSTANTS ---
@@ -773,6 +774,9 @@ export default function Home() {
                     </div>
                 </div>
             </section>
+
+            {/* --- HOTSPOT SECTION (INTERACTIVE DETAILS) --- */}
+             <HotspotSection />
 
             {/* --- VISUAL GALLERY (OPTIMIZED) --- */}
             <section className="py-16 md:py-24 bg-white content-relative">
