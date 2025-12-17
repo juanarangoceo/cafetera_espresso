@@ -556,11 +556,12 @@ export default function Home() {
                     <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-4 h-auto md:h-[600px] reveal zoom-in">
                         {PRODUCT_IMAGES.map((img, idx) => (
                             <div key={idx} className={`relative rounded-2xl overflow-hidden group ${img.span} border border-white/5 shadow-2xl bg-coffee-900`}>
-                                <img
+                                <Image
                                     src={img.src}
                                     alt={img.title}
-                                    loading="lazy"
-                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, 33vw"
+                                    className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-6 md:p-8 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                                     <h3 className="text-white text-xl md:text-2xl font-serif font-bold mb-1">{img.title}</h3>
@@ -592,7 +593,7 @@ export default function Home() {
                         {RECIPES.map((recipe, index) => (
                             <div key={recipe.id} className={`bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group border border-coffee-100 hover:border-gold-300 flex flex-col cursor-pointer reveal fade-bottom`} style={{ transitionDelay: `${index * 100}ms` }} onClick={() => setSelectedRecipe(recipe)}>
                                 <div className="h-56 overflow-hidden relative">
-                                    <img src={recipe.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-90 bg-coffee-100" alt={recipe.title} loading="lazy" />
+                                    <Image src={recipe.image} fill sizes="(max-width: 768px) 100vw, 25vw" className="object-cover group-hover:scale-110 transition-transform duration-500 opacity-90 bg-coffee-100" alt={recipe.title} />
                                     <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-80"></div>
                                     <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded text-sm font-bold text-gold-600 shadow-sm">{recipe.time}</div>
                                 </div>
@@ -794,7 +795,7 @@ export default function Home() {
                                 style={{ aspectRatio: '3/4', transitionDelay: `${index * 100}ms` }}
                             >
                                 <div className="absolute inset-0 bg-coffee-900">
-                                    <img src={item.image} className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110 opacity-90" alt={item.title} loading="lazy" />
+                                    <Image src={item.image} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110 opacity-90" alt={item.title} />
                                 </div>
 
                                 {/* Gradient Overlay for Text Readability */}
@@ -941,7 +942,7 @@ export default function Home() {
                         <p className="text-coffee-800 text-lg mb-6 leading-relaxed italic">"{t.text}"</p>
                         <div className="flex items-center gap-4 mt-auto">
                             <div className="w-14 h-14 rounded-full bg-coffee-200 overflow-hidden border-2 border-white shadow-sm shrink-0">
-                                <img src={t.image} alt={t.name} className="w-full h-full object-cover bg-coffee-300" loading="lazy" />
+                                <Image src={t.image} alt={t.name} width={56} height={56} className="bg-coffee-300 object-cover" />
                             </div>
                             <div>
                                 <h4 className="font-bold text-coffee-900 leading-none text-lg">{t.name}</h4>
@@ -970,7 +971,7 @@ export default function Home() {
                     <div className="grid grid-cols-3 md:grid-cols-6 gap-3 md:gap-4">
                         {UGC_IMAGES.map((img, i) => (
                             <div key={i} className="aspect-square bg-coffee-800 rounded-xl overflow-hidden relative group cursor-pointer border border-white/5">
-                                <img src={img} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500 bg-coffee-800" alt="Cliente Feliz" loading="lazy" />
+                                <Image src={img} fill sizes="(max-width: 768px) 33vw, 16vw" className="object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500 bg-coffee-800" alt="Cliente Feliz" />
                             </div>
                         ))}
                     </div>
