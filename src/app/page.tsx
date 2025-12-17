@@ -421,7 +421,7 @@ export default function Home() {
                                     priority
                                     fetchPriority="high"
                                     quality={80}
-                                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                    sizes="(max-width: 640px) 100vw, 450px"
                                     style={{ width: '100%', height: 'auto', aspectRatio: '1 / 1' }}
                                     className="max-w-[450px] mx-auto rounded-[2rem] shadow-2xl border-[4px] border-white relative z-10 hover:scale-105 transition-transform duration-500 bg-coffee-200 object-cover"
                                 />
@@ -586,7 +586,7 @@ export default function Home() {
                         {RECIPES.map((recipe, index) => (
                             <div key={recipe.id} className={`bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group border border-coffee-100 hover:border-gold-300 flex flex-col cursor-pointer reveal fade-bottom`} style={{ transitionDelay: `${index * 100}ms` }} onClick={() => setSelectedRecipe(recipe)}>
                                 <div className="h-56 overflow-hidden relative">
-                                    <Image src={recipe.image} fill sizes="(max-width: 768px) 100vw, 25vw" className="object-cover group-hover:scale-110 transition-transform duration-500 opacity-90 bg-coffee-100" alt={recipe.title} />
+                                    <Image src={recipe.image} fill sizes="(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 25vw" className="object-cover group-hover:scale-110 transition-transform duration-500 opacity-90 bg-coffee-100" alt={recipe.title} />
                                     <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-80"></div>
                                     <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded text-sm font-bold text-gold-600 shadow-sm">{recipe.time}</div>
                                 </div>
@@ -700,11 +700,12 @@ export default function Home() {
                             {/* Tablet Container simulating a device */}
                             <div className="relative z-10 bg-black rounded-[2rem] border-[8px] border-gray-800 shadow-2xl transform md:-rotate-3 hover:rotate-0 transition-all duration-500 w-full max-w-sm mx-auto overflow-hidden">
                                 <div className="aspect-[3/4] relative">
-                                    <img
+                                    <Image
                                         src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=800&auto=format&fit=crop"
-                                        className="w-full h-full object-cover opacity-90"
+                                        fill
+                                        sizes="(max-width: 640px) 90vw, 384px"
+                                        className="object-cover opacity-90"
                                         alt="Ebook Cover on Tablet"
-                                        loading="lazy"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6 text-white">
                                         <p className="text-gold-400 font-bold uppercase tracking-widest text-xs mb-1">Masterclass Oficial</p>
