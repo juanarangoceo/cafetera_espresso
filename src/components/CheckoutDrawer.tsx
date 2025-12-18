@@ -25,15 +25,37 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({ isOpen, onClose }) => {
 
   if (!isVisible && !isOpen) return null;
 
-  const handleAction = () => {
+  const handleAction = async () => {
     setStep(2);
-    // Simulation of transition to Shopify Checkout or Order placement
-    setTimeout(() => {
-        // In a real scenario, this would trigger Shopify Checkout Kit or redirect
-        alert("¡Excelente decisión! Redirigiendo a Shopify para finalizar tu pedido...");
+    try {
+        const { createCheckout, getFirstVariantId } = await import('../utils/shopify');
+        const PRODUCT_ID = 'gid://shopify/Product/7341719093303'; 
+        
+        console.log("Fetching variant for product:", PRODUCT_ID);
+        const variantId = await getFirstVariantId(PRODUCT_ID);
+        console.log("Variant ID found:", variantId);
+
+        if (!variantId) {
+            console.error("Could not find variant for product:", PRODUCT_ID);
+            alert("Error: No se encontró disponibilidad del producto. Por favor contacta a soporte.");
+            setStep(1);
+            return;
+        }
+
+        const checkoutUrl = await createCheckout(variantId, 1);
+        console.log("Checkout URL created:", checkoutUrl);
+        
+        if (checkoutUrl) {
+            window.location.href = checkoutUrl;
+        } else {
+             throw new Error("No checkout URL returned");
+        }
+    } catch (error) {
+        console.error("Checkout Request failed", error);
+        alert("Hubo un problema iniciando el pago. Te redirigiremos a la tienda.");
+        window.open('https://crrh5n-d8.myshopify.com', '_blank');
         setStep(1);
-        onClose();
-    }, 1500);
+    }
   };
 
   return (
@@ -154,20 +176,11 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({ isOpen, onClose }) => {
                     <ShieldCheck size={20} className="text-coffee-700 shrink-0" />
                     <div>
                         <p className="text-sm font-bold text-coffee-900">Compra 100% Segura</p>
-                        <p className="text-xs text-coffee-600">Pagas al recibir en casa</p>
+                        <p className="text-xs text-coffee-600">Procesado por Shopify</p>
                     </div>
                 </div>
             </div>
             
-            {/* Payment Method Selected Visual */}
-             <div className="border border-gold-500 bg-gold-50/30 rounded-xl p-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <div className="w-5 h-5 rounded-full border-4 border-gold-500 bg-white"></div>
-                    <span className="font-bold text-coffee-900 text-sm">Pago Contraentrega</span>
-                </div>
-                <CreditCard size={18} className="text-gold-600" />
-             </div>
-
         </div>
 
         {/* Footer / Sticky Action */}
@@ -189,17 +202,17 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({ isOpen, onClose }) => {
                     <>
                     <span className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500"></span>
                     <Truck size={24} className="text-gold-500" />
-                    PEDIR CONTRAENTREGA
+                    FINALIZAR COMPRA
                     </>
                 ) : (
                     <>
                      <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
-                     Procesando...
+                     Creando Checkout...
                     </>
                 )}
             </button>
             <p className="text-center text-[11px] text-coffee-400 mt-3">
-                Al confirmar, serás redirigido para finalizar tu orden segura.
+                Serás redirigido al checkout seguro de Shopify.
             </p>
         </div>
       </div>

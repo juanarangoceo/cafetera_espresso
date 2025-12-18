@@ -253,23 +253,8 @@ export default function Home() {
         setMobileMenuOpen(false);
     };
 
-    const handleCheckoutClick = async () => {
-        try {
-            const { createCheckout, getFirstVariantId } = await import('../utils/shopify');
-            const PRODUCT_ID = 'gid://shopify/Product/7341719093303'; 
-            const variantId = await getFirstVariantId(PRODUCT_ID);
-            if (!variantId) {
-                console.error("Could not find variant for product:", PRODUCT_ID);
-                window.open('https://crrh5n-d8.myshopify.com', '_blank');
-                return;
-            }
-            const checkoutUrl = await createCheckout(variantId, 1);
-            if (checkoutUrl) window.location.href = checkoutUrl;
-            else throw new Error("No checkout URL returned");
-        } catch (error) {
-            console.error("Checkout Request failed", error);
-            window.open('https://crrh5n-d8.myshopify.com', '_blank');
-        }
+    const handleCheckoutClick = () => {
+        setIsCheckoutOpen(true);
     };
 
     const navLinks = [
