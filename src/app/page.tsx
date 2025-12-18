@@ -545,7 +545,7 @@ export default function Home() {
                     {/* Bento Grid Optimized */}
                     <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-4 h-auto md:h-[600px] reveal zoom-in">
                         {PRODUCT_IMAGES.map((img, idx) => (
-                            <div key={idx} className={`relative rounded-2xl overflow-hidden group ${img.span} border border-white/5 shadow-2xl bg-coffee-900`}>
+                            <div key={idx} className={`relative rounded-2xl overflow-hidden group ${img.span} border border-white/5 shadow-2xl bg-coffee-900 aspect-[4/5] md:aspect-auto`}>
                                 <Image
                                     src={img.src}
                                     alt={img.title}

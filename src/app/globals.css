@@ -34,3 +34,44 @@ body {
 .safe-area-pb {
   padding-bottom: env(safe-area-inset-bottom);
 }
+
+/* --- CLS Safe Animations --- */
+.reveal {
+  opacity: 1; /* Default to visible to prevent CLS if JS fails */
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+/* Base state for JS observation */
+.reveal:not(.active) {
+  opacity: 0;
+  transform: translateY(20px); /* Small translation, composite only */
+}
+
+/* Active state */
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Variations */
+.fade-bottom:not(.active) {
+  transform: translateY(20px);
+}
+.fade-left:not(.active) {
+  transform: translateX(-20px);
+}
+.fade-right:not(.active) {
+  transform: translateX(20px);
+}
+.zoom-in:not(.active) {
+  transform: scale(0.95);
+}
+
+/* Ensure no layout shift for hidden elements */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
