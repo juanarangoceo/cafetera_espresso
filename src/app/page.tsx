@@ -409,26 +409,22 @@ export default function Home() {
                     </div>
 
                     {/* Main Image - CSS Animated Float (Smoother than JS Scroll) */}
-                    <div className="relative order-1 lg:order-2">
-                        <div className="relative z-10 perspective-1000">
+                    <div className="relative order-1 lg:order-2 aspect-square w-full">
+                        <div className="relative z-10 perspective-1000 w-full h-full">
                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-radial-gradient from-white/80 to-transparent blur-3xl -z-10"></div>
 
-                            <div className="">
+                            <div className="w-full h-full">
                                 <Image
                                     src="https://cdn.shopify.com/s/files/1/0608/6433/1831/files/scuare.jpg?v=1757995325"
                                     alt="Coffee Maker Pro Machine"
-                                    width={450}
-                                    height={450}
-                                    priority
+                                    priority={true}
                                     fetchPriority="high"
                                     quality={80}
-                                    sizes="(max-width: 640px) 100vw, 450px"
-                                    style={{ width: '100%', height: 'auto', aspectRatio: '1 / 1' }}
-                                    className="max-w-[450px] mx-auto rounded-[2rem] shadow-2xl border-[4px] border-white relative z-10 hover:scale-105 transition-transform duration-500 bg-coffee-200 object-cover"
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 450px"
+                                    className="rounded-[2rem] shadow-2xl border-[4px] border-white relative z-10 hover:scale-105 transition-transform duration-500 bg-coffee-200 object-contain"
                                 />
                             </div>
-
-
                         </div>
                     </div>
                 </div>
