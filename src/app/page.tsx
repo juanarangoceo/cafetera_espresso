@@ -418,9 +418,9 @@ export default function Home() {
                                     alt="Coffee Maker Pro Machine"
                                     priority={true}
                                     fetchPriority="high"
-                                    quality={80}
+                                    quality={75}
                                     fill
-                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 450px"
+                                    sizes="(max-width: 768px) 90vw, (max-width: 1200px) 50vw, 450px"
                                     className="rounded-[2rem] shadow-2xl border-[4px] border-white relative z-10 bg-coffee-200 object-contain"
                                 />
                             </div>
