@@ -376,13 +376,8 @@ export default function Home() {
                                 </svg>
                             </span>
                         </h1>
-
-                        </h1>
-
                         <p className="text-lg lg:text-xl text-coffee-600 leading-relaxed max-w-lg mx-auto lg:mx-0 font-medium">
                             La máquina te da la presión (20 Bares), pero el molino te da el sabor. Llévate hoy el <span className="font-bold text-coffee-800">Kit Barista Completo</span> y deja de tomar café oxidado.
-                        </p>
-
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
@@ -394,8 +389,6 @@ export default function Home() {
                                 <span className="relative">¡Quiero mi Kit Barista!</span>
                                 <span className="relative bg-white/20 p-1.5 rounded-full group-hover:bg-white/30 transition-colors"><ArrowRight size={18} /></span>
                             </button>
-                        </div>
-
                         </div>
 
                         <div className="pt-8 flex flex-wrap justify-center lg:justify-start gap-x-6 gap-y-4 text-base text-coffee-500 font-medium border-t border-coffee-200 mt-8">
@@ -781,7 +774,7 @@ export default function Home() {
              <HotspotSection />
 
             {/* --- VISUAL GALLERY (OPTIMIZED) --- */}
-            <section className="py-16 md:py-24 bg-white content-relative">
+            <section className="py-16 md:py-24 bg-white">
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="text-center mb-12 md:mb-16 reveal fade-bottom">
                         <h2 className="text-3xl md:text-4xl font-serif font-bold text-coffee-900">Detalles que Enamoran</h2>
