@@ -24,19 +24,25 @@ export const getFirstVariantId = async (productId: string) => {
 
 export const createCheckout = async (variantId: string, quantity: number = 1) => {
   try {
-    const checkout = await client.checkout.create();
-    const lineItemsToAdd = [
+    const lineItems = [
       {
         variantId: variantId,
         quantity: quantity,
       },
     ];
-    
-    // Add an item to the checkout
-    const checkoutWithItem = await client.checkout.addLineItems(checkout.id, lineItemsToAdd);
+
+    // Atomic creation: Create checkout WITH items in one go
+    // This prevents "empty checkout" scenarios and reduces API calls
+    const checkout = await client.checkout.create({
+        lineItems: lineItems
+    });
     
     // Return the webUrl for redirection
-    return checkoutWithItem.webUrl;
+    if (!checkout.webUrl) {
+        throw new Error("Checkout created but no webUrl found.");
+    }
+
+    return checkout.webUrl;
   } catch (error) {
     console.error('Error creating checkout:', error);
     throw error;
