@@ -6,7 +6,7 @@ const VideoPlayer: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
 
   // ID del video de YouTube (Usando uno genérico de arte latte/espresso cinematográfico)
-  const videoId = "Mv2qY7T1C8c"; 
+  const videoId = "ptIVdhOGAmc"; 
 
   return (
     <div className="relative w-full aspect-video rounded-3xl overflow-hidden shadow-2xl group border-4 border-white/50 bg-black">

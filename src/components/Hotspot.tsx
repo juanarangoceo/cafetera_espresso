@@ -7,19 +7,18 @@ export const Hotspot: React.FC<HotspotProps> = ({ feature, isOpen, onToggle, onC
   const [positionClass, setPositionClass] = useState('left-full ml-4');
 
   // Adjust tooltip position to prevent screen overflow
+  // Adjust tooltip position to stay inside the container
   useEffect(() => {
-    if (isOpen && popupRef.current) {
-      const rect = popupRef.current.getBoundingClientRect();
-      const screenWidth = window.innerWidth;
-      
-      // If tooltip goes off the right edge, flip it to the left
-      if (rect.right > screenWidth - 20) {
+    if (isOpen) {
+      // Simple heuristic: If the point is on the right half (>50%), open to the left.
+      // If it's on the left half (<=50%), open to the right.
+      if (feature.x > 50) {
         setPositionClass('right-full mr-4');
       } else {
          setPositionClass('left-full ml-4');
       }
     }
-  }, [isOpen]);
+  }, [isOpen, feature.x]);
 
   return (
     <div

@@ -72,20 +72,20 @@ const PRODUCT_IMAGES = [
     },
     {
         src: "https://cdn.shopify.com/s/files/1/0608/6433/1831/files/imagen-3.webp?v=1757995172",
-        title: "Manómetro Análogo",
-        desc: "Control visual de la presión en tiempo real.",
+        title: "Vaporizador Pro",
+        desc: "Varilla de acero con rotación 360° para texturizar leche.",
         span: "md:col-span-1 md:row-span-1"
     },
     {
         src: "https://cdn.shopify.com/s/files/1/0608/6433/1831/files/imagen-4.webp?v=1757995172",
-        title: "Vaporizador Pro",
-        desc: "Varilla de acero con rotación 360°.",
+        title: "Portafiltro Sólido",
+        desc: "Peso balanceado y doble salida para extracción uniforme.",
         span: "md:col-span-1 md:row-span-1"
     },
     {
         src: "https://cdn.shopify.com/s/files/1/0608/6433/1831/files/imagen-6.webp?v=1757995173",
-        title: "Portafiltro Sólido",
-        desc: "Peso balanceado y doble salida.",
+        title: "Pantalla Táctil",
+        desc: "Control intuitivo y preciso para cada preparación.",
         span: "md:col-span-2 md:row-span-1"
     }
 ];
@@ -655,11 +655,12 @@ export default function Home() {
                         {/* Image Content */}
                         <div className="order-1 lg:order-2 relative reveal zoom-in">
                             <div className="relative z-10">
-                                <img
-                                    src="https://images.unsplash.com/photo-1516053360634-8671b4028ce3?q=80&w=800&auto=format&fit=crop"
+                                <Image
+                                    src="https://cdn.shopify.com/s/files/1/0608/6433/1831/files/molino_cafe_electrico_raf.webp?v=1758255802"
+                                    width={800}
+                                    height={800}
                                     className="w-full h-auto rounded-[2.5rem] shadow-2xl shadow-black/50 border border-white/10 bg-gradient-to-br from-gray-800 to-black p-2"
-                                    alt="Molino Premium"
-                                    loading="lazy"
+                                    alt="Molino de Café Eléctrico Premium"
                                 />
 
                                 {/* Floating Badge */}

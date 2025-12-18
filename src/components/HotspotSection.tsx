@@ -9,39 +9,32 @@ const PRODUCT_IMAGE_URL = "https://cdn.shopify.com/s/files/1/0608/6433/1831/file
 // Coffee Maker Pro Hotspot Data
 const FEATURES: ProductFeature[] = [
   {
-    id: 'pressure',
-    title: 'Manómetro de Precisión',
-    description: 'Monitorea la presión de extracción en tiempo real. 9-12 bares es el rango ideal para un espresso perfecto.',
-    x: 50,
-    y: 19, // Adjusted based on visual estimation of the gauge location
-  },
-  {
     id: 'steam',
     title: 'Vaporizador Profesional',
     description: 'Potencia de vapor seco para texturizar leche. Crea micro-espuma sedosa para latte art.',
     x: 85,
-    y: 45, // Adjusted for steam wand on right
+    y: 40, 
   },
   {
     id: 'portafilter',
     title: 'Portafiltro Comercial 58mm',
     description: 'Estabilidad térmica y peso profesional. Compatible con filtros de competencia.',
-    x: 42,
-    y: 65, // Adjusted for portafilter location
+    x: 50,
+    y: 60, 
   },
   {
     id: 'body',
     title: 'Cuerpo Acero Inox 304',
     description: 'Construcción robusta y duradera. Fácil de limpiar y resistente a la corrosión.',
-    x: 20,
-    y: 80, // General body point
+    x: 30,
+    y: 65, 
   },
   {
       id: 'tray',
       title: 'Bandeja Calienta Tazas',
       description: 'Mantén tus tazas a la temperatura ideal antes de servir el espresso.',
-      x: 35,
-      y: 5 // Top tray
+      x: 50,
+      y: 5 
   }
 ];
 
