@@ -140,28 +140,28 @@ const GALLERY_ITEMS = [
         id: 1,
         title: "La Crema Perfecta",
         desc: "Densa, color avellana y capaz de sostener el azúcar. El sello de calidad de un espresso real.",
-        image: "https://images.unsplash.com/photo-1621256272580-c13f6498801d?q=80&w=600&auto=format&fit=crop",
+        image: "https://cdn.shopify.com/s/files/1/0608/6433/1831/files/imagen-2.webp?v=1757995172",
         icon: <Droplets size={24} />
     },
     {
         id: 2,
         title: "Micro-espuma de Seda",
         desc: "Potencia de vapor seco para texturizar leche brillante y elástica. Tu Latte Art empieza aquí.",
-        image: "https://images.unsplash.com/photo-1542129759-4c2813589b9d?q=80&w=600&auto=format&fit=crop",
+        image: "https://cdn.shopify.com/s/files/1/0608/6433/1831/files/imagen-3.webp?v=1757995172",
         icon: <Wind size={24} />
     },
     {
         id: 3,
         title: "Frescura Instantánea",
         desc: "Rompe el grano segundos antes. Los aceites esenciales van a tu taza, no al aire.",
-        image: "https://images.unsplash.com/photo-1611162458324-a27eb7f95d66?q=80&w=600&auto=format&fit=crop",
+        image: "https://cdn.shopify.com/s/files/1/0608/6433/1831/files/molino_cafe_electrico_raf.webp?v=1758255802",
         icon: <Coffee size={24} />
     },
     {
         id: 4,
         title: "Acero Inoxidable 304",
         desc: "Robusta, pesada y elegante. No es plástico, es maquinaria comercial para tu cocina.",
-        image: "https://images.unsplash.com/photo-1512568400610-62da28bc8a13?q=80&w=600&auto=format&fit=crop",
+        image: "https://cdn.shopify.com/s/files/1/0608/6433/1831/files/scuare.jpg?v=1757995325",
         icon: <Shield size={24} />
     }
 ];
@@ -338,18 +338,18 @@ export default function Home() {
                 <div className="md:hidden fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-md border-t border-coffee-100 p-4 z-40 shadow-[0_-5px_30px_rgba(0,0,0,0.08)] flex items-center gap-4 animate-slide-up safe-area-pb">
                     <div className="flex-1">
                         <p className="text-xs text-gold-600 font-bold uppercase tracking-wider flex items-center gap-1 mb-1">
-                            <Gift size={12} /> + Molino Gratis
+                            <Gift size={12} /> Oferta Limitada Activada
                         </p>
-                        <div className="flex items-baseline gap-2">
-                            <p className="text-xl font-bold text-coffee-900 leading-none">{PRICE}</p>
-                            <span className="text-sm text-gray-400 font-normal line-through">{OLD_PRICE}</span>
+                        <div className="flex flex-col">
+                            <p className="text-sm font-bold text-coffee-900 leading-tight">Molino + Curso Barista</p>
+                            <span className="text-xs text-green-600 font-bold">INCLUIDOS GRATIS</span>
                         </div>
                     </div>
                     <button
                         onClick={handleCheckoutClick}
-                        className="bg-gold-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg flex items-center gap-2 active:scale-95 transition-transform text-base"
+                        className="bg-gold-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg flex items-center gap-2 active:scale-95 transition-transform text-sm whitespace-nowrap"
                     >
-                        Reclamar Molino <ArrowRight size={18} />
+                        Reclamar Oferta
                     </button>
                 </div>
             )}

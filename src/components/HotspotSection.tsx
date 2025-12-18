@@ -47,6 +47,8 @@ export const HotspotSection: React.FC = () => {
 
   const closeAll = () => setActiveId(null);
 
+  const activeFeature = activeId ? FEATURES.find(f => f.id === activeId) : null;
+
   return (
     <section className="w-full max-w-6xl mx-auto px-4 py-16 md:py-24 bg-white relative">
         {/* Background Texture similar to other sections */}
@@ -65,9 +67,8 @@ export const HotspotSection: React.FC = () => {
       {/* Interactive Container */}
       <div 
         className="relative w-full max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-2xl bg-coffee-100 group cursor-default border-4 border-white/50 reveal zoom-in"
-        onClick={closeAll}
       >
-        <div className="relative w-full">
+        <div className="relative w-full" onClick={closeAll}>
            <Image 
             src={PRODUCT_IMAGE_URL} 
             alt="Detalles de la Cafetera Espresso" 
@@ -89,10 +90,40 @@ export const HotspotSection: React.FC = () => {
                 feature={feature}
                 isOpen={activeId === feature.id}
                 onToggle={toggleHotspot}
-                onClose={closeAll}
+                // No onClose needed here anymore, modal is separate
+                onClose={closeAll} 
               />
             ))}
           </div>
+
+          {/* --- CENTRALIZED POPUP MODAL --- */}
+          {activeFeature && (
+            <div 
+                className="absolute inset-0 z-30 flex items-center justify-center p-4 bg-black/20 backdrop-blur-[2px] transition-all duration-300"
+                onClick={(e) => { e.stopPropagation(); closeAll(); }}
+            >
+                <div 
+                    className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-6 md:p-8 max-w-sm w-full mx-auto relative transform transition-all animate-in fade-in zoom-in-95 border-2 border-white"
+                    onClick={(e) => e.stopPropagation()} 
+                >
+                    <button 
+                        onClick={closeAll}
+                        className="absolute top-3 right-3 text-coffee-400 hover:text-coffee-900 transition-colors bg-coffee-50 rounded-full p-1"
+                    >
+                        {/* Simple X Icon */}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+
+                    <h3 className="font-serif text-2xl font-bold text-coffee-900 mb-3 pr-6">
+                        {activeFeature.title}
+                    </h3>
+                    <p className="text-coffee-600 text-base leading-relaxed">
+                        {activeFeature.description}
+                    </p>
+                </div>
+            </div>
+          )}
+
         </div>
       </div>
 
