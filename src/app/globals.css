@@ -44,27 +44,27 @@ body {
 /* Base state for JS observation */
 .reveal:not(.active) {
   opacity: 0;
-  transform: translateY(20px); /* Small translation, composite only */
+  transform: none; /* DISABLED MOVEMENT */
 }
 
 /* Active state */
 .reveal.active {
   opacity: 1;
-  transform: translateY(0);
+  transform: none; /* DISABLED MOVEMENT */
 }
 
-/* Variations */
+/* Variations - All neutralized */
 .fade-bottom:not(.active) {
-  transform: translateY(20px);
+  transform: none;
 }
 .fade-left:not(.active) {
-  transform: translateX(-20px);
+  transform: none;
 }
 .fade-right:not(.active) {
-  transform: translateX(20px);
+  transform: none;
 }
 .zoom-in:not(.active) {
-  transform: scale(0.95);
+  transform: none;
 }
 
 /* Ensure no layout shift for hidden elements */
