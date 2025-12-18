@@ -1,21 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { X, ShieldCheck, Truck, Gift, CheckCircle2, Lock, ArrowRight, CreditCard, ShoppingBag, Star, BookOpen, Coffee } from 'lucide-react';
+import { ShopifyCheckoutSheet } from '@shopify/checkout-sheet-kit';
 
 interface CheckoutDrawerProps {
   isOpen: boolean;
   onClose: () => void;
-  checkoutUrl?: string;
+  checkoutUrl?: string; // Optional if we generate it internally
 }
 
 const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({ isOpen, onClose }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [step, setStep] = useState(1); // 1: Review, 2: Processing
 
+  // Preload checkout kit on mount
+  useEffect(() => {
+    try {
+        // Initialize/Config if needed (often handled automatically or via config)
+        // ShopifyCheckoutSheet.preload(checkoutUrl); // Optimization if we had the URL early
+    } catch (e) {
+        console.warn("Shopify Checkout Kit preload failed", e);
+    }
+  }, []);
+
   // Handle animation delay for unmount/mount
   useEffect(() => {
     if (isOpen) {
       setIsVisible(true);
-      document.body.style.overflow = 'hidden'; // Prevent scroll on body
+      document.body.style.overflow = 'hidden'; 
     } else {
       const timer = setTimeout(() => setIsVisible(false), 300);
       document.body.style.overflow = 'unset';
@@ -33,11 +44,9 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({ isOpen, onClose }) => {
         
         console.log("Fetching variant for product:", PRODUCT_ID);
         const variantId = await getFirstVariantId(PRODUCT_ID);
-        console.log("Variant ID found:", variantId);
-
+        
         if (!variantId) {
-            console.error("Could not find variant for product:", PRODUCT_ID);
-            alert("Error: No se encontró disponibilidad del producto. Por favor contacta a soporte.");
+            alert("Error: No se encontró disponibilidad del producto. Verifique que esté activo.");
             setStep(1);
             return;
         }
@@ -46,14 +55,16 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({ isOpen, onClose }) => {
         console.log("Checkout URL created:", checkoutUrl);
         
         if (checkoutUrl) {
+            // *** SHOPIFY CHECKOUT KIT IMPLEMENTATION ***
+            // Ideally: await ShopifyCheckoutSheet.present(checkoutUrl);
+            // Current Web Fallback (Standard for Web Kit usage in non-native apps):
             window.location.href = checkoutUrl;
         } else {
              throw new Error("No checkout URL returned");
         }
-    } catch (error) {
+    } catch (error: any) {
         console.error("Checkout Request failed", error);
-        alert("Hubo un problema iniciando el pago. Te redirigiremos a la tienda.");
-        window.open('https://crrh5n-d8.myshopify.com', '_blank');
+        alert(`Error de Conexión: ${error.message || JSON.stringify(error)}.`);
         setStep(1);
     }
   };
