@@ -360,14 +360,14 @@ export default function Home() {
                 <div className="absolute top-0 right-0 w-[500px] lg:w-[800px] h-[500px] lg:h-[800px] bg-gradient-to-br from-gold-100/40 to-transparent rounded-full blur-3xl opacity-50 -translate-y-1/3 translate-x-1/3 z-0"></div>
                 <div className="absolute bottom-0 left-0 w-[400px] lg:w-[700px] h-[400px] lg:h-[700px] bg-coffee-100/30 rounded-full blur-3xl opacity-50 translate-y-1/3 -translate-x-1/4 z-0"></div>
 
-                <div className="max-w-7xl mx-auto px-6 relative z-10 grid lg:grid-cols-2 gap-10 lg:gap-20 items-center content-relative">
+                <div className="max-w-7xl mx-auto px-6 relative z-10 grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
                     <div className="space-y-6 lg:space-y-8 text-center lg:text-left order-2 lg:order-1">
-                        <div className="inline-flex items-center gap-2 bg-gold-500 text-white px-5 py-2 rounded-full shadow-lg shadow-gold-500/30 animate-pulse-slow mx-auto lg:mx-0 transform hover:scale-105 transition-transform cursor-pointer reveal fade-bottom" onClick={() => scrollToSection(SectionId.BONUS)}>
+                        <div className="inline-flex items-center gap-2 bg-gold-500 text-white px-5 py-2 rounded-full shadow-lg shadow-gold-500/30 mx-auto lg:mx-0 transform hover:scale-105 transition-transform cursor-pointer" onClick={() => scrollToSection(SectionId.BONUS)}>
                             <Gift size={18} fill="white" />
                             <span className="text-sm font-bold tracking-widest uppercase">Oferta Flash Activa</span>
                         </div>
 
-                        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-serif font-bold text-coffee-900 leading-[1.1] tracking-tight drop-shadow-sm reveal fade-bottom delay-100">
+                        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-serif font-bold text-coffee-900 leading-[1.1] tracking-tight drop-shadow-sm">
                             El café perfecto<br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-600 to-gold-400 relative italic pr-2">
                                 exige molienda fresca.
@@ -377,11 +377,15 @@ export default function Home() {
                             </span>
                         </h1>
 
-                        <p className="text-lg lg:text-xl text-coffee-600 leading-relaxed max-w-lg mx-auto lg:mx-0 font-medium reveal fade-bottom delay-200">
+                        </h1>
+
+                        <p className="text-lg lg:text-xl text-coffee-600 leading-relaxed max-w-lg mx-auto lg:mx-0 font-medium">
                             La máquina te da la presión (20 Bares), pero el molino te da el sabor. Llévate hoy el <span className="font-bold text-coffee-800">Kit Barista Completo</span> y deja de tomar café oxidado.
                         </p>
 
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4 reveal fade-bottom delay-300">
+                        </p>
+
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
                             <button
                                 onClick={handleCheckoutClick}
                                 className="group bg-coffee-900 hover:bg-coffee-800 text-white px-8 py-4 rounded-full font-bold text-lg shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3 border border-coffee-700 relative overflow-hidden"
@@ -392,7 +396,9 @@ export default function Home() {
                             </button>
                         </div>
 
-                        <div className="pt-8 flex flex-wrap justify-center lg:justify-start gap-x-6 gap-y-4 text-base text-coffee-500 font-medium border-t border-coffee-200 mt-8 reveal fade-bottom delay-400">
+                        </div>
+
+                        <div className="pt-8 flex flex-wrap justify-center lg:justify-start gap-x-6 gap-y-4 text-base text-coffee-500 font-medium border-t border-coffee-200 mt-8">
                             <div className="flex items-center gap-2">
                                 <CheckCircle2 size={18} className="text-gold-500" />
                                 Garantía 1 Año
@@ -462,7 +468,7 @@ export default function Home() {
             {/* --- SECTION 2: THE PROBLEM / SOLUTION --- */}
             <section id={SectionId.FEATURES} className="relative bg-white border-t border-coffee-100 py-16 md:py-24 overflow-hidden min-h-[500px]">
                 <div className="max-w-7xl mx-auto px-6">
-                    <div className="text-center mb-12 md:mb-16 min-h-[300px] flex flex-col justify-center">
+                    <div className="text-center mb-12 md:mb-16 flex flex-col justify-center">
                         <div className="inline-block min-h-[36px]"><span className="text-gold-600 font-bold tracking-[0.2em] text-sm uppercase bg-coffee-50 border border-gold-200 px-5 py-2 rounded-full shadow-sm leading-none">La Verdad Incómoda</span></div>
                         <h2 className="text-4xl md:text-5xl font-serif font-bold text-coffee-900 mt-6 leading-tight min-h-[1.1em]">
                             Tu café casero sabe mal<br />
