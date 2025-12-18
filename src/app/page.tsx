@@ -462,7 +462,7 @@ export default function Home() {
             {/* --- SECTION 2: THE PROBLEM / SOLUTION --- */}
             <section id={SectionId.FEATURES} className="relative bg-white border-t border-coffee-100 py-16 md:py-24 overflow-hidden min-h-[500px]">
                 <div className="max-w-7xl mx-auto px-6">
-                    <div className="text-center mb-12 md:mb-16 reveal fade-bottom min-h-[300px] flex flex-col justify-center">
+                    <div className="text-center mb-12 md:mb-16 min-h-[300px] flex flex-col justify-center">
                         <div className="inline-block min-h-[36px]"><span className="text-gold-600 font-bold tracking-[0.2em] text-sm uppercase bg-coffee-50 border border-gold-200 px-5 py-2 rounded-full shadow-sm leading-none">La Verdad Incómoda</span></div>
                         <h2 className="text-4xl md:text-5xl font-serif font-bold text-coffee-900 mt-6 leading-tight min-h-[1.1em]">
                             Tu café casero sabe mal<br />
@@ -472,13 +472,13 @@ export default function Home() {
 
                     <div className="grid lg:grid-cols-2 gap-10 md:gap-20 items-center">
                         {/* Visual Anchor: Video */}
-                        <div className="reveal fade-right">
+                        <div>
                             <VideoPlayer />
                             <p className="text-center text-sm text-coffee-400 mt-4 italic">Mira la extracción real a 20 Bares con Coffee Maker Pro</p>
                         </div>
 
                         {/* Benefits List */}
-                        <div className="space-y-6 md:space-y-8 reveal fade-left">
+                        <div className="space-y-6 md:space-y-8">
                             <div className="bg-coffee-50 rounded-2xl p-6 md:p-8 border border-coffee-100 hover:border-gold-300 transition-colors shadow-sm group">
                                 <div className="flex items-start gap-5">
                                     <div className="bg-white p-3 rounded-full shadow-md text-gold-500 group-hover:scale-110 transition-transform shrink-0">

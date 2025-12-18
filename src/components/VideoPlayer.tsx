@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Play } from 'lucide-react';
+import Image from 'next/image';
 
 const VideoPlayer: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -15,17 +16,19 @@ const VideoPlayer: React.FC = () => {
           onClick={() => setIsPlaying(true)}
         >
           {/* Cover Image Placeholder */}
-          <img 
+          <Image 
             src="https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?q=80&w=800&auto=format&fit=crop"
             alt="Coffee Ritual" 
-            className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700 ease-out bg-gray-900"
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover opacity-90 group-hover:scale-105 transition-transform duration-700 ease-out bg-gray-900"
           />
           
           {/* Overlay Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
           
           {/* Play Button */}
-          <div className="absolute inset-0 flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center justify-center z-20">
             <div className="relative">
                 <div className="absolute inset-0 bg-gold-500 rounded-full animate-ping opacity-75"></div>
                 <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/50 group-hover:scale-110 transition-all duration-300 relative z-10">
@@ -36,7 +39,7 @@ const VideoPlayer: React.FC = () => {
             </div>
           </div>
 
-          <div className="absolute bottom-6 left-6 text-white z-10">
+          <div className="absolute bottom-6 left-6 text-white z-20">
             <p className="text-xs font-bold uppercase tracking-widest text-gold-400 mb-1">Experiencia Visual</p>
             <h3 className="text-2xl font-serif font-bold">Descubre el arte del espresso</h3>
           </div>
