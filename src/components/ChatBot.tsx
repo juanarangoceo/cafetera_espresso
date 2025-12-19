@@ -105,7 +105,7 @@ const ChatBot: React.FC = () => {
       {/* Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50 p-3 md:p-4 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center ${isOpen ? 'bg-coffee-900 rotate-90' : 'bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-400 hover:to-gold-500'
+        className={`fixed bottom-24 right-4 md:bottom-8 md:right-8 z-50 p-3 md:p-4 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center ${isOpen ? 'bg-coffee-900 rotate-90' : 'bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-400 hover:to-gold-500'
           } text-white`}
         aria-label="Hablar con Marco"
       >
@@ -127,10 +127,15 @@ const ChatBot: React.FC = () => {
           <div className="bg-gradient-to-r from-coffee-900 to-coffee-800 p-4 flex flex-col gap-3 shadow-md shrink-0">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-coffee-100 border-2 border-white overflow-hidden">
-                  <img src="https://images.unsplash.com/photo-1583689436329-3a31c519a4e3?q=80&w=200&auto=format&fit=crop" alt="Marco Barista" className="w-full h-full object-cover bg-coffee-300" />
+                <div className="w-12 h-12 md:w-14 md:h-14 relative flex items-center justify-center">
+                    {/* Frame */}
+                    <img src="/images/logo-marco.jpg" alt="Marco Frame" className="absolute inset-0 w-full h-full object-contain z-20 pointer-events-none rounded-full" />
+                    {/* Avatar */}
+                    <div className="w-9 h-9 md:w-10 md:h-10 rounded-full overflow-hidden bg-coffee-100 z-10">
+                        <img src="https://images.unsplash.com/photo-1583689436329-3a31c519a4e3?q=80&w=200&auto=format&fit=crop" alt="Marco Barista" className="w-full h-full object-cover" />
+                    </div>
                 </div>
-                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-coffee-900 rounded-full animate-pulse"></span>
+                <span className="absolute bottom-1 right-1 w-3 h-3 bg-green-500 border-2 border-coffee-900 rounded-full animate-pulse z-30"></span>
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="text-white font-bold text-lg leading-tight truncate">Marco</h3>

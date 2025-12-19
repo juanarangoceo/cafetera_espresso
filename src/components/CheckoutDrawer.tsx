@@ -88,7 +88,8 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({ isOpen, onClose }) => {
         {/* Header */}
         <div className="bg-white border-b border-coffee-100 p-4 flex justify-between items-center shadow-sm z-10">
           <div className="flex items-center gap-2 text-coffee-900">
-            <ShoppingBag size={20} className="text-gold-500" />
+            {/* Logo Replaced */}
+            <img src="/images/logo-chekout.jpg" alt="Logo Checkout" className="h-8 w-auto object-contain" />
             <span className="font-bold text-sm tracking-wide uppercase">Resumen del Pedido</span>
           </div>
           <button 
