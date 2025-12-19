@@ -1,14 +1,12 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { X, ShieldCheck, Truck, Gift, CheckCircle2, Lock, ArrowRight, CreditCard, ShoppingBag, Star, BookOpen, Coffee } from 'lucide-react';
 import { ShopifyCheckoutSheet } from '@shopify/checkout-sheet-kit';
+import { useCheckout } from '../context/CheckoutContext';
 
-interface CheckoutDrawerProps {
-  isOpen: boolean;
-  onClose: () => void;
-  checkoutUrl?: string; // Optional if we generate it internally
-}
-
-const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({ isOpen, onClose }) => {
+const CheckoutDrawer: React.FC = () => {
+  const { isCheckoutOpen: isOpen, closeCheckout: onClose } = useCheckout();
   const [isVisible, setIsVisible] = useState(false);
   const [step, setStep] = useState(1); // 1: Review, 2: Processing
 
