@@ -110,7 +110,7 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({ isOpen, onClose }) => {
                 </div>
                 <div className="flex gap-4 items-center">
                     <div className="w-24 h-24 bg-coffee-100 rounded-xl overflow-hidden shrink-0 border border-coffee-200">
-                        <img src="https://images.unsplash.com/photo-1599395932585-e7a83709b43d?q=80&w=200&auto=format&fit=crop" className="w-full h-full object-cover" alt="Kit Barista" />
+                        <img src="/images/logo-chekout.jpg" className="w-full h-full object-contain" alt="Kit Barista" />
                     </div>
                     <div>
                         <h3 className="font-serif font-bold text-coffee-900 text-lg leading-tight">Kit Barista Pro Edición Limitada</h3>
