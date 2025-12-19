@@ -417,7 +417,7 @@ export default function Home() {
                             {/* --- VERSIÓN MÓVIL (Vertical 4:5) --- */}
                             <div className="block md:hidden relative w-full h-full">
                                 <Image
-                                    src="/images/hero-mobile.jpg"
+                                    src="/images/hero-mobile.webp"
                                     alt="Cafetera Coffee Maker Pro - Vista Móvil"
                                     fill
                                     priority={true}
@@ -429,7 +429,7 @@ export default function Home() {
                             {/* --- VERSIÓN ESCRITORIO (Cuadrada) --- */}
                             <div className="hidden md:block relative w-full h-full">
                                 <Image
-                                    src="/images/hero-desktop.jpg"
+                                    src="/images/hero-desktop.webp"
                                     alt="Cafetera Coffee Maker Pro - Vista Escritorio"
                                     fill
                                     priority={true}
