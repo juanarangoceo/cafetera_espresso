@@ -17,9 +17,6 @@ const playfair = Playfair_Display({
     adjustFontFallback: true,
 });
 
-import { Providers } from "../components/Providers";
-import CheckoutDrawer from "../components/CheckoutDrawer";
-
 export const metadata: Metadata = {
     title: "Coffee Maker Pro - La Máquina Definitiva",
     description: "El café perfecto exige molienda fresca. Llévate hoy el Kit Barista Completo y deja de tomar café oxidado.",
@@ -36,10 +33,7 @@ export default function RootLayout({
                 <link rel="preconnect" href="https://www.transparenttextures.com" />
             </head>
             <body className="font-sans antialiased text-coffee-900 bg-coffee-50" suppressHydrationWarning>
-                <Providers>
-                    {children}
-                    <CheckoutDrawer />
-                </Providers>
+                {children}
                 <Script id="facebook-pixel" strategy="afterInteractive">
           {`
             !function(f,b,e,v,n,t,s)
