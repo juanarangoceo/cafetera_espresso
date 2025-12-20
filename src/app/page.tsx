@@ -31,7 +31,7 @@ export default function Home() {
                     <div className="max-w-7xl mx-auto px-6 relative z-10 grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
                         <div className="space-y-6 lg:space-y-8 text-center lg:text-left order-2 lg:order-1">
                             
-                            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-serif font-bold text-coffee-900 leading-[1.1] tracking-tight drop-shadow-sm">
+                            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-serif font-bold text-coffee-900 leading-[1.1] tracking-tight drop-shadow-sm">
                                 Tu Propia Barra de Café<br />
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-600 to-gold-400 relative italic pr-2">
                                     Barista en Casa u Oficina
