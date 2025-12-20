@@ -12,6 +12,7 @@ import VideoPlayer from './VideoPlayer';
 import { HotspotSection } from './HotspotSection';
 import { TimerReset, Gauge, ChevronRight } from 'lucide-react';
 import Footer from './layout/Footer';
+import StickyMobileCTA from './layout/StickyMobileCTA';
 
 // Helper for dynamic icon rendering in Gallery
 const GalleryIcon = ({ type }: { type: string }) => {
@@ -506,6 +507,7 @@ export default function HomeContent() {
                  </div>
               </section>
         
+            <StickyMobileCTA />
             <Footer />
         </>
     );
