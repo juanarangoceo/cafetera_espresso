@@ -494,9 +494,9 @@ export default function Home() {
 
                     <div className="grid lg:grid-cols-2 gap-10 md:gap-20 items-center">
                         {/* Visual Anchor: Video */}
-                        <div>
-                            <VideoPlayer />
-                            <p className="text-center text-sm text-coffee-400 mt-4 italic">Mira la extracción real a 20 Bares con Coffee Maker Pro</p>
+                        <div className="flex flex-col items-center justify-center">
+                            <VideoPlayer src="https://res.cloudinary.com/dohwyszdj/video/upload/v1766264202/video_reel_hcfoyo.mp4" />
+                            <p className="text-center text-sm text-coffee-400 mt-6 italic max-w-xs mx-auto">Mira la extracción real a 20 Bares de la Coffee Maker Pro</p>
                         </div>
 
                         {/* Benefits List */}
