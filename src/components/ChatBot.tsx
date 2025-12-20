@@ -160,7 +160,7 @@ const ChatBot: React.FC = () => {
               onClick={handleBuyClick}
               className="w-full bg-gold-500 hover:bg-gold-600 active:bg-gold-700 text-white text-sm font-bold py-2 px-4 rounded-xl shadow-lg transition-colors flex items-center justify-center gap-2 animate-pulse-slow"
             >
-              <Gift size={16} /> Quiero mi Molino Gratis
+              <Gift size={16} /> 🎁 Aplicar Beneficio: Molino Gratis
             </button>
           </div>
 

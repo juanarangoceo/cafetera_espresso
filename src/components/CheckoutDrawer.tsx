@@ -90,39 +90,39 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({ isOpen, onClose }) => {
                         <div className="flex items-center gap-3">
                             <div className="bg-coffee-100 p-2 rounded-lg text-coffee-700"><Coffee size={18} /></div>
                             <div>
-                                <p className="font-bold text-coffee-900 text-sm">Máquina Espresso 20 Bares</p>
+                                <p className="font-bold text-coffee-900 text-sm">Cafetera Coffee Maker Pro</p>
                                 <p className="text-xs text-coffee-500">Garantía 1 Año</p>
                             </div>
                         </div>
-                        <span className="text-sm font-bold text-coffee-900">$490k</span>
+                        <span className="text-sm font-bold text-coffee-900">$490.000</span>
                     </div>
 
                     {/* Item 2 (GIFT) */}
-                    <div className="flex justify-between items-center pb-3 border-b border-coffee-50 bg-gold-50/50 p-2 rounded-lg -mx-2">
+                    <div className="flex justify-between items-center pb-3 border-b border-coffee-50 bg-green-50/50 p-2 rounded-lg -mx-2">
                         <div className="flex items-center gap-3">
-                            <div className="bg-gold-100 p-2 rounded-lg text-gold-600"><Gift size={18} /></div>
+                            <div className="bg-green-100 p-2 rounded-lg text-green-600"><Gift size={18} /></div>
                             <div>
-                                <p className="font-bold text-coffee-900 text-sm">Molino Automático</p>
-                                <p className="text-xs text-gold-600 font-bold">¡Regalo Hoy!</p>
+                                <p className="font-bold text-coffee-900 text-sm">🎁 Regalo: Molino Eléctrico</p>
+                                <p className="text-xs text-green-600 font-bold">¡Ahorras $180.000!</p>
                             </div>
                         </div>
                         <div className="text-right">
-                            <span className="block text-xs text-red-400 line-through">$180k</span>
+                            <span className="block text-xs text-red-400 line-through">$180.000</span>
                             <span className="block text-sm font-bold text-green-600">GRATIS</span>
                         </div>
                     </div>
 
                     {/* Item 3 (GIFT) */}
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center p-2 -mx-2 bg-green-50/30 rounded-lg">
                         <div className="flex items-center gap-3">
-                            <div className="bg-gold-100 p-2 rounded-lg text-gold-600"><BookOpen size={18} /></div>
+                            <div className="bg-green-100 p-2 rounded-lg text-green-600"><BookOpen size={18} /></div>
                             <div>
-                                <p className="font-bold text-coffee-900 text-sm">E-book &quot;Barista Master&quot;</p>
-                                <p className="text-xs text-gold-600 font-bold">Curso Digital</p>
+                                <p className="font-bold text-coffee-900 text-sm">🎁 Regalo: E-book Barista</p>
+                                <p className="text-xs text-green-600 font-bold">Curso Digital</p>
                             </div>
                         </div>
                          <div className="text-right">
-                            <span className="block text-xs text-red-400 line-through">$120k</span>
+                            <span className="block text-xs text-red-400 line-through"></span>
                             <span className="block text-sm font-bold text-green-600">GRATIS</span>
                         </div>
                     </div>

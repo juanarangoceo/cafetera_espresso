@@ -20,19 +20,36 @@ const Countdown: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex gap-2 justify-center py-2">
-      {[
-        { label: 'Hrs', value: timeLeft.hours },
-        { label: 'Min', value: timeLeft.minutes },
-        { label: 'Seg', value: timeLeft.seconds }
-      ].map((item, idx) => (
-        <div key={idx} className="text-center">
-          <div className="bg-coffee-50 border border-coffee-200 text-coffee-900 font-mono text-xl font-bold py-1.5 px-2 rounded-md shadow-sm min-w-[50px]">
-            {item.value.toString().padStart(2, '0')}
+    <div className="w-full bg-gradient-to-r from-coffee-950 via-coffee-900 to-coffee-950 border-b border-gold-500/20 py-3 px-4 rounded-lg mb-6 flex justify-between items-center shadow-inner">
+      {/* Left: Status */}
+      <div className="flex items-center gap-2 md:gap-3">
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
+        </span>
+        <span className="text-[10px] md:text-xs font-medium tracking-[0.15em] text-gold-100/90 uppercase leading-none">
+          DISPONIBILIDAD LIMITADA: ÚLTIMAS 7 UNIDADES
+        </span>
+      </div>
+
+      {/* Right: Timer */}
+      <div className="flex gap-2 items-center">
+        {[
+          { label: 'hrs', value: timeLeft.hours },
+          { label: 'min', value: timeLeft.minutes },
+          { label: 'seg', value: timeLeft.seconds }
+        ].map((item, idx) => (
+          <div key={idx} className="text-center flex items-end gap-1">
+            <span className="font-mono text-gold-400 font-bold text-lg leading-none">
+              {item.value.toString().padStart(2, '0')}
+            </span>
+            <span className="text-[9px] uppercase text-coffee-400 mb-0.5 font-medium">
+              {item.label}
+            </span>
+            {idx < 2 && <span className="text-coffee-600 text-sm leading-none mx-0.5">:</span>}
           </div>
-          <span className="text-[10px] uppercase tracking-wide text-coffee-400 mt-1 block font-bold">{item.label}</span>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };

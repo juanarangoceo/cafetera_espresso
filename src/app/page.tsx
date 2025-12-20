@@ -386,18 +386,18 @@ export default function Home() {
                                 className="group bg-coffee-900 hover:bg-coffee-800 text-white px-8 py-4 rounded-full font-bold text-lg shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3 border border-coffee-700 relative overflow-hidden"
                             >
                                 <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                                <span className="relative">¡Quiero mi Kit Barista!</span>
+                                <span className="relative">Elevar mi Rutina de Café Hoy</span>
                                 <span className="relative bg-white/20 p-1.5 rounded-full group-hover:bg-white/30 transition-colors"><ArrowRight size={18} /></span>
                             </button>
                         </div>
                         
-                        <div className="flex items-center justify-center lg:justify-start gap-3 mt-3">
-                             <div className="flex items-center gap-1.5 text-sm font-medium text-coffee-600/80">
+                        <div className="flex items-center justify-center lg:justify-start gap-4 mt-4">
+                             <div className="flex items-center gap-1.5 text-sm font-medium text-coffee-700">
                                  <Truck size={16} className="text-green-600" /> Envío Gratis
                              </div>
-                             <span className="w-1 h-1 rounded-full bg-coffee-300"></span>
-                             <div className="flex items-center gap-1.5 text-sm font-medium text-coffee-600/80">
-                                 <div className="text-coffee-600"><Banknote size={16} /></div> Paga al Recibir
+                             <span className="text-coffee-300">•</span>
+                             <div className="flex items-center gap-1.5 text-sm font-medium text-coffee-700">
+                                 <Banknote size={16} className="text-green-600" /> Paga al Recibir
                              </div>
                         </div>
 
@@ -1054,46 +1054,78 @@ export default function Home() {
                     </div>
                 </div>
 
-                <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-8 text-center shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] transform md:scale-105 border-4 border-gold-500/30 relative overflow-hidden transition-transform duration-300 flex flex-col justify-between h-full">
+                <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-8 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] transform md:scale-105 border-4 border-gold-500/30 relative overflow-hidden transition-transform duration-300 flex flex-col h-full">
                     
                     <div className="absolute top-0 right-0 bg-gold-500 text-white text-[10px] font-bold px-4 py-2 rounded-bl-2xl shadow-md tracking-wider">OFERTA FLASH</div>
-                    
-                    <div>
-                        <p className="text-coffee-400 uppercase text-xs font-bold tracking-widest mb-1 mt-4">Precio Kit Completo</p>
-                        <div className="flex flex-col items-center justify-center gap-1 mb-4">
-                            <span className="text-2xl text-red-500 line-through font-medium opacity-60">{OLD_PRICE}</span>
-                            <span className="text-5xl md:text-6xl font-extrabold text-coffee-900 tracking-tighter">{PRICE}</span>
-                            <span className="text-xs font-bold text-coffee-500 bg-coffee-50 px-2 py-1 rounded-md mt-1">COP (Pesos Colombianos)</span>
-                        </div>
-                        
-                        <div className="flex justify-center mb-6">
-                            <Countdown />
-                        </div>
-                    </div>
 
-                    <div>
-                        <div className="bg-coffee-50 text-coffee-800 text-xs font-bold py-3 px-3 rounded-lg mb-4 flex items-center justify-center gap-2 border border-coffee-200">
-                            <Truck size={16} /> ENVÍO GRATIS + PAGO EN CASA 🏠
+                    <div className="mb-6">
+                        <Countdown />
+                        
+                        {/* HERO DEL PRECIO */}
+                        <div className="flex items-start gap-4 border-b border-coffee-100 pb-4 mb-4">
+                            <div className="bg-coffee-100 p-3 rounded-xl">
+                                <Coffee size={32} className="text-coffee-900" />
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-serif font-bold text-coffee-900 leading-tight">Máquina Espresso Pro 20 Bares</h3>
+                                <p className="text-sm text-coffee-500 font-medium">Calidad de Cafetería en Casa</p>
+                            </div>
+                        </div>
+
+                        {/* SECCION DE REGALOS */}
+                        <div className="bg-gold-50/50 rounded-xl p-4 border border-gold-100 mb-6">
+                            <p className="text-xs font-bold text-coffee-900 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                <Gift size={14} className="text-gold-600" /> BONUS INCLUIDOS HOY:
+                            </p>
+                            <ul className="space-y-3">
+                                <li className="flex justify-between items-center text-sm">
+                                    <span className="text-coffee-700 font-medium">Molino Eléctrico Ajustable</span>
+                                    <div className="flex flex-col items-end">
+                                        <span className="text-red-400 line-through text-xs">$180.000</span>
+                                        <span className="text-green-600 font-bold">GRATIS</span>
+                                    </div>
+                                </li>
+                                <li className="flex justify-between items-center text-sm">
+                                    <span className="text-coffee-700 font-medium">Kit Barista (Tamper + Cuchara)</span>
+                                    <div className="flex flex-col items-end">
+                                        <span className="text-red-400 line-through text-xs">$50.000</span>
+                                        <span className="text-green-600 font-bold">GRATIS</span>
+                                    </div>
+                                </li>
+                                <li className="flex justify-between items-center text-sm">
+                                    <span className="text-coffee-700 font-medium">Curso Digital: Barista Master</span>
+                                    <div className="flex flex-col items-end">
+                                        <span className="text-red-400 line-through text-xs">$90.000</span>
+                                        <span className="text-green-600 font-bold">GRATIS</span>
+                                    </div>
+                                </li>
+                            </ul>
                         </div>
                         
+                        {/* TOTAL PRICE */}
+                        <div className="text-center mb-6">
+                            <p className="text-coffee-400 uppercase text-xs font-bold tracking-widest mb-1">Precio Total Hoy</p>
+                             <div className="flex flex-col items-center justify-center gap-1">
+                                <span className="text-xl text-red-500 line-through font-medium opacity-60">{OLD_PRICE}</span>
+                                <span className="text-5xl md:text-6xl font-extrabold text-coffee-900 tracking-tighter">{PRICE}</span>
+                            </div>
+                        </div>
+
                         <button 
                             onClick={handleCheckoutClick}
-                            className="w-full bg-coffee-900 hover:bg-black text-white text-xl font-bold py-4 rounded-xl shadow-xl hover:shadow-gold-500/20 transition-all transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2 mb-4 group relative overflow-hidden"
+                            className="w-full bg-coffee-900 hover:bg-black text-white text-lg font-bold py-4 rounded-xl shadow-xl hover:shadow-gold-500/20 transition-all transform hover:-translate-y-1 active:scale-95 flex flex-col items-center justify-center gap-0.5 group relative overflow-hidden"
                         >
-                            <>
-                              <span className="absolute w-full h-full bg-white/10 animate-pulse"></span>
-                              <span className="relative z-10">SOLICITAR PEDIDO (PAGAR AL RECIBIR)</span>
-                              <ArrowRight size={24} className="group-hover:translate-x-1 transition-transform relative z-10 text-gold-500" /> 
-                            </>
+                            <div className="flex items-center gap-2 relative z-10">
+                                <span>RESERVAR MI KIT PRO + REGALOS</span>
+                                <ArrowRight size={20} className="text-gold-500" />
+                            </div>
+                            <span className="text-[10px] font-medium text-coffee-200 uppercase tracking-wider relative z-10">Pago Contraentrega • Envío Asegurado</span>
+                            
+                            <span className="absolute w-full h-full bg-white/5 top-0 left-0 animate-pulse"></span>
                         </button>
                         
-                        <div className="mt-4 pt-4 border-t border-coffee-100/50 text-xs text-coffee-500 font-medium">
-                            <p className="mb-2 font-bold">Pasarela de Pagos Segura:</p>
-                            <div className="flex flex-wrap justify-center gap-2 opacity-90">
-                                <span className="bg-[#FFDD00] text-black px-2 py-1 rounded font-bold border border-black/10">Bancolombia</span>
-                                <span className="bg-[#DA0081] text-white px-2 py-1 rounded font-bold">Nequi</span>
-                                <span className="bg-[#ED1C24] text-white px-2 py-1 rounded font-bold">Daviplata</span>
-                            </div>
+                        <div className="mt-4 flex justify-center gap-4 opacity-60 grayscale hover:grayscale-0 transition-all">
+                             <img src="https://cdn.shopify.com/s/files/1/0608/6433/1831/files/pagos_seguros_colombia.png?v=1705680000" alt="Medios de Pago" className="h-6 object-contain" />
                         </div>
                     </div>
                 </div>
