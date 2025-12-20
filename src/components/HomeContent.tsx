@@ -11,6 +11,7 @@ import FAQ from './FAQ';
 import VideoPlayer from './VideoPlayer';
 import { HotspotSection } from './HotspotSection';
 import { TimerReset, Gauge, ChevronRight } from 'lucide-react';
+import Footer from './layout/Footer';
 
 // Helper for dynamic icon rendering in Gallery
 const GalleryIcon = ({ type }: { type: string }) => {
@@ -505,67 +506,7 @@ export default function HomeContent() {
                  </div>
               </section>
         
-              <section className="py-20 md:py-32 bg-coffee-900 relative overflow-hidden text-center">
-                  <div className="max-w-4xl mx-auto px-6 relative z-10 pb-24 md:pb-0">
-                      <h2 className="text-4xl md:text-6xl font-serif font-bold text-white mb-6 md:mb-8 leading-tight">
-                          El café de tus sueños,<br />
-                          <span className="text-gold-500">en la cocina de tu casa.</span>
-                      </h2>
-                      <p className="text-lg md:text-xl text-gray-300 mb-10 md:mb-12 max-w-2xl mx-auto">
-                          Deja de gastar en cafeterías y empieza a invertir en ti. Únete a los más de 10.000 clientes felices.
-                      </p>
-                      
-                      <button 
-                          onClick={handleCheckoutClick}
-                          className="bg-gold-500 hover:bg-gold-400 text-white text-xl md:text-2xl font-bold py-5 md:py-6 px-10 md:px-12 rounded-full shadow-[0_0_40px_rgba(234,179,8,0.4)] hover:shadow-[0_0_60px_rgba(234,179,8,0.6)] transition-all transform hover:scale-105 animate-pulse-slow flex items-center gap-3 mx-auto"
-                      >
-                          ¡QUIERO MI ESTACIÓN PRO + REGALOS! <ArrowRight size={28} />
-                      </button>
-                      <p className="mt-6 text-sm text-gray-400 flex justify-center items-center gap-2">
-                           <Clock size={16} /> Oferta válida hasta medianoche
-                      </p>
-                  </div>
-              </section>
-        
-            <footer className="bg-black text-coffee-400 py-12 border-t border-white/10 pb-32 md:pb-12">
-                <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-                    <div>
-                        <div className="flex items-center gap-2 mb-4 text-white">
-                            <Coffee className="text-gold-500" />
-                            <span className="font-serif font-bold text-xl">CoffeeMaker Pro</span>
-                        </div>
-                        <p className="text-sm">
-                            Llevando la cultura del café de especialidad a los hogares colombianos desde 2023.
-                        </p>
-                    </div>
-                    <div>
-                        <h4 className="text-white font-bold mb-4">Enlaces</h4>
-                        <ul className="space-y-2 text-sm">
-                            <li><a href="#" className="hover:text-gold-500">Inicio</a></li>
-                            <li><a href="#features" className="hover:text-gold-500">Características</a></li>
-                            <li><a href="#recipes" className="hover:text-gold-500">Recetas</a></li>
-                        </ul>
-                    </div>
-                     <div>
-                        <h4 className="text-white font-bold mb-4">Legal</h4>
-                        <ul className="space-y-2 text-sm">
-                            <li><button className="hover:text-gold-500">Términos</button></li>
-                            <li><button className="hover:text-gold-500">Privacidad</button></li>
-                            <li><button className="hover:text-gold-500">Garantía</button></li>
-                        </ul>
-                    </div>
-                     <div>
-                        <h4 className="text-white font-bold mb-4">Contacto</h4>
-                        <ul className="space-y-2 text-sm">
-                            <li className="flex items-center gap-2"><MapPin size={16} /> Bogotá, Colombia</li>
-                            <li className="flex items-center gap-2"><Instagram size={16} /> @coffeemaker_col</li>
-                        </ul>
-                    </div>
-                </div>
-                <div className="max-w-7xl mx-auto px-6 pt-8 border-t border-white/10 text-center text-xs">
-                    <p>© 2024 Coffee Maker Pro. Todos los derechos reservados.</p>
-                </div>
-            </footer>
+            <Footer />
         </>
     );
 }
