@@ -66,9 +66,9 @@ export default function Home() {
                                     <CheckCircle2 size={18} className="text-gold-500" />
                                     Envío Gratis
                                 </div>
-                                <div className="flex items-center gap-2 text-red-500 font-bold animate-pulse">
-                                    <AlertTriangle size={18} />
-                                    Solo 7 Molinos Disponibles
+                                <div className="flex items-center gap-2 text-gold-700 font-bold bg-gold-50 px-3 py-1 rounded-full border border-gold-200">
+                                    <AlertTriangle size={16} />
+                                    Alta Demanda: Últimas unidades
                                 </div>
                             </div>
                         </div>
