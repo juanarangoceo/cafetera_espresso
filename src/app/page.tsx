@@ -9,6 +9,7 @@ import FAQ from '../components/FAQ';
 import VideoPlayer from '../components/VideoPlayer';
 import RecipeModal from '../components/RecipeModal';
 import PolicyModal from '../components/PolicyModal';
+import ImageModal from '../components/ImageModal';
 import CheckoutDrawer from '../components/CheckoutDrawer';
 import { HotspotSection } from '../components/HotspotSection';
 import { SectionId, Recipe, Policy } from '../types';
@@ -211,6 +212,7 @@ export default function Home() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
     const [selectedPolicy, setSelectedPolicy] = useState<Policy | null>(null);
+    const [selectedImage, setSelectedImage] = useState<{src: string, alt: string} | null>(null);
     const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
     // --- INTERSECTION OBSERVER FOR ANIMATIONS & SCROLL TRACKING ---
@@ -293,10 +295,10 @@ export default function Home() {
                             </button>
                         ))}
                         <button
-                            onClick={handleCheckoutClick}
+                            onClick={() => scrollToSection(SectionId.PRICING)}
                             className="bg-gold-500 hover:bg-gold-600 text-white px-6 py-2.5 rounded-full font-bold text-sm transition-all transform hover:scale-105 shadow-lg shadow-gold-500/20 flex items-center gap-2 border border-gold-400"
                         >
-                            Reclamar Oferta
+                            COMPRAR AHORA
                         </button>
                     </div>
 
@@ -362,10 +364,7 @@ export default function Home() {
 
                 <div className="max-w-7xl mx-auto px-6 relative z-10 grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
                     <div className="space-y-6 lg:space-y-8 text-center lg:text-left order-2 lg:order-1">
-                        <div className="inline-flex items-center gap-2 bg-gold-500 text-white px-5 py-2 rounded-full shadow-lg shadow-gold-500/30 mx-auto lg:mx-0 transform hover:scale-105 transition-transform cursor-pointer" onClick={() => scrollToSection(SectionId.BONUS)}>
-                            <Gift size={18} fill="white" />
-                            <span className="text-sm font-bold tracking-widest uppercase">Oferta Flash Activa</span>
-                        </div>
+                        {/* Banner removed by user request (Oferta Flash Activa) */}
 
                         <h1 className="text-5xl sm:text-6xl lg:text-7xl font-serif font-bold text-coffee-900 leading-[1.1] tracking-tight drop-shadow-sm">
                             El café perfecto<br />
@@ -382,7 +381,7 @@ export default function Home() {
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
                             <button
-                                onClick={handleCheckoutClick}
+                                onClick={() => scrollToSection(SectionId.PRICING)}
                                 className="group bg-coffee-900 hover:bg-coffee-800 text-white px-8 py-4 rounded-full font-bold text-lg shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3 border border-coffee-700 relative overflow-hidden"
                             >
                                 <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
@@ -486,10 +485,10 @@ export default function Home() {
             <section id={SectionId.FEATURES} className="relative bg-white border-t border-coffee-100 py-16 md:py-24 overflow-hidden min-h-[500px]">
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="text-center mb-12 md:mb-16 flex flex-col justify-center">
-                        <div className="inline-block min-h-[36px]"><span className="text-gold-600 font-bold tracking-[0.2em] text-sm uppercase bg-coffee-50 border border-gold-200 px-5 py-2 rounded-full shadow-sm leading-none">La Verdad Incómoda</span></div>
-                        <h2 className="text-4xl md:text-5xl font-serif font-bold text-coffee-900 mt-6 leading-tight min-h-[1.1em]">
-                            Tu café casero sabe mal<br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-coffee-600 to-coffee-400">por estas 3 razones.</span>
+                        <div className="inline-block min-h-[36px]"><span className="text-gold-600 font-bold tracking-[0.2em] text-sm uppercase bg-coffee-50 border border-gold-200 px-5 py-2 rounded-full shadow-sm leading-none">La Realidad</span></div>
+                        <h2 className="text-3xl md:text-5xl font-serif font-bold text-coffee-900 mt-6 leading-tight min-h-[1.1em]">
+                            ¿Por qué tu café en casa no sabe<br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-coffee-600 to-coffee-400">como el de tu cafetería favorita?</span>
                         </h2>
                     </div>
 
@@ -565,22 +564,29 @@ export default function Home() {
                         </p>
                     </div>
 
-                    {/* Bento Grid Optimized */}
+                    {/* Bento Grid Optimized with Overlay & Modal */}
                     <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-4 h-auto md:h-[600px] reveal zoom-in">
                         {PRODUCT_IMAGES.map((img, idx) => (
-                            <div key={idx} className={`relative rounded-2xl overflow-hidden group ${img.span} border border-white/5 shadow-2xl bg-coffee-900 aspect-[4/5] md:aspect-auto`}>
+                            <div 
+                                key={idx} 
+                                className={`relative rounded-2xl overflow-hidden group ${img.span} border border-white/5 shadow-2xl bg-coffee-900 aspect-square md:aspect-auto cursor-pointer`}
+                                onClick={() => setSelectedImage({src: img.src, alt: img.title})}
+                            >
                                 <Image
                                     src={img.src}
                                     alt={img.title}
                                     fill
                                     sizes="(max-width: 768px) 100vw, 33vw"
-                                    className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
+                                    className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-60 group-hover:opacity-40"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-6 md:p-8 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                                    <h3 className="text-white text-xl md:text-2xl font-serif font-bold mb-1">{img.title}</h3>
-                                    <p className="text-coffee-200 text-sm md:text-base opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">{img.desc}</p>
-                                    <div className="absolute top-4 right-4 bg-white/10 backdrop-blur-md p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <Maximize2 size={16} className="text-gold-400" />
+                                {/* Overlay Content Always Visible but Enhanced on Hover */}
+                                <div className="absolute inset-0 flex flex-col justify-center items-center p-6 text-center z-10 hover:backdrop-blur-[2px] transition-all">
+                                    <h3 className="text-white text-2xl md:text-3xl font-serif font-bold mb-2 drop-shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">{img.title}</h3>
+                                    <div className="w-12 h-1 bg-gold-500 rounded-full mb-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    <p className="text-coffee-100 text-sm md:text-base font-medium max-w-[80%] opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-100">{img.desc}</p>
+                                    
+                                    <div className="absolute bottom-4 right-4 bg-white/10 backdrop-blur-md p-2 rounded-full text-gold-400 group-hover:bg-gold-500 group-hover:text-white transition-colors">
+                                        <Maximize2 size={20} />
                                     </div>
                                 </div>
                             </div>
@@ -632,8 +638,10 @@ export default function Home() {
 
                         {/* Text Content */}
                         <div className="order-2 lg:order-1 reveal fade-right">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gold-500/30 bg-gold-500/10 text-gold-400 text-xs font-bold uppercase tracking-widest mb-6">
-                                <Gift size={14} /> Regalo Exclusivo #1
+                            <div className="bg-gradient-to-r from-gold-600 to-gold-400 text-white px-6 py-2 rounded-r-full border-l-4 border-white inline-block shadow-lg shadow-gold-500/20 mb-8 transform -translate-x-6">
+                                <span className="text-sm md:text-base font-bold uppercase tracking-widest flex items-center gap-2">
+                                    <Gift size={18} className="animate-bounce" /> Regalo Exclusivo #1
+                                </span>
                             </div>
                             <h2 className="text-4xl md:text-6xl font-serif font-bold leading-none mb-6">
                                 Ingeniería de Precisión <br />
@@ -687,12 +695,6 @@ export default function Home() {
                                     alt="Molino de Café Eléctrico Premium"
                                 />
 
-                                {/* Floating Badge */}
-                                <div className="absolute -bottom-6 -left-6 bg-gold-500 text-coffee-950 p-6 rounded-2xl shadow-xl animate-float">
-                                    <Sparkles size={32} className="mb-2" />
-                                    <p className="font-bold text-3xl leading-none">100%</p>
-                                    <p className="text-xs font-bold uppercase tracking-wider">Bonificado</p>
-                                </div>
                             </div>
                             {/* Back Glow */}
                             <div className="absolute inset-0 bg-gold-600 blur-[80px] opacity-20 -z-10 rounded-full"></div>
@@ -706,7 +708,9 @@ export default function Home() {
             <section className="py-20 bg-coffee-50 relative overflow-hidden">
                 <div className="max-w-6xl mx-auto px-6 relative z-10">
                     <div className="text-center max-w-3xl mx-auto mb-16 reveal fade-bottom">
-                        <span className="text-gold-600 font-bold tracking-[0.2em] text-sm uppercase">Regalo #2: Academia Digital</span>
+                         <div className="inline-block bg-coffee-900/5 px-6 py-2 rounded-full border border-coffee-900/10 mb-6">
+                            <span className="text-gold-600 font-bold tracking-[0.2em] text-sm md:text-base uppercase">Regalo Exclusivo #2</span>
+                         </div>
                         <h2 className="text-4xl md:text-5xl font-serif font-bold text-coffee-900 mt-3 mb-6">"No necesitas ser experto para parecer uno."</h2>
                         <p className="text-lg text-coffee-600">
                             La mayoría compra máquinas caras y las abandona porque no saben usarlas. Nosotros no te vendemos solo la máquina, te regalamos la habilidad.
@@ -811,24 +815,25 @@ export default function Home() {
                                 key={item.id}
                                 className={`relative rounded-3xl overflow-hidden cursor-pointer group transition-all duration-500 shadow-xl border border-transparent hover:border-gold-500/50 reveal fade-bottom`}
                                 style={{ aspectRatio: '3/4', transitionDelay: `${index * 100}ms` }}
+                                onClick={() => setSelectedImage({src: item.image, alt: item.title})}
                             >
                                 <div className="absolute inset-0 bg-coffee-900">
-                                    <Image src={item.image} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110 opacity-90" alt={item.title} />
+                                    <Image src={item.image} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110 opacity-60" alt={item.title} />
                                 </div>
-
-                                {/* Gradient Overlay for Text Readability */}
-                                <div className={`absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-80 group-hover:opacity-90 transition-opacity`}></div>
-
+                                
                                 {/* Top Icon */}
-                                <div className="absolute top-6 right-6 bg-white/10 backdrop-blur-md p-3 rounded-full text-gold-400 group-hover:bg-gold-500 group-hover:text-white transition-colors duration-300 border border-white/10">
+                                <div className="absolute top-6 right-6 bg-white/10 backdrop-blur-md p-3 rounded-full text-gold-400 group-hover:bg-gold-500 group-hover:text-white transition-colors duration-300 border border-white/10 z-20">
                                     {item.icon}
                                 </div>
 
-                                <div className={`absolute bottom-0 left-0 w-full p-8 text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500`}>
-                                    <div className="w-10 h-1 bg-gold-500 mb-4 rounded-full"></div>
-                                    <p className="font-serif text-2xl font-bold leading-none mb-3">{item.title}</p>
-                                    <p className="text-sm text-gray-300 line-clamp-2 md:line-clamp-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">{item.desc}</p>
+                                {/* Text Overlay - Centered and Visible */}
+                                <div className="absolute inset-0 flex flex-col justify-center items-center p-6 text-center z-10">
+                                    <div className="w-10 h-1 bg-gold-500 mb-4 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+                                    <p className="font-serif text-2xl md:text-3xl font-bold leading-none mb-3 text-white drop-shadow-md">{item.title}</p>
+                                    <p className="text-sm text-coffee-100 opacity-90 group-hover:text-white transition-colors duration-300">{item.desc}</p>
                                 </div>
+                                
+                                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500 z-0"></div>
                             </div>
                         ))}
                     </div>
@@ -1004,8 +1009,12 @@ export default function Home() {
           <div className="relative bg-gradient-to-br from-coffee-900 to-coffee-950 rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl shadow-coffee-900/40 border-2 border-coffee-800 group reveal zoom-in">
              <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
              
-            <div className="relative bg-red-600 text-white text-center py-3 font-bold uppercase tracking-[0.2em] text-xs md:text-sm animate-pulse shadow-lg z-10 border-b border-white/10 flex items-center justify-center gap-2">
-                <AlertTriangle size={18} className="text-white" /> ¡Últimos 7 Molinos Gratis Disponibles!
+            <div className="relative bg-gradient-to-r from-red-600 to-red-500 text-white text-center py-3 font-bold uppercase tracking-[0.2em] text-xs md:text-sm shadow-lg z-10 border-b border-white/10 flex items-center justify-center gap-2">
+                <span className="relative flex h-3 w-3 mr-1">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+                </span>
+                ¡OFERTA LIMITADA ACTIVA!
             </div>
             
             <div className="relative z-10 p-6 md:p-12 lg:p-16 grid md:grid-cols-2 gap-12 items-center">
@@ -1033,17 +1042,11 @@ export default function Home() {
                                 </div>
                                 Molino Eléctrico (GRATIS)
                             </li>
-                            <li className="flex items-center gap-3 text-coffee-100 text-base font-medium">
-                                <div className="p-1 rounded-full shrink-0 bg-white/20 text-white">
-                                    <Check size={14} strokeWidth={3} />
+                            <li className="flex items-center gap-3 text-gold-300 text-base md:text-lg font-bold animate-pulse">
+                                <div className="p-1 rounded-full shrink-0 bg-red-500 text-white">
+                                    <Gift size={16} strokeWidth={3} />
                                 </div>
-                                Filtros Prof. (Doble + Sencillo)
-                            </li>
-                            <li className="flex items-center gap-3 text-coffee-100 text-base font-medium">
-                                <div className="p-1 rounded-full shrink-0 bg-white/20 text-white">
-                                    <Check size={14} strokeWidth={3} />
-                                </div>
-                                E-book 'Barista Master'
+                                E-book 'Barista Master' (GRATIS)
                             </li>
                         </ul>
                     </div>
@@ -1056,7 +1059,7 @@ export default function Home() {
 
                 <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-8 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] transform md:scale-105 border-4 border-gold-500/30 relative overflow-hidden transition-transform duration-300 flex flex-col h-full">
                     
-                    <div className="absolute top-0 right-0 bg-gold-500 text-white text-[10px] font-bold px-4 py-2 rounded-bl-2xl shadow-md tracking-wider">OFERTA FLASH</div>
+                    <div className="absolute top-0 right-0 bg-gold-500 text-white text-[10px] font-bold px-4 py-2 rounded-bl-2xl shadow-md tracking-wider">STOCK LIMITADO</div>
 
                     <div className="mb-6">
                         <Countdown />
@@ -1124,8 +1127,13 @@ export default function Home() {
                             <span className="absolute w-full h-full bg-white/5 top-0 left-0 animate-pulse"></span>
                         </button>
                         
-                        <div className="mt-4 flex justify-center gap-4 opacity-60 grayscale hover:grayscale-0 transition-all">
-                             <img src="https://cdn.shopify.com/s/files/1/0608/6433/1831/files/pagos_seguros_colombia.png?v=1705680000" alt="Medios de Pago" className="h-6 object-contain" />
+                        <div className="mt-4 pt-4 border-t border-coffee-100/50 text-xs text-coffee-500 font-medium">
+                            <p className="mb-2 font-bold">Pasarela de Pagos Segura:</p>
+                            <div className="flex flex-wrap justify-center gap-2 opacity-90">
+                                <span className="bg-green-100 text-green-700 px-3 py-1.5 rounded-lg font-bold border border-green-200 flex items-center gap-1">
+                                    <Banknote size={14} /> PAGO CONTRAENTREGA (Efectivo)
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1199,6 +1207,14 @@ export default function Home() {
          <PolicyModal 
              policy={selectedPolicy}
              onClose={() => setSelectedPolicy(null)}
+         />
+      )}
+
+      {selectedImage && (
+         <ImageModal
+             src={selectedImage.src}
+             alt={selectedImage.alt}
+             onClose={() => setSelectedImage(null)}
          />
       )}
 

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 
 const Countdown: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState({
-    hours: 4,
-    minutes: 59,
+    hours: 2,
+    minutes: 15,
     seconds: 0
   });
 
