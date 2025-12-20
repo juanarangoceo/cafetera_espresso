@@ -46,48 +46,50 @@ export default function HomeContent() {
     return (
         <>
             {/* --- SECTION 2: THE PROBLEM / SOLUTION --- */}
-            <section id={SectionId.FEATURES} className="relative bg-white border-t border-coffee-100 py-16 md:py-24 overflow-hidden min-h-[500px]">
+            <section id={SectionId.FEATURES} className="relative bg-white border-t border-coffee-100 py-20 md:py-32 overflow-hidden min-h-[600px]">
                 <div className="max-w-7xl mx-auto px-6">
-                    <div className="text-center mb-12 md:mb-16 flex flex-col justify-center">
-                        <div className="inline-block min-h-[36px]"><span className="text-gold-600 font-bold tracking-[0.2em] text-sm uppercase bg-coffee-50 border border-gold-200 px-5 py-2 rounded-full shadow-sm leading-none">La Realidad</span></div>
-                        <h2 className="text-3xl md:text-5xl font-serif font-bold text-coffee-900 mt-6 leading-tight min-h-[1.1em]">
+                    <div className="text-center mb-16 md:mb-24 flex flex-col justify-center">
+                        <div className="inline-block min-h-[36px]"><span className="text-gold-600 font-bold tracking-[0.2em] text-sm md:text-base uppercase bg-coffee-50 border border-gold-200 px-6 py-2.5 rounded-full shadow-sm leading-none">La Realidad</span></div>
+                        <h2 className="text-4xl md:text-6xl font-serif font-bold text-coffee-900 mt-8 leading-[1.1] min-h-[1.1em]">
                             ¿Por qué tu café en casa no sabe<br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-coffee-600 to-coffee-400">como el de tu cafetería favorita?</span>
                         </h2>
                     </div>
 
-                    <div className="grid lg:grid-cols-2 gap-10 md:gap-20 items-center">
+                    <div className="grid lg:grid-cols-2 gap-12 md:gap-24 items-center">
                         <div className="flex flex-col items-center justify-center">
                             <VideoPlayer src="https://res.cloudinary.com/dohwyszdj/video/upload/v1766264202/video_reel_hcfoyo.mp4" />
-                            <p className="text-center text-sm text-coffee-400 mt-6 italic max-w-xs mx-auto">Mira la extracción real a 20 Bares de la Coffee Maker Pro</p>
+                            <p className="text-center text-base text-coffee-400 mt-8 italic max-w-sm mx-auto">Mira la extracción real a 20 Bares de la Coffee Maker Pro</p>
                         </div>
 
-                        <div className="space-y-6 md:space-y-8">
-                            <div className="bg-coffee-50 rounded-2xl p-6 md:p-8 border border-coffee-100 hover:border-gold-300 transition-colors shadow-sm group">
-                                <div className="flex items-start gap-5">
-                                    <div className="bg-white p-3 rounded-full shadow-md text-gold-500 group-hover:scale-110 transition-transform shrink-0">
-                                        <TimerReset size={28} className="md:w-8 md:h-8" />
+                        <div className="space-y-8 md:space-y-10">
+                            <div className="bg-coffee-50 rounded-[2rem] p-8 md:p-10 border border-coffee-100 hover:border-gold-300 transition-colors shadow-sm group">
+                                <div className="flex items-start gap-6">
+                                    <div className="bg-white p-4 rounded-2xl shadow-md text-gold-500 group-hover:scale-110 transition-transform shrink-0">
+                                        <TimerReset size={32} className="md:w-10 md:h-10" />
                                     </div>
                                     <div>
-                                        <h3 className="text-xl md:text-2xl font-bold text-coffee-900 mb-3">1. El Problema del Café Oxidado</h3>
-                                        <p className="text-coffee-700 leading-relaxed text-base md:text-lg">
+                                        <h3 className="text-2xl md:text-3xl font-bold text-coffee-900 mb-4">1. El Problema del Café Oxidado</h3>
+                                        <p className="text-coffee-700 leading-relaxed text-lg md:text-xl">
                                             <span className="font-bold text-red-500">Lo que haces mal:</span> Usas café pre-molido de supermercado. <br />
-                                            <span className="font-bold text-green-600">La Solución:</span> Te regalamos el <strong className="text-coffee-900">Molino Automático</strong>. Rompes el grano 10 segundos antes de beberlo.
+                                            <span className="font-bold text-gray-400 block my-1">vs</span>
+                                            <span className="font-bold text-green-600">La Solución:</span> Te regalamos el <strong className="text-coffee-900 text-xl md:text-2xl decoration-gold-400 underline decoration-2 underline-offset-4">Molino Automático</strong>. Rompes el grano 10 segundos antes de beberlo.
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="bg-coffee-50 rounded-2xl p-6 md:p-8 border border-coffee-100 hover:border-gold-300 transition-colors shadow-sm group">
-                                <div className="flex items-start gap-5">
-                                    <div className="bg-white p-3 rounded-full shadow-md text-gold-500 group-hover:scale-110 transition-transform shrink-0">
-                                        <Gauge size={28} className="md:w-8 md:h-8" />
+                            <div className="bg-coffee-50 rounded-[2rem] p-8 md:p-10 border border-coffee-100 hover:border-gold-300 transition-colors shadow-sm group">
+                                <div className="flex items-start gap-6">
+                                    <div className="bg-white p-4 rounded-2xl shadow-md text-gold-500 group-hover:scale-110 transition-transform shrink-0">
+                                        <Gauge size={32} className="md:w-10 md:h-10" />
                                     </div>
                                     <div>
-                                        <h3 className="text-xl md:text-2xl font-bold text-coffee-900 mb-3">2. Presión Insuficiente</h3>
-                                        <p className="text-coffee-700 leading-relaxed text-base md:text-lg">
+                                        <h3 className="text-2xl md:text-3xl font-bold text-coffee-900 mb-4">2. Presión Insuficiente</h3>
+                                        <p className="text-coffee-700 leading-relaxed text-lg md:text-xl">
                                             <span className="font-bold text-red-500">Tu máquina actual:</span> Tiene 3-9 bares (muy poco) o 15 bares falsos.<br />
-                                            <span className="font-bold text-green-600">La Pro:</span> <strong className="text-coffee-900">20 Bares Reales</strong> de bomba italiana. La única forma de obtener la "Crema Avellana".
+                                            <span className="font-bold text-gray-400 block my-1">vs</span>
+                                            <span className="font-bold text-green-600">La Pro:</span> <strong className="text-coffee-900 text-xl md:text-2xl decoration-gold-400 underline decoration-2 underline-offset-4">20 Bares Reales</strong> de bomba italiana. La única forma de obtener la "Crema Avellana".
                                         </p>
                                     </div>
                                 </div>
@@ -172,41 +174,96 @@ export default function HomeContent() {
                 </div>
              </section>
 
-             <section id="roi" className="py-16 md:py-24 bg-white border-t border-coffee-100 relative">
-                 <div className="max-w-5xl mx-auto px-6">
-                     <div className="bg-coffee-900 rounded-[3rem] p-8 md:p-16 text-center text-white relative overflow-hidden shadow-2xl reveal zoom-in">
-                         <div className="relative z-10">
-                             <h2 className="text-3xl md:text-5xl font-serif font-bold mb-6 md:mb-8">No es un Gasto, es Ahorro Inteligente</h2>
-                             <div className="grid md:grid-cols-3 gap-8 md:gap-12 mb-10 md:mb-12">
-                                 <div className="p-4">
-                                     <div className="text-4xl md:text-5xl font-bold text-gold-400 mb-2">$3.5M</div>
-                                     <p className="text-sm md:text-base text-coffee-200 uppercase tracking-widest">Ahorro Anual Promedio</p>
-                                 </div>
-                                 <div className="p-4 border-y md:border-y-0 md:border-x border-white/10">
-                                     <div className="text-4xl md:text-5xl font-bold text-gold-400 mb-2 font-serif">500</div>
-                                     <p className="text-sm md:text-base text-coffee-200 uppercase tracking-widest">Pesos por Taza</p>
-                                 </div>
-                                 <div className="p-4">
-                                     <div className="text-4xl md:text-5xl font-bold text-gold-400 mb-2">2 Meses</div>
-                                     <p className="text-sm md:text-base text-coffee-200 uppercase tracking-widest">Retorno de Inversión</p>
-                                 </div>
-                             </div>
-                             <p className="text-lg text-coffee-100 max-w-2xl mx-auto mb-8 leading-relaxed">
-                                 "Antes compraba un latte diario de $12.000. Ahora me lo hago yo mismo por $800 pesos. La máquina se pagó sola en 7 semanas." 
-                             </p>
-                             <div className="flex justify-center">
-                                 <div className="flex -space-x-4">
-                                     {TESTIMONIALS.map(t => (
-                                         <div key={t.id} className="w-12 h-12 rounded-full border-2 border-coffee-900 relative overflow-hidden">
-                                             <Image src={t.image} alt={t.name} fill className="object-cover" />
-                                         </div>
-                                     ))}
-                                 </div>
-                             </div>
-                         </div>
-                     </div>
-                 </div>
-             </section>
+
+
+            {/* --- SECTION 5: GIFT KIT (RESTORED) --- */}
+            <section id={SectionId.BONUS} className="py-20 md:py-32 bg-coffee-900 text-white relative overflow-hidden">
+                {/* Background Decor */}
+                <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/black-felt.png')]"></div>
+                <div className="absolute -top-24 -right-24 w-96 h-96 bg-gold-500/20 rounded-full blur-3xl"></div>
+                <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-gold-600/20 rounded-full blur-3xl"></div>
+
+                <div className="max-w-7xl mx-auto px-6 relative z-10">
+                    <div className="text-center mb-16 md:mb-24">
+                        <span className="text-gold-400 font-bold tracking-[0.2em] text-sm uppercase border border-gold-500/30 px-4 py-1.5 rounded-full backdrop-blur-sm">Solo por Hoy</span>
+                        <h2 className="text-4xl md:text-6xl font-serif font-bold text-white mt-6 leading-tight">
+                            Tu Cafetería en Casa <br/>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-gold-200">No Estaría Completa Sin...</span>
+                        </h2>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
+                        {/* GIFT 1: MOLINO */}
+                        <div className="group relative">
+                            <div className="absolute inset-0 bg-gold-500/5 rounded-[3rem] transform rotate-3 scale-105 transition-transform group-hover:rotate-6"></div>
+                            <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-[2.5rem] p-8 md:p-12 overflow-hidden hover:bg-white/10 transition-colors duration-500">
+                                <div className="absolute top-0 right-0 bg-gold-500 text-coffee-900 font-bold px-6 py-2 rounded-bl-3xl shadow-lg">Regalo #1</div>
+                                <div className="h-64 md:h-80 relative mb-8 transform group-hover:scale-105 transition-transform duration-700">
+                                   <Image 
+                                        src="https://cdn.shopify.com/s/files/1/0608/6433/1831/files/molino_cafe_electrico_raf.webp?v=1758255802"
+                                        alt="Molino de Café Eléctrico"
+                                        fill
+                                        className="object-contain drop-shadow-2xl"
+                                   />
+                                </div>
+                                <h3 className="text-3xl md:text-4xl font-serif font-bold text-white mb-4">Molino Eléctrico de Muelas</h3>
+                                <p className="text-gray-300 text-lg leading-relaxed mb-6">
+                                    El secreto del espresso perfecto no es la máquina, es la molienda. Este molino de precisión (valorado en $180.000) asegura que cada grano libere sus aceites justo en el momento de la extracción.
+                                </p>
+                                <ul className="space-y-3">
+                                    <li className="flex items-center gap-3 text-gold-300">
+                                        <CheckCircle2 size={20} /> <span>Molienda ajustable (Fina a Gruesa)</span>
+                                    </li>
+                                    <li className="flex items-center gap-3 text-gold-300">
+                                        <CheckCircle2 size={20} /> <span>Tolva de 250g con cierre hermético</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        {/* GIFT 2: EBOOK & KIT */}
+                        <div className="space-y-8">
+                            <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-[2.5rem] p-8 hover:bg-white/10 transition-colors duration-500 group">
+                                <div className="absolute top-0 right-0 bg-gold-500 text-coffee-900 font-bold px-6 py-2 rounded-bl-3xl shadow-lg">Regalo #2</div>
+                                <div className="flex flex-col md:flex-row gap-6 items-center">
+                                    <div className="w-full md:w-1/3 aspect-[3/4] relative rounded-2xl overflow-hidden shadow-2xl border border-white/20">
+                                         {/* Ebook Cover Simulation */}
+                                        <div className="absolute inset-0 bg-gradient-to-br from-coffee-800 to-black flex items-center justify-center p-4 text-center">
+                                            <div>
+                                                <Coffee size={40} className="mx-auto text-gold-500 mb-2" />
+                                                <h4 className="font-serif font-bold text-xl text-white">Barista<br/>Pro</h4>
+                                                <span className="text-xs text-gold-400 uppercase tracking-widest mt-2 block">Masterclass</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="w-full md:w-2/3">
+                                        <h3 className="text-2xl md:text-3xl font-serif font-bold text-white mb-3">Masterclass: "Arte Latte en Casa"</h3>
+                                        <p className="text-gray-300 text-lg leading-relaxed mb-4">
+                                            No necesitas años de experiencia. Aprende a vaporizar la leche para crear corazones y tulipanes en tu primer mes.
+                                        </p>
+                                        <span className="text-gold-400 font-bold text-sm uppercase tracking-wide">Incluye Videos Paso a Paso</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                             <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-[2.5rem] p-8 hover:bg-white/10 transition-colors duration-500">
+                                <div className="absolute top-0 right-0 bg-gold-500 text-coffee-900 font-bold px-6 py-2 rounded-bl-3xl shadow-lg">Regalo #3</div>
+                                <div className="flex gap-6 items-center">
+                                    <div className="bg-white/10 p-5 rounded-full text-gold-500">
+                                        <ShieldCheck size={40} />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-2xl font-bold text-white mb-2">Kit de Mantenimiento y Herramientas</h3>
+                                        <p className="text-gray-300 text-lg">
+                                            Tamper profesional, cuchara medidora y guía de cuidado para que tu máquina dure décadas.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             <section id={SectionId.PRICING} className="py-16 md:py-24 bg-gradient-to-b from-coffee-50 to-white relative scroll-mt-20">
               <div className="max-w-7xl mx-auto px-6">
