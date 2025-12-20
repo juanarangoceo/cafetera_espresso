@@ -176,7 +176,7 @@ export default function HomeContent() {
 
 
 
-            {/* --- SECTION 5: GIFT KIT (RESTORED) --- */}
+            {/* --- SECTION 5: GIFT KIT (RESTORED & IMPROVED) --- */}
             <section id={SectionId.BONUS} className="py-20 md:py-32 bg-coffee-900 text-white relative overflow-hidden">
                 {/* Background Decor */}
                 <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/black-felt.png')]"></div>
@@ -197,7 +197,9 @@ export default function HomeContent() {
                         <div className="group relative">
                             <div className="absolute inset-0 bg-gold-500/5 rounded-[3rem] transform rotate-3 scale-105 transition-transform group-hover:rotate-6"></div>
                             <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-[2.5rem] p-8 md:p-12 overflow-hidden hover:bg-white/10 transition-colors duration-500">
-                                <div className="absolute top-0 right-0 bg-gold-500 text-coffee-900 font-bold px-6 py-2 rounded-bl-3xl shadow-lg">Regalo #1</div>
+                                <div className="absolute top-0 right-0">
+                                    <span className="bg-gold-500 text-coffee-950 font-bold px-6 py-2 rounded-bl-3xl shadow-lg block">GRATIS</span>
+                                </div>
                                 <div className="h-64 md:h-80 relative mb-8 transform group-hover:scale-105 transition-transform duration-700">
                                    <Image 
                                         src="https://cdn.shopify.com/s/files/1/0608/6433/1831/files/molino_cafe_electrico_raf.webp?v=1758255802"
@@ -207,14 +209,18 @@ export default function HomeContent() {
                                    />
                                 </div>
                                 <h3 className="text-3xl md:text-4xl font-serif font-bold text-white mb-4">Molino Eléctrico de Muelas</h3>
+                                <div className="flex items-baseline gap-3 mb-4">
+                                    <span className="text-2xl font-bold text-gold-400">Regalo #1</span>
+                                    <span className="text-gray-400 line-through text-lg">Antes $180.000</span>
+                                </div>
                                 <p className="text-gray-300 text-lg leading-relaxed mb-6">
-                                    El secreto del espresso perfecto no es la máquina, es la molienda. Este molino de precisión (valorado en $180.000) asegura que cada grano libere sus aceites justo en el momento de la extracción.
+                                    El secreto del espresso perfecto no es la máquina, es la molienda. Este molino de precisión asegura que cada grano libere sus aceites justo en el momento de la extracción.
                                 </p>
                                 <ul className="space-y-3">
-                                    <li className="flex items-center gap-3 text-gold-300">
+                                    <li className="flex items-center gap-3 text-gold-300 font-medium">
                                         <CheckCircle2 size={20} /> <span>Molienda ajustable (Fina a Gruesa)</span>
                                     </li>
-                                    <li className="flex items-center gap-3 text-gold-300">
+                                    <li className="flex items-center gap-3 text-gold-300 font-medium">
                                         <CheckCircle2 size={20} /> <span>Tolva de 250g con cierre hermético</span>
                                     </li>
                                 </ul>
@@ -223,39 +229,51 @@ export default function HomeContent() {
 
                         {/* GIFT 2: EBOOK & KIT */}
                         <div className="space-y-8">
-                            <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-[2.5rem] p-8 hover:bg-white/10 transition-colors duration-500 group">
-                                <div className="absolute top-0 right-0 bg-gold-500 text-coffee-900 font-bold px-6 py-2 rounded-bl-3xl shadow-lg">Regalo #2</div>
-                                <div className="flex flex-col md:flex-row gap-6 items-center">
-                                    <div className="w-full md:w-1/3 aspect-[3/4] relative rounded-2xl overflow-hidden shadow-2xl border border-white/20">
-                                         {/* Ebook Cover Simulation */}
-                                        <div className="absolute inset-0 bg-gradient-to-br from-coffee-800 to-black flex items-center justify-center p-4 text-center">
-                                            <div>
-                                                <Coffee size={40} className="mx-auto text-gold-500 mb-2" />
-                                                <h4 className="font-serif font-bold text-xl text-white">Barista<br/>Pro</h4>
-                                                <span className="text-xs text-gold-400 uppercase tracking-widest mt-2 block">Masterclass</span>
-                                            </div>
-                                        </div>
+                            <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-[2.5rem] p-8 hover:bg-white/10 transition-colors duration-500 group overflow-hidden">
+                                <div className="absolute top-0 right-0">
+                                    <span className="bg-gold-500 text-coffee-950 font-bold px-6 py-2 rounded-bl-3xl shadow-lg block">GRATIS</span>
+                                </div>
+                                <div className="flex flex-col md:flex-row gap-8 items-center">
+                                    <div className="w-full md:w-5/12 aspect-[3/4] relative rounded-xl overflow-hidden shadow-2xl border border-white/10 transform group-hover:-rotate-3 transition-transform duration-500">
+                                         <Image 
+                                            src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=400&auto=format&fit=crop"
+                                            alt="Ebook Barista Masterclass"
+                                            fill
+                                            className="object-cover"
+                                         />
+                                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
+                                            <span className="text-white font-serif font-bold text-lg leading-none">Arte Latte<br/><span className="text-gold-400 text-sm font-sans tracking-wider">MASTERCLASS</span></span>
+                                         </div>
                                     </div>
-                                    <div className="w-full md:w-2/3">
-                                        <h3 className="text-2xl md:text-3xl font-serif font-bold text-white mb-3">Masterclass: "Arte Latte en Casa"</h3>
+                                    <div className="w-full md:w-7/12">
+                                        <h3 className="text-2xl md:text-3xl font-serif font-bold text-white mb-2">Masterclass: "Arte Latte"</h3>
+                                        <div className="flex items-baseline gap-2 mb-3">
+                                            <span className="text-gold-400 font-bold">Regalo #2</span>
+                                            <span className="text-gray-500 line-through text-sm">Valor $90.000</span>
+                                        </div>
                                         <p className="text-gray-300 text-lg leading-relaxed mb-4">
-                                            No necesitas años de experiencia. Aprende a vaporizar la leche para crear corazones y tulipanes en tu primer mes.
+                                            Aprende a vaporizar la leche para crear corazones y tulipanes en tu primer mes. Incluye videos paso a paso.
                                         </p>
-                                        <span className="text-gold-400 font-bold text-sm uppercase tracking-wide">Incluye Videos Paso a Paso</span>
                                     </div>
                                 </div>
                             </div>
 
-                             <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-[2.5rem] p-8 hover:bg-white/10 transition-colors duration-500">
-                                <div className="absolute top-0 right-0 bg-gold-500 text-coffee-900 font-bold px-6 py-2 rounded-bl-3xl shadow-lg">Regalo #3</div>
+                             <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-[2.5rem] p-8 hover:bg-white/10 transition-colors duration-500 group">
+                                <div className="absolute top-0 right-0">
+                                    <span className="bg-gold-500 text-coffee-950 font-bold px-6 py-2 rounded-bl-3xl shadow-lg block">GRATIS</span>
+                                </div>
                                 <div className="flex gap-6 items-center">
-                                    <div className="bg-white/10 p-5 rounded-full text-gold-500">
-                                        <ShieldCheck size={40} />
+                                    <div className="bg-white/10 p-5 rounded-full text-gold-500 group-hover:bg-gold-500 group-hover:text-coffee-900 transition-colors duration-300">
+                                        <ShieldCheck size={32} />
                                     </div>
                                     <div>
-                                        <h3 className="text-2xl font-bold text-white mb-2">Kit de Mantenimiento y Herramientas</h3>
-                                        <p className="text-gray-300 text-lg">
-                                            Tamper profesional, cuchara medidora y guía de cuidado para que tu máquina dure décadas.
+                                        <h3 className="text-2xl font-bold text-white mb-2">Kit de Mantenimiento</h3>
+                                         <div className="flex items-baseline gap-2 mb-2">
+                                            <span className="text-gold-400 font-bold">Regalo #3</span>
+                                            <span className="text-gray-500 line-through text-sm">Valor $50.000</span>
+                                        </div>
+                                        <p className="text-gray-300">
+                                            Tamper, cuchara medidora y guía de cuidado.
                                         </p>
                                     </div>
                                 </div>
@@ -264,6 +282,90 @@ export default function HomeContent() {
                     </div>
                 </div>
             </section>
+
+             <section id="roi" className="py-20 md:py-32 bg-coffee-50 border-t border-coffee-200 relative">
+                 <div className="max-w-6xl mx-auto px-6">
+                     <div className="text-center mb-16">
+                         <h2 className="text-4xl md:text-5xl font-serif font-bold text-coffee-900 mb-6">Matemáticas Simples</h2>
+                         <p className="text-xl text-coffee-600 max-w-2xl mx-auto">Tu hábito actual de café está financiando la cafetería. <br/>Es hora de financiar tus propios sueños.</p>
+                     </div>
+
+                     <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-coffee-100 flex flex-col md:flex-row">
+                         {/* LEFT: THE RECEIPT (FACTURA) */}
+                         <div className="w-full md:w-1/2 bg-[#f8f5f2] p-8 md:p-12 relative border-r-2 border-dashed border-gray-300">
+                            <div className="absolute top-0 left-0 w-full h-4 bg-gradient-to-b from-black/5 to-transparent"></div>
+                            
+                            <div className="bg-white p-6 shadow-sm border border-gray-200 rotate-1 max-w-sm mx-auto relative font-mono text-sm md:text-base text-gray-800">
+                                <div className="w-8 h-8 bg-gray-200 rounded-full mx-auto mb-4 opacity-50"></div>
+                                <div className="text-center border-b-2 border-dashed border-gray-300 pb-4 mb-4">
+                                    <h4 className="font-bold text-lg uppercase tracking-widest">Cafetería X</h4>
+                                    <p className="text-xs text-gray-500">Cajero: 04 - Fecha: Todos los días</p>
+                                </div>
+                                <div className="space-y-3 mb-6">
+                                    <div className="flex justify-between">
+                                        <span>1x Cappuccino Grande</span>
+                                        <span>$12.000</span>
+                                    </div>
+                                    <div className="flex justify-between text-gray-500 text-xs">
+                                        <span> Leche de Almendras (Ad)</span>
+                                        <span>$2.000</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span>1x Muffin Arándanos</span>
+                                        <span>$8.000</span>
+                                    </div>
+                                </div>
+                                <div className="border-t-2 border-dashed border-gray-300 pt-4 mb-4">
+                                    <div className="flex justify-between font-bold text-lg">
+                                        <span>TOTAL DIARIO</span>
+                                        <span>$22.000</span>
+                                    </div>
+                                </div>
+                                <div className="bg-red-50 p-4 rounded-lg text-center border border-red-100">
+                                    <p className="text-xs text-red-500 uppercase tracking-widest font-bold mb-1">Gasto Anual (365 días)</p>
+                                    <p className="text-3xl font-bold text-red-600 font-sans">$8.030.000</p>
+                                </div>
+                                <div className="mt-6 text-center">
+                                    <p className="font-serif italic text-gray-400 text-xs">"¡Gracias por su visita!"</p>
+                                </div>
+                                {/* Jagged bottom edge simulation */}
+                                <div className="absolute -bottom-1 left-0 w-full h-2 bg-[#f8f5f2]" style={{clipPath: 'polygon(0 0, 5% 100%, 10% 0, 15% 100%, 20% 0, 25% 100%, 30% 0, 35% 100%, 40% 0, 45% 100%, 50% 0, 55% 100%, 60% 0, 65% 100%, 70% 0, 75% 100%, 80% 0, 85% 100%, 90% 0, 95% 100%, 100% 0)'}}></div>
+                            </div>
+                         </div>
+
+                         {/* RIGHT: THE SAVINGS */}
+                         <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center bg-coffee-900 text-white relative overflow-hidden">
+                             <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                             
+                             <div className="relative z-10">
+                                 <h3 className="text-3xl font-serif font-bold mb-6 text-gold-400">La Experiencia en Casa</h3>
+                                 <ul className="space-y-6 mb-8">
+                                     <li className="flex items-center justify-between border-b border-white/10 pb-2">
+                                         <span className="text-gray-300 text-lg">Costo por Taza (Café de Especialidad)</span>
+                                         <span className="font-bold text-2xl font-mono text-white">$500</span>
+                                     </li>
+                                     <li className="flex items-center justify-between border-b border-white/10 pb-2">
+                                         <span className="text-gray-300 text-lg">Tiempo de preparación</span>
+                                         <span className="font-bold text-2xl font-mono text-white">2 min</span>
+                                     </li>
+                                     <li className="flex items-center justify-between border-b border-white/10 pb-2">
+                                         <span className="text-gray-300 text-lg">Gusto</span>
+                                         <span className="font-bold text-2xl font-serif text-gold-400">Infinito</span>
+                                     </li>
+                                 </ul>
+                                 
+                                 <div className="bg-white/10 rounded-2xl p-6 text-center border border-white/20 backdrop-blur-md">
+                                     <p className="text-sm uppercase tracking-widest text-gray-300 mb-2">Tu Ahorro el Primer Año</p>
+                                     <p className="text-5xl md:text-6xl font-bold text-green-400 font-mono tracking-tighter">
+                                         $7.5M+
+                                     </p>
+                                     <p className="text-xs text-gray-400 mt-2">Suficiente para unas vacaciones en Europa.</p>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </section>
 
             <section id={SectionId.PRICING} className="py-16 md:py-24 bg-gradient-to-b from-coffee-50 to-white relative scroll-mt-20">
               <div className="max-w-7xl mx-auto px-6">

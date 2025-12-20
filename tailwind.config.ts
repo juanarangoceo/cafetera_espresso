@@ -39,8 +39,9 @@ const config: Config = {
                 },
             },
             fontFamily: {
-                serif: ['var(--font-playfair)', 'serif'],
+                serif: ['var(--font-fraunces)', 'serif'],
                 sans: ['var(--font-inter)', 'sans-serif'],
+                mono: ['var(--font-jetbrains)', 'monospace'],
             },
             animation: {
                 'fade-in-up': 'fadeInUp 0.5s ease-out',

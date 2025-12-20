@@ -1,6 +1,6 @@
 import Script from 'next/script'
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, Fraunces, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -10,9 +10,16 @@ const inter = Inter({
     adjustFontFallback: true,
 });
 
-const playfair = Playfair_Display({
+const fraunces = Fraunces({
     subsets: ["latin"],
-    variable: "--font-playfair",
+    variable: "--font-fraunces",
+    display: "swap",
+    adjustFontFallback: true,
+});
+
+const jetbrains = JetBrains_Mono({
+    subsets: ["latin"],
+    variable: "--font-jetbrains",
     display: "swap",
     adjustFontFallback: true,
 });
@@ -28,7 +35,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="es" className={`${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
+        <html lang="es" className={`${inter.variable} ${fraunces.variable} ${jetbrains.variable}`} suppressHydrationWarning>
             <head>
                 <link rel="preconnect" href="https://www.transparenttextures.com" />
             </head>
