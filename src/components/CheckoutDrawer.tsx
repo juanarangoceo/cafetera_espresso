@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, ShieldCheck, Truck, Gift, CheckCircle2, Lock, ArrowRight, CreditCard, ShoppingBag, Star, BookOpen, Coffee } from 'lucide-react';
-import { ShopifyCheckoutSheet } from '@shopify/checkout-sheet-kit';
+import { X, CheckCircle2, Coffee, Gift, BookOpen, Star } from 'lucide-react';
+import CODForm from './CODForm';
 
 interface CheckoutDrawerProps {
   isOpen: boolean;
@@ -10,17 +10,6 @@ interface CheckoutDrawerProps {
 
 const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({ isOpen, onClose }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [step, setStep] = useState(1); // 1: Review, 2: Processing
-
-  // Preload checkout kit on mount
-  useEffect(() => {
-    try {
-        // Initialize/Config if needed (often handled automatically or via config)
-        // ShopifyCheckoutSheet.preload(checkoutUrl); // Optimization if we had the URL early
-    } catch (e) {
-        console.warn("Shopify Checkout Kit preload failed", e);
-    }
-  }, []);
 
   // Handle animation delay for unmount/mount
   useEffect(() => {
@@ -35,39 +24,6 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({ isOpen, onClose }) => {
   }, [isOpen]);
 
   if (!isVisible && !isOpen) return null;
-
-  const handleAction = async () => {
-    setStep(2);
-    try {
-        const { createCheckout, getFirstVariantId } = await import('../utils/shopify');
-        const PRODUCT_ID = 'gid://shopify/Product/7341719093303'; 
-        
-        console.log("Fetching variant for product:", PRODUCT_ID);
-        const variantId = await getFirstVariantId(PRODUCT_ID);
-        
-        if (!variantId) {
-            alert("Error: No se encontró disponibilidad del producto. Verifique que esté activo.");
-            setStep(1);
-            return;
-        }
-
-        const checkoutUrl = await createCheckout(variantId, 1);
-        console.log("Checkout URL created:", checkoutUrl);
-        
-        if (checkoutUrl) {
-            // *** SHOPIFY CHECKOUT KIT IMPLEMENTATION ***
-            // Ideally: await ShopifyCheckoutSheet.present(checkoutUrl);
-            // Current Web Fallback (Standard for Web Kit usage in non-native apps):
-            window.location.href = checkoutUrl;
-        } else {
-             throw new Error("No checkout URL returned");
-        }
-    } catch (error: any) {
-        console.error("Checkout Request failed", error);
-        alert(`Error de Conexión: ${error.message || JSON.stringify(error)}.`);
-        setStep(1);
-    }
-  };
 
   return (
     <div className="fixed inset-0 z-[100] flex justify-end isolate">
@@ -174,62 +130,23 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({ isOpen, onClose }) => {
                 </div>
             </div>
 
-            {/* 3. Shipping & Payment Info */}
-            <div className="space-y-3">
-                <div className="flex items-center gap-3 bg-green-50 p-3 rounded-xl border border-green-100">
-                    <Truck size={20} className="text-green-600 shrink-0" />
-                    <div>
-                        <p className="text-sm font-bold text-green-800">Envío Gratis Asegurado</p>
-                        <p className="text-xs text-green-600">Llega en 2-4 días hábiles</p>
+            {/* 3. COD Form */}
+            <div className="bg-white rounded-2xl shadow-sm border border-coffee-100 overflow-hidden">
+                <div className="bg-coffee-50 p-4 border-b border-coffee-100 flex justify-between items-center">
+                    <span className="text-coffee-500 text-sm font-medium">Total a Pagar:</span>
+                    <div className="text-right">
+                        <span className="text-xs text-red-400 line-through mr-2 font-medium">$1.190.000</span>
+                        <span className="text-2xl font-serif font-bold text-coffee-900">$490.000</span>
                     </div>
                 </div>
-                
-                <div className="flex items-center gap-3 bg-coffee-100 p-3 rounded-xl border border-coffee-200">
-                    <ShieldCheck size={20} className="text-coffee-700 shrink-0" />
-                    <div>
-                        <p className="text-sm font-bold text-coffee-900">Compra 100% Segura</p>
-                        <p className="text-xs text-coffee-600">Procesado por Shopify</p>
-                    </div>
-                </div>
+                <CODForm />
             </div>
             
-        </div>
-
-        {/* Footer / Sticky Action */}
-        <div className="bg-white border-t border-coffee-100 p-5 z-20 shadow-[0_-5px_20px_rgba(0,0,0,0.05)] pb-8">
-            <div className="flex justify-between items-end mb-4">
-                <span className="text-coffee-500 text-sm font-medium">Total a Pagar:</span>
-                <div className="text-right">
-                    <span className="text-xs text-red-400 line-through mr-2 font-medium">$1.190.000</span>
-                    <span className="text-3xl font-serif font-bold text-coffee-900">$490.000</span>
-                </div>
-            </div>
-            
-            <button 
-                onClick={handleAction}
-                disabled={step === 2}
-                className="w-full bg-coffee-900 hover:bg-black text-white text-lg font-bold py-4 rounded-xl shadow-xl hover:shadow-gold-500/20 transition-all flex items-center justify-center gap-3 group relative overflow-hidden"
-            >
-                {step === 1 ? (
-                    <>
-                    <span className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500"></span>
-                    <Truck size={24} className="text-gold-500" />
-                    FINALIZAR COMPRA
-                    </>
-                ) : (
-                    <>
-                     <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
-                     Creando Checkout...
-                    </>
-                )}
-            </button>
-            <p className="text-center text-[11px] text-coffee-400 mt-3">
-                Serás redirigido al checkout seguro de Shopify.
-            </p>
         </div>
       </div>
     </div>
   );
 };
+
 
 export default CheckoutDrawer;
