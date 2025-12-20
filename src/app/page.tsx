@@ -2,8 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { ShoppingBag, Star, Check, ShieldCheck, Truck, Zap, Thermometer, Settings, Menu, X, ArrowRight, PlayCircle, Coffee, Droplets, Gauge, Package, Touchpad, Box, ChefHat, Heart, ChevronRight, Users, Award, MapPin, BookOpen, Gift, Sparkles, CheckCircle2, Lock, Banknote, CreditCard, Info, Smartphone, Tablet, Wind, Speaker, Timer, XCircle, TrendingUp, DollarSign, Calculator, AlertTriangle, Loader2, Quote, Instagram, Flame, TimerReset, Camera, Maximize2, Shield, GraduationCap, Play, MonitorPlay, Receipt, Clock, MousePointerClick } from 'lucide-react';
-import ChatBot from '../components/ChatBot';
+
+const ChatBot = dynamic(() => import('../components/ChatBot'), { 
+  ssr: false,
+  loading: () => null 
+});
 import Countdown from '../components/Countdown';
 import FAQ from '../components/FAQ';
 import VideoPlayer from '../components/VideoPlayer';
@@ -430,6 +435,7 @@ export default function Home() {
                                     alt="Cafetera Coffee Maker Pro - Vista Móvil"
                                     fill
                                     priority={true}
+                                    fetchPriority="high"
                                     sizes="100vw"
                                     className="rounded-[2rem] shadow-2xl border-[4px] border-white bg-coffee-200 object-cover"
                                 />
@@ -442,6 +448,7 @@ export default function Home() {
                                     alt="Cafetera Coffee Maker Pro - Vista Escritorio"
                                     fill
                                     priority={true}
+                                    fetchPriority="high"
                                     sizes="50vw"
                                     className="rounded-[2rem] shadow-2xl border-[4px] border-white bg-coffee-200 object-contain"
                                 />
