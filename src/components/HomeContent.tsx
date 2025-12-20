@@ -64,9 +64,9 @@ export default function HomeContent() {
                         </div>
 
                         <div className="space-y-8 md:space-y-10">
-                            <div className="bg-coffee-50 rounded-[2rem] p-8 md:p-10 border border-coffee-100 hover:border-gold-300 transition-colors shadow-sm group">
-                                <div className="flex items-start gap-6">
-                                    <div className="bg-white p-4 rounded-2xl shadow-md text-gold-500 group-hover:scale-110 transition-transform shrink-0">
+                            <div className="bg-coffee-50 rounded-[2rem] p-6 md:p-10 border border-coffee-100 hover:border-gold-300 transition-colors shadow-sm group">
+                                <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
+                                    <div className="bg-white p-4 rounded-2xl shadow-md text-gold-500 group-hover:scale-110 transition-transform shrink-0 mb-2 sm:mb-0">
                                         <TimerReset size={32} className="md:w-10 md:h-10" />
                                     </div>
                                     <div>
@@ -80,9 +80,9 @@ export default function HomeContent() {
                                 </div>
                             </div>
 
-                            <div className="bg-coffee-50 rounded-[2rem] p-8 md:p-10 border border-coffee-100 hover:border-gold-300 transition-colors shadow-sm group">
-                                <div className="flex items-start gap-6">
-                                    <div className="bg-white p-4 rounded-2xl shadow-md text-gold-500 group-hover:scale-110 transition-transform shrink-0">
+                            <div className="bg-coffee-50 rounded-[2rem] p-6 md:p-10 border border-coffee-100 hover:border-gold-300 transition-colors shadow-sm group">
+                                <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
+                                    <div className="bg-white p-4 rounded-2xl shadow-md text-gold-500 group-hover:scale-110 transition-transform shrink-0 mb-2 sm:mb-0">
                                         <Gauge size={32} className="md:w-10 md:h-10" />
                                     </div>
                                     <div>
