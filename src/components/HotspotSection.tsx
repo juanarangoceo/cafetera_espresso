@@ -24,7 +24,7 @@ const FEATURES: ProductFeature[] = [
   },
   {
     id: 'body',
-    title: 'Cuerpo Acero Inox 304',
+    title: 'Cuerpo Acero Inox Premium',
     description: 'Construcción robusta y duradera. Fácil de limpiar y resistente a la corrosión.',
     x: 30,
     y: 65, 

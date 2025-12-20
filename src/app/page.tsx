@@ -67,7 +67,7 @@ const UGC_IMAGES = [
 const PRODUCT_IMAGES = [
     {
         src: "https://cdn.shopify.com/s/files/1/0608/6433/1831/files/imagen-2.webp?v=1757995172",
-        title: "Acero Inoxidable 304",
+        title: "Acero Inoxidable Premium",
         desc: "Cuerpo robusto de grado quirúrgico. No se oxida, no se mancha.",
         span: "md:col-span-2 md:row-span-2" // Hero Image
     },
@@ -160,7 +160,7 @@ const GALLERY_ITEMS = [
     },
     {
         id: 4,
-        title: "Acero Inoxidable 304",
+        title: "Acero Inoxidable Premium",
         desc: "Robusta, pesada y elegante. No es plástico, es maquinaria comercial para tu cocina.",
         image: "https://cdn.shopify.com/s/files/1/0608/6433/1831/files/scuare.jpg?v=1757995325",
         icon: <Shield size={24} />
@@ -367,16 +367,16 @@ export default function Home() {
                         {/* Banner removed by user request (Oferta Flash Activa) */}
 
                         <h1 className="text-5xl sm:text-6xl lg:text-7xl font-serif font-bold text-coffee-900 leading-[1.1] tracking-tight drop-shadow-sm">
-                            El café perfecto<br />
+                            Tu Propia Barra de Café<br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-600 to-gold-400 relative italic pr-2">
-                                exige molienda fresca.
+                                Barista en Casa u Oficina
                                 <svg className="absolute w-full h-2 lg:h-3 -bottom-1 left-0 text-gold-300 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
                                     <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" opacity="0.4" />
                                 </svg>
                             </span>
                         </h1>
                         <p className="text-lg lg:text-xl text-coffee-600 leading-relaxed max-w-lg mx-auto lg:mx-0 font-medium">
-                            La máquina te da la presión (20 Bares), pero el molino te da el sabor. Llévate hoy el <span className="font-bold text-coffee-800">Kit Barista Completo</span> y deja de tomar café oxidado.
+                            Olvídate del café quemado. Disfruta de espressos, cappuccinos y lattes con calidad de cafetería italiana, sin salir de tu espacio.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
@@ -385,7 +385,7 @@ export default function Home() {
                                 className="group bg-coffee-900 hover:bg-coffee-800 text-white px-8 py-4 rounded-full font-bold text-lg shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3 border border-coffee-700 relative overflow-hidden"
                             >
                                 <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                                <span className="relative">Elevar mi Rutina de Café Hoy</span>
+                                <span className="relative">Comenzar mi Experiencia Barista</span>
                                 <span className="relative bg-white/20 p-1.5 rounded-full group-hover:bg-white/30 transition-colors"><ArrowRight size={18} /></span>
                             </button>
                         </div>
@@ -537,10 +537,10 @@ export default function Home() {
                                         <Flame size={28} className="md:w-8 md:h-8" />
                                     </div>
                                     <div>
-                                        <h3 className="text-xl md:text-2xl font-bold text-coffee-900 mb-3">3. Temperatura Inestable</h3>
+                                        <h3 className="text-xl md:text-2xl font-bold text-coffee-900 mb-3">3. Sé el Barista de tu Equipo</h3>
                                         <p className="text-coffee-700 leading-relaxed text-base md:text-lg">
-                                            <span className="font-bold text-red-500">Lo que haces mal:</span> Agua hirviendo (quema) o tibia (ácida).<br />
-                                            <span className="font-bold text-green-600">La Solución:</span> Tecnología <strong className="text-coffee-900">ThermoBlock</strong>. Calienta el agua a 92°C exactos en 25 segundos.
+                                            <span className="font-bold text-red-500">Lo que haces mal:</span> Ofrecer café rancio o instantáneo.<br />
+                                            <span className="font-bold text-green-600">La Solución:</span> Sorprende a tus visitas o clientes con un café real en segundos, no con agua manchada.
                                         </p>
                                     </div>
                                 </div>
@@ -560,7 +560,7 @@ export default function Home() {
                             <h2 className="text-4xl md:text-5xl font-serif font-bold leading-tight">Más que una máquina,<br /><span className="text-coffee-200">una escultura.</span></h2>
                         </div>
                         <p className="text-coffee-200 max-w-sm text-base md:text-lg hidden md:block leading-relaxed opacity-90">
-                            Construida en acero inoxidable 304 de grado quirúrgico. Pesada, robusta y diseñada para durar décadas, no años.
+                            Construida en acero inoxidable Premium de grado quirúrgico. Diseñada para durar y lucir elegante en cualquier cocina o sala de juntas.
                         </p>
                     </div>
 
@@ -1070,8 +1070,8 @@ export default function Home() {
                                 <Coffee size={32} className="text-coffee-900" />
                             </div>
                             <div>
-                                <h3 className="text-xl font-serif font-bold text-coffee-900 leading-tight">Máquina Espresso Pro 20 Bares</h3>
-                                <p className="text-sm text-coffee-500 font-medium">Calidad de Cafetería en Casa</p>
+                                <h3 className="text-xl font-serif font-bold text-coffee-900 leading-tight">Estación Espresso Pro (Edición Acero)</h3>
+                                <p className="text-sm text-coffee-500 font-medium">Calidad de Cafetería en Casa u Oficina</p>
                             </div>
                         </div>
 

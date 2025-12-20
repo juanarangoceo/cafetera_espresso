@@ -72,9 +72,9 @@ export default function CODForm() {
       <div className="bg-coffee-50 border border-coffee-100 p-4 rounded-xl mb-6">
         <div className="flex items-center gap-2 mb-1">
             <ShieldCheck className="text-green-600" size={20} />
-            <h3 className="font-bold text-coffee-900">Solicitud de Envío Prioritario</h3>
+            <h3 className="font-bold text-coffee-900">Solicitar Envío de mi Estación de Café</h3>
         </div>
-        <p className="text-sm text-coffee-600">Completa tus datos para asegurar tu unidad. El pago se realiza únicamente al recibir el producto.</p>
+        <p className="text-sm text-coffee-600">Perfecta para transformar tus mañanas en casa o elevar el nivel de tu oficina. Paga al recibir.</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
