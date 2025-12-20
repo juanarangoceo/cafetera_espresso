@@ -28,7 +28,19 @@ OBJETIVO:
 Resolver dudas y dirigir al usuario a hacer clic en "COMPRAR AHORA" en la web.
 `;
 
-export async function sendMessageToGemini(userMessage: string, history: { role: string, parts: { text: string }[] }[] = []) {
+
+import { createClient } from "@supabase/supabase-js";
+
+// Initialize Supabase Client
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+export async function sendMessageToGemini(
+    userMessage: string, 
+    history: { role: string, parts: { text: string }[] }[] = [],
+    sessionId?: string
+) {
     const apiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
@@ -37,20 +49,28 @@ export async function sendMessageToGemini(userMessage: string, history: { role: 
     }
 
     try {
+        // 1. Persist User Message (Fire and forget to not block)
+        if (sessionId) {
+            (async () => {
+                try {
+                    // Ensure session exists
+                    await supabase.from('chat_sessions').upsert({ id: sessionId }, { onConflict: 'id', ignoreDuplicates: true });
+                    // Save user message
+                    await supabase.from('chat_messages').insert({
+                        session_id: sessionId,
+                        role: 'user',
+                        content: userMessage
+                    });
+                } catch (dbError) {
+                    console.error("Supabase Persistence Error (User):", dbError);
+                }
+            })();
+        }
+
         const client = new GoogleGenAI({ apiKey });
 
-        // Map history to the format expected by the SDK if needed, 
-        // but the new SDK usually takes 'contents' in generateContent or chats.
-        // We will use a simple chat session per request for now, or stateless generateContent if history is complex.
-        // For simplicity and robustness in serverless, we'll just send the message with system instruction.
-
-        // Note: To properly maintain history in a server action without a DB, 
-        // we would need to pass the full history from the client.
-        // For this implementation, we will perform a single-turn generation 
-        // or a multi-turn if history is provided.
-
         const chat = client.chats.create({
-            model: 'gemini-2.0-flash', // Updating to latest stable or flash model
+            model: 'gemini-2.0-flash', 
             config: {
                 systemInstruction: SYSTEM_INSTRUCTION,
             },
@@ -77,8 +97,25 @@ export async function sendMessageToGemini(userMessage: string, history: { role: 
                 .join(' ');
             if (sources) sourcesText = ` ${sources}`;
         }
+        
+        const fullResponse = text + sourcesText;
 
-        return text + sourcesText;
+        // 2. Persist Model Response
+        if (sessionId) {
+            (async () => {
+                try {
+                    await supabase.from('chat_messages').insert({
+                        session_id: sessionId,
+                        role: 'model',
+                        content: fullResponse
+                    });
+                } catch (dbError) {
+                    console.error("Supabase Persistence Error (Model):", dbError);
+                }
+            })();
+        }
+
+        return fullResponse;
 
     } catch (error) {
         console.error("Gemini API Error:", error);

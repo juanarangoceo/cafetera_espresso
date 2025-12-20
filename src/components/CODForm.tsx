@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { User, Phone, MapPin, CheckCircle, Loader2, Navigation, Home } from 'lucide-react';
+import { User, Phone, MapPin, CheckCircle, Loader2, Navigation, Home, ShieldCheck, Lock } from 'lucide-react';
 import { createOrder } from '@/app/actions/order';
 
 const formSchema = z.object({
@@ -69,9 +69,12 @@ export default function CODForm() {
 
   return (
     <div className="w-full max-w-md mx-auto p-4">
-      <div className="mb-6">
-        <h2 className="text-xl font-bold text-gray-900">Envío Contraentrega</h2>
-        <p className="text-sm text-gray-500">Pagas cuando recibes el producto.</p>
+      <div className="bg-coffee-50 border border-coffee-100 p-4 rounded-xl mb-6">
+        <div className="flex items-center gap-2 mb-1">
+            <ShieldCheck className="text-green-600" size={20} />
+            <h3 className="font-bold text-coffee-900">Compra 100% Segura</h3>
+        </div>
+        <p className="text-sm text-coffee-600">No necesitas tarjeta. Llena tus datos y paga en efectivo solo cuando recibas la máquina.</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
@@ -156,10 +159,14 @@ export default function CODForm() {
               <Loader2 className="w-6 h-6 animate-spin" /> Cargando...
             </>
           ) : (
-            'CONFIRMAR PEDIDO CONTRAENTREGA'
+            'CONFIRMAR ENVÍO A MI CASA 🚚'
           )}
         </button>
       </form>
+
+      <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-400">
+        <Lock size={12} /> Tus datos están encriptados SSL
+      </div>
     </div>
   );
 }

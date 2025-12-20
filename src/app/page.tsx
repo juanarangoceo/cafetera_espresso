@@ -342,7 +342,7 @@ export default function Home() {
                         </p>
                         <div className="flex flex-col">
                             <p className="text-sm font-bold text-coffee-900 leading-tight">Molino + Curso Barista</p>
-                            <span className="text-xs text-green-600 font-bold">INCLUIDOS GRATIS</span>
+                            <span className="text-[10px] text-green-700 font-bold flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> PAGO CONTRAENTREGA DISPONIBLE</span>
                         </div>
                     </div>
                     <button
@@ -389,6 +389,16 @@ export default function Home() {
                                 <span className="relative">¡Quiero mi Kit Barista!</span>
                                 <span className="relative bg-white/20 p-1.5 rounded-full group-hover:bg-white/30 transition-colors"><ArrowRight size={18} /></span>
                             </button>
+                        </div>
+                        
+                        <div className="flex items-center justify-center lg:justify-start gap-3 mt-3">
+                             <div className="flex items-center gap-1.5 text-sm font-medium text-coffee-600/80">
+                                 <Truck size={16} className="text-green-600" /> Envío Gratis
+                             </div>
+                             <span className="w-1 h-1 rounded-full bg-coffee-300"></span>
+                             <div className="flex items-center gap-1.5 text-sm font-medium text-coffee-600/80">
+                                 <div className="text-coffee-600"><Banknote size={16} /></div> Paga al Recibir
+                             </div>
                         </div>
 
                         <div className="pt-8 flex flex-wrap justify-center lg:justify-start gap-x-6 gap-y-4 text-base text-coffee-500 font-medium border-t border-coffee-200 mt-8">
@@ -1063,7 +1073,7 @@ export default function Home() {
 
                     <div>
                         <div className="bg-coffee-50 text-coffee-800 text-xs font-bold py-3 px-3 rounded-lg mb-4 flex items-center justify-center gap-2 border border-coffee-200">
-                            <Truck size={16} /> ENVÍO GRATIS ASEGURADO
+                            <Truck size={16} /> ENVÍO GRATIS + PAGO EN CASA 🏠
                         </div>
                         
                         <button 
@@ -1072,7 +1082,7 @@ export default function Home() {
                         >
                             <>
                               <span className="absolute w-full h-full bg-white/10 animate-pulse"></span>
-                              <span className="relative z-10">SÍ, QUIERO LA OFERTA COMPLETA</span>
+                              <span className="relative z-10">SOLICITAR PEDIDO (PAGAR AL RECIBIR)</span>
                               <ArrowRight size={24} className="group-hover:translate-x-1 transition-transform relative z-10 text-gold-500" /> 
                             </>
                         </button>

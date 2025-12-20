@@ -17,6 +17,17 @@ const ChatBot: React.FC = () => {
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [sessionId, setSessionId] = useState<string>('');
+  
+  // Initialize Session ID
+  useEffect(() => {
+    let storedSessionId = localStorage.getItem('chat_session_id');
+    if (!storedSessionId) {
+      storedSessionId = crypto.randomUUID();
+      localStorage.setItem('chat_session_id', storedSessionId);
+    }
+    setSessionId(storedSessionId);
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -34,7 +45,7 @@ const ChatBot: React.FC = () => {
   };
 
   const handleSend = async () => {
-    if (!inputText.trim() || isTyping) return;
+    if (!inputText.trim() || isTyping || !sessionId) return;
 
     const userText = inputText;
     setInputText('');
@@ -55,7 +66,8 @@ const ChatBot: React.FC = () => {
         parts: [{ text: m.text }]
       }));
 
-      const responseFullText = await sendMessageToGemini(userText, history);
+      // Pass sessionId to the server action
+      const responseFullText = await sendMessageToGemini(userText, history, sessionId);
 
       const rawSentences = responseFullText.match(/[^.!?\n]+[.!?\n]+|[^.!?\n]+$/g) || [responseFullText];
 
