@@ -1,0 +1,412 @@
+"use client";
+
+import React, { useEffect } from 'react';
+import Image from 'next/image';
+import { CheckCircle2, Truck, ShieldCheck, Coffee, Gift, ArrowRight, Home, Banknote, Clock, MapPin, Instagram, Facebook } from 'lucide-react';
+import { useLanding } from '@/context/LandingContext';
+import { SectionId } from '@/types';
+import { RECIPES, TESTIMONIALS, GALLERY_ITEMS, OLD_PRICE, PRICE } from '@/lib/data';
+import Countdown from './Countdown';
+import FAQ from './FAQ';
+import VideoPlayer from './VideoPlayer';
+import { HotspotSection } from './HotspotSection';
+import { TimerReset, Gauge, ChevronRight } from 'lucide-react';
+
+// Helper for dynamic icon rendering in Gallery
+const GalleryIcon = ({ type }: { type: string }) => {
+    // Simple mapping for icons used in data.ts
+    // In a real app, pass the component itself or use a proper map
+    return <CheckCircle2 size={24} className="text-gold-500" />;
+};
+
+export default function HomeContent() {
+    const { openCheckout, openRecipe, openImage, openPolicy } = useLanding();
+
+    useEffect(() => {
+        const observerReveal = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        const reveals = document.querySelectorAll('.reveal');
+        reveals.forEach(el => observerReveal.observe(el));
+
+        return () => {
+            reveals.forEach(el => observerReveal.unobserve(el));
+        };
+    }, []);
+
+    const handleCheckoutClick = () => {
+        openCheckout();
+    };
+
+    return (
+        <>
+            {/* --- SECTION 2: THE PROBLEM / SOLUTION --- */}
+            <section id={SectionId.FEATURES} className="relative bg-white border-t border-coffee-100 py-16 md:py-24 overflow-hidden min-h-[500px]">
+                <div className="max-w-7xl mx-auto px-6">
+                    <div className="text-center mb-12 md:mb-16 flex flex-col justify-center">
+                        <div className="inline-block min-h-[36px]"><span className="text-gold-600 font-bold tracking-[0.2em] text-sm uppercase bg-coffee-50 border border-gold-200 px-5 py-2 rounded-full shadow-sm leading-none">La Realidad</span></div>
+                        <h2 className="text-3xl md:text-5xl font-serif font-bold text-coffee-900 mt-6 leading-tight min-h-[1.1em]">
+                            ¿Por qué tu café en casa no sabe<br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-coffee-600 to-coffee-400">como el de tu cafetería favorita?</span>
+                        </h2>
+                    </div>
+
+                    <div className="grid lg:grid-cols-2 gap-10 md:gap-20 items-center">
+                        <div className="flex flex-col items-center justify-center">
+                            <VideoPlayer src="https://res.cloudinary.com/dohwyszdj/video/upload/v1766264202/video_reel_hcfoyo.mp4" />
+                            <p className="text-center text-sm text-coffee-400 mt-6 italic max-w-xs mx-auto">Mira la extracción real a 20 Bares de la Coffee Maker Pro</p>
+                        </div>
+
+                        <div className="space-y-6 md:space-y-8">
+                            <div className="bg-coffee-50 rounded-2xl p-6 md:p-8 border border-coffee-100 hover:border-gold-300 transition-colors shadow-sm group">
+                                <div className="flex items-start gap-5">
+                                    <div className="bg-white p-3 rounded-full shadow-md text-gold-500 group-hover:scale-110 transition-transform shrink-0">
+                                        <TimerReset size={28} className="md:w-8 md:h-8" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xl md:text-2xl font-bold text-coffee-900 mb-3">1. El Problema del Café Oxidado</h3>
+                                        <p className="text-coffee-700 leading-relaxed text-base md:text-lg">
+                                            <span className="font-bold text-red-500">Lo que haces mal:</span> Usas café pre-molido de supermercado. <br />
+                                            <span className="font-bold text-green-600">La Solución:</span> Te regalamos el <strong className="text-coffee-900">Molino Automático</strong>. Rompes el grano 10 segundos antes de beberlo.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-coffee-50 rounded-2xl p-6 md:p-8 border border-coffee-100 hover:border-gold-300 transition-colors shadow-sm group">
+                                <div className="flex items-start gap-5">
+                                    <div className="bg-white p-3 rounded-full shadow-md text-gold-500 group-hover:scale-110 transition-transform shrink-0">
+                                        <Gauge size={28} className="md:w-8 md:h-8" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xl md:text-2xl font-bold text-coffee-900 mb-3">2. Presión Insuficiente</h3>
+                                        <p className="text-coffee-700 leading-relaxed text-base md:text-lg">
+                                            <span className="font-bold text-red-500">Tu máquina actual:</span> Tiene 3-9 bares (muy poco) o 15 bares falsos.<br />
+                                            <span className="font-bold text-green-600">La Pro:</span> <strong className="text-coffee-900">20 Bares Reales</strong> de bomba italiana. La única forma de obtener la "Crema Avellana".
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+             <HotspotSection />
+
+            <section className="py-16 md:py-24 bg-white relative">
+                <div className="max-w-7xl mx-auto px-6">
+                    <div className="text-center mb-16">
+                        <span className="text-gold-600 font-bold tracking-widest text-sm uppercase">Detalles que Enamoran</span>
+                        <h2 className="text-3xl md:text-4xl font-serif font-bold text-coffee-900 mt-4">Ingeniería Italiana, Diseño Moderno</h2>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {GALLERY_ITEMS.map((item, index) => (
+                            <div key={item.id} className={`group relative rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 bg-coffee-900 aspect-square reveal fade-up delay-${index * 100} cursor-pointer`}
+                                onClick={() => openImage(item.image, item.title)}
+                            >
+                                <Image 
+                                    src={item.image} 
+                                    alt={item.title} 
+                                    fill 
+                                    className="object-cover opacity-80 group-hover:opacity-60 group-hover:scale-110 transition-transform duration-700"
+                                    sizes="(max-width: 768px) 100vw, 25vw"
+                                />
+                                <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col justify-end pb-8">
+                                    <h3 className="text-xl font-bold text-white mb-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75">{item.title}</h3>
+                                    <p className="text-gray-200 text-sm opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300 delay-100 leading-relaxed">
+                                        {item.desc}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+             <section id="recipes" className="py-16 md:py-24 bg-coffee-50 border-t border-coffee-200 relative overflow-hidden">
+                <div className="absolute top-0 right-0 opacity-5 pointer-events-none">
+                     <Coffee size={400} />
+                </div>
+                <div className="max-w-7xl mx-auto px-6 relative z-10">
+                    <div className="text-center mb-12 md:mb-16">
+                         <span className="text-gold-600 font-bold tracking-widest text-sm uppercase">Tu Menú Diario</span>
+                         <h2 className="text-3xl md:text-5xl font-serif font-bold text-coffee-900 mt-4 leading-tight">
+                            Resultados de cafetería de especialidad, sin el costo de equipos industriales. <br/>
+                            <span className="text-coffee-600">Calidad accesible y garantizada.</span>
+                        </h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                        {RECIPES.map((recipe, index) => (
+                             <div 
+                                key={recipe.id}
+                                className={`bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer group border border-coffee-100 reveal fade-up delay-${index * 100}`}
+                                onClick={() => openRecipe(recipe)}
+                             >
+                                <div className="relative h-56 overflow-hidden">
+                                     <Image 
+                                        src={recipe.image}
+                                        alt={recipe.title}
+                                        fill
+                                        className="object-cover group-hover:scale-110 transition-transform duration-700"
+                                        sizes="(max-width: 768px) 100vw, 25vw"
+                                     />
+                                </div>
+                                <div className="p-6">
+                                     <h3 className="text-xl font-bold text-coffee-900 mb-1">{recipe.title}</h3>
+                                     <p className="text-coffee-500 text-sm mb-4">{recipe.subtitle}</p>
+                                     <div className="flex items-center text-gold-600 font-bold text-sm group-hover:translate-x-1 transition-transform">
+                                         Ver Receta <ChevronRight size={16} />
+                                     </div>
+                                </div>
+                             </div>
+                        ))}
+                    </div>
+                </div>
+             </section>
+
+             <section id="roi" className="py-16 md:py-24 bg-white border-t border-coffee-100 relative">
+                 <div className="max-w-5xl mx-auto px-6">
+                     <div className="bg-coffee-900 rounded-[3rem] p-8 md:p-16 text-center text-white relative overflow-hidden shadow-2xl reveal zoom-in">
+                         <div className="relative z-10">
+                             <h2 className="text-3xl md:text-5xl font-serif font-bold mb-6 md:mb-8">No es un Gasto, es Ahorro Inteligente</h2>
+                             <div className="grid md:grid-cols-3 gap-8 md:gap-12 mb-10 md:mb-12">
+                                 <div className="p-4">
+                                     <div className="text-4xl md:text-5xl font-bold text-gold-400 mb-2">$3.5M</div>
+                                     <p className="text-sm md:text-base text-coffee-200 uppercase tracking-widest">Ahorro Anual Promedio</p>
+                                 </div>
+                                 <div className="p-4 border-y md:border-y-0 md:border-x border-white/10">
+                                     <div className="text-4xl md:text-5xl font-bold text-gold-400 mb-2 font-serif">500</div>
+                                     <p className="text-sm md:text-base text-coffee-200 uppercase tracking-widest">Pesos por Taza</p>
+                                 </div>
+                                 <div className="p-4">
+                                     <div className="text-4xl md:text-5xl font-bold text-gold-400 mb-2">2 Meses</div>
+                                     <p className="text-sm md:text-base text-coffee-200 uppercase tracking-widest">Retorno de Inversión</p>
+                                 </div>
+                             </div>
+                             <p className="text-lg text-coffee-100 max-w-2xl mx-auto mb-8 leading-relaxed">
+                                 "Antes compraba un latte diario de $12.000. Ahora me lo hago yo mismo por $800 pesos. La máquina se pagó sola en 7 semanas." 
+                             </p>
+                             <div className="flex justify-center">
+                                 <div className="flex -space-x-4">
+                                     {TESTIMONIALS.map(t => (
+                                         <div key={t.id} className="w-12 h-12 rounded-full border-2 border-coffee-900 relative overflow-hidden">
+                                             <Image src={t.image} alt={t.name} fill className="object-cover" />
+                                         </div>
+                                     ))}
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </section>
+
+            <section id={SectionId.PRICING} className="py-16 md:py-24 bg-gradient-to-b from-coffee-50 to-white relative scroll-mt-20">
+              <div className="max-w-7xl mx-auto px-6">
+                <div className="grid lg:grid-cols-2 gap-10 md:gap-16 items-center">
+                    
+                    <div className="order-2 lg:order-1 space-y-8">
+                        <div>
+                            <span className="text-red-500 font-bold tracking-widest uppercase text-sm animate-pulse mb-2 block">🔥 Oferta por Tiempo Limitado</span>
+                            <h2 className="text-4xl md:text-6xl font-serif font-bold text-coffee-900 leading-tight">
+                                Todo lo que necesitas para ser <span className="text-gold-600">Barista PRO</span>
+                            </h2>
+                        </div>
+                        <p className="text-lg text-coffee-600 leading-relaxed">
+                            No solo compras una máquina. Obtienes el ecosistema completo para dominar el arte del café desde el día 1.
+                        </p>
+                        
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-4 p-4 bg-white rounded-2xl shadow-sm border border-coffee-100">
+                                <div className="bg-green-100 p-2 rounded-full text-green-700"><CheckCircle2 size={24} /></div>
+                                <div>
+                                    <h4 className="font-bold text-coffee-900">Molino Eléctrico (Regalo #1)</h4>
+                                    <p className="text-sm text-coffee-500">Valor real: $180.000. Molienda fresca = Sabor real.</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-4 p-4 bg-white rounded-2xl shadow-sm border border-coffee-100">
+                                <div className="bg-green-100 p-2 rounded-full text-green-700"><CheckCircle2 size={24} /></div>
+                                <div>
+                                    <h4 className="font-bold text-coffee-900">Kit de Herramientas (Regalo #2)</h4>
+                                    <p className="text-sm text-coffee-500">Tamper y Cuchara medidora profesional.</p>
+                                </div>
+                            </div>
+                            
+                        </div>
+        
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="bg-coffee-50 p-4 rounded-xl text-center">
+                                <Truck size={24} className="mx-auto text-coffee-900 mb-2" />
+                                <span className="font-bold text-sm block">Envío Gratis</span>
+                                <span className="text-xs text-coffee-500">A toda Colombia</span>
+                            </div>
+                            <div className="bg-coffee-50 p-4 rounded-xl text-center">
+                                <ShieldCheck size={24} className="mx-auto text-coffee-900 mb-2" />
+                                <span className="font-bold text-sm block">Garantía Total</span>
+                                <span className="text-xs text-coffee-500">12 Meses Directa</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="order-1 lg:order-2 h-full"> 
+                        <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] p-3 md:p-8 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] transform md:scale-105 border-4 border-gold-500/30 relative overflow-hidden transition-transform duration-300 flex flex-col h-full">
+                            
+                            <div className="absolute top-0 right-0 bg-gold-500 text-white text-[10px] font-bold px-4 py-2 rounded-bl-2xl shadow-md tracking-wider">STOCK LIMITADO</div>
+        
+                            <div className="mb-2 md:mb-6">
+                                <Countdown />
+                                
+                                <div className="flex items-start gap-3 border-b border-coffee-100 pb-2 mb-2 md:pb-4 md:mb-4">
+                                    <div className="bg-coffee-100 p-2 md:p-3 rounded-xl shrink-0">
+                                        <Coffee size={24} className="text-coffee-900 md:w-8 md:h-8" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-base md:text-xl font-serif font-bold text-coffee-900 leading-tight">Estación Espresso Pro</h3>
+                                        <p className="text-[10px] md:text-sm text-coffee-500 font-medium leading-tight">Calidad de Cafetería</p>
+                                    </div>
+                                </div>
+        
+                                <div className="bg-gold-50/50 rounded-xl p-2.5 md:p-4 border border-gold-100 mb-2 md:mb-6">
+                                    <p className="text-[10px] md:text-xs font-bold text-coffee-900 uppercase tracking-widest mb-1.5 flex items-center gap-2">
+                                        <Gift size={10} className="text-gold-600" /> BONUS ACTIVOS:
+                                    </p>
+                                    <ul className="space-y-1 md:space-y-2">
+                                        <li className="flex justify-between items-center text-xs md:text-sm">
+                                            <span className="text-coffee-700 font-medium truncate pr-2">Molino Ajustable</span>
+                                            <div className="flex flex-col items-end shrink-0">
+                                                <span className="text-red-400 line-through text-[9px] md:text-[10px]">$180.000</span>
+                                                <span className="text-green-600 font-bold text-[9px] md:text-xs">GRATIS</span>
+                                            </div>
+                                        </li>
+                                        <li className="flex justify-between items-center text-xs md:text-sm">
+                                            <span className="text-coffee-700 font-medium truncate pr-2">Kit Barista</span>
+                                            <div className="flex flex-col items-end shrink-0">
+                                                <span className="text-red-400 line-through text-[9px] md:text-[10px]">$50.000</span>
+                                                <span className="text-green-600 font-bold text-[9px] md:text-xs">GRATIS</span>
+                                            </div>
+                                        </li>
+                                        <li className="flex justify-between items-center text-xs md:text-sm">
+                                            <span className="text-coffee-700 font-medium truncate pr-2">Curso Barista</span>
+                                            <div className="flex flex-col items-end shrink-0">
+                                                <span className="text-red-400 line-through text-[9px] md:text-[10px]">$90.000</span>
+                                                <span className="text-green-600 font-bold text-[9px] md:text-xs">GRATIS</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                                <div className="text-center mb-2 md:mb-6">
+                                    <p className="text-coffee-400 uppercase text-[9px] md:text-[10px] font-bold tracking-widest mb-0">Precio Total Hoy</p>
+                                     <div className="flex flex-col items-center justify-center gap-0">
+                                        <span className="text-base md:text-xl text-red-500 line-through font-medium opacity-60">{OLD_PRICE}</span>
+                                        <span className="text-4xl md:text-6xl font-extrabold text-coffee-900 tracking-tighter">{PRICE}</span>
+                                    </div>
+                                </div>
+        
+                                <button 
+                                    onClick={handleCheckoutClick}
+                                    className="w-full bg-coffee-900 hover:bg-black text-white text-base md:text-lg font-bold py-3 md:py-4 rounded-xl shadow-xl hover:shadow-gold-500/20 transition-all transform hover:-translate-y-1 active:scale-95 flex flex-col items-center justify-center gap-0.5 group relative overflow-hidden"
+                                >
+                                    <div className="flex items-center gap-2 relative z-10">
+                                        <span>OBTENER OFERTA</span>
+                                        <ArrowRight size={20} className="text-gold-500" />
+                                    </div>
+                                    <span className="text-[9px] md:text-[10px] font-medium text-coffee-200 uppercase tracking-wider relative z-10">Pago Contraentrega • Envío Asegurado</span>
+                                    <span className="absolute w-full h-full bg-white/5 top-0 left-0 animate-pulse"></span>
+                                </button>
+                                
+                                <div className="mt-2 md:mt-4 pt-2 md:pt-3 border-t border-coffee-100/50 text-[9px] md:text-xs text-coffee-500 font-medium text-center">
+                                    <p className="mb-1 font-bold">Pasarela de Pagos Segura:</p>
+                                    <div className="flex flex-wrap justify-center gap-2 opacity-90">
+                                        <span className="bg-green-100 text-green-700 px-3 py-1 rounded-lg font-bold border border-green-200 flex items-center gap-1">
+                                            <Banknote size={12} /> PAGO CONTRAENTREGA (Efectivo)
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                  <p className="text-center text-coffee-500 text-sm mt-10 flex justify-center items-center gap-2 font-medium">
+                    <ShieldCheck size={18} className="text-green-600" /> Garantía Todopolis: Compra 100% Protegida.
+                  </p>
+                </div>
+              </section>
+        
+              <section className="py-16 md:py-24 bg-coffee-50 border-t border-coffee-200 relative z-10">
+                 <div className="reveal fade-bottom">
+                      <FAQ />
+                 </div>
+              </section>
+        
+              <section className="py-20 md:py-32 bg-coffee-900 relative overflow-hidden text-center">
+                  <div className="max-w-4xl mx-auto px-6 relative z-10 pb-24 md:pb-0">
+                      <h2 className="text-4xl md:text-6xl font-serif font-bold text-white mb-6 md:mb-8 leading-tight">
+                          El café de tus sueños,<br />
+                          <span className="text-gold-500">en la cocina de tu casa.</span>
+                      </h2>
+                      <p className="text-lg md:text-xl text-gray-300 mb-10 md:mb-12 max-w-2xl mx-auto">
+                          Deja de gastar en cafeterías y empieza a invertir en ti. Únete a los más de 10.000 clientes felices.
+                      </p>
+                      
+                      <button 
+                          onClick={handleCheckoutClick}
+                          className="bg-gold-500 hover:bg-gold-400 text-white text-xl md:text-2xl font-bold py-5 md:py-6 px-10 md:px-12 rounded-full shadow-[0_0_40px_rgba(234,179,8,0.4)] hover:shadow-[0_0_60px_rgba(234,179,8,0.6)] transition-all transform hover:scale-105 animate-pulse-slow flex items-center gap-3 mx-auto"
+                      >
+                          ¡QUIERO MI ESTACIÓN PRO + REGALOS! <ArrowRight size={28} />
+                      </button>
+                      <p className="mt-6 text-sm text-gray-400 flex justify-center items-center gap-2">
+                           <Clock size={16} /> Oferta válida hasta medianoche
+                      </p>
+                  </div>
+              </section>
+        
+            <footer className="bg-black text-coffee-400 py-12 border-t border-white/10 pb-32 md:pb-12">
+                <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                    <div>
+                        <div className="flex items-center gap-2 mb-4 text-white">
+                            <Coffee className="text-gold-500" />
+                            <span className="font-serif font-bold text-xl">CoffeeMaker Pro</span>
+                        </div>
+                        <p className="text-sm">
+                            Llevando la cultura del café de especialidad a los hogares colombianos desde 2023.
+                        </p>
+                    </div>
+                    <div>
+                        <h4 className="text-white font-bold mb-4">Enlaces</h4>
+                        <ul className="space-y-2 text-sm">
+                            <li><a href="#" className="hover:text-gold-500">Inicio</a></li>
+                            <li><a href="#features" className="hover:text-gold-500">Características</a></li>
+                            <li><a href="#recipes" className="hover:text-gold-500">Recetas</a></li>
+                        </ul>
+                    </div>
+                     <div>
+                        <h4 className="text-white font-bold mb-4">Legal</h4>
+                        <ul className="space-y-2 text-sm">
+                            <li><button className="hover:text-gold-500">Términos</button></li>
+                            <li><button className="hover:text-gold-500">Privacidad</button></li>
+                            <li><button className="hover:text-gold-500">Garantía</button></li>
+                        </ul>
+                    </div>
+                     <div>
+                        <h4 className="text-white font-bold mb-4">Contacto</h4>
+                        <ul className="space-y-2 text-sm">
+                            <li className="flex items-center gap-2"><MapPin size={16} /> Bogotá, Colombia</li>
+                            <li className="flex items-center gap-2"><Instagram size={16} /> @coffeemaker_col</li>
+                        </ul>
+                    </div>
+                </div>
+                <div className="max-w-7xl mx-auto px-6 pt-8 border-t border-white/10 text-center text-xs">
+                    <p>© 2024 Coffee Maker Pro. Todos los derechos reservados.</p>
+                </div>
+            </footer>
+        </>
+    );
+}
