@@ -277,7 +277,7 @@ export default function Home() {
                             <Coffee size={20} strokeWidth={2.5} className="md:w-6 md:h-6" />
                         </div>
                         <div className="flex flex-col justify-center">
-                            <div className={`text-lg md:text-2xl font-serif font-bold tracking-tight leading-none transition-colors duration-300 ${isScrolled ? 'text-coffee-900' : 'text-coffee-900 lg:text-coffee-900'}`}>
+                            <div className={`text-xl md:text-2xl font-serif font-black tracking-tight leading-none transition-colors duration-300 ${isScrolled ? 'text-coffee-900' : 'text-coffee-900 lg:text-coffee-900'}`}>
                                 CoffeeMaker<span className="text-gold-500">Pro</span>
                             </div>
                             <span className={`text-[9px] md:text-[10px] tracking-widest uppercase font-bold ${isScrolled ? 'text-coffee-400' : 'text-coffee-600'} hidden sm:block`}>Tienda Oficial</span>
@@ -579,13 +579,13 @@ export default function Home() {
                                     sizes="(max-width: 768px) 100vw, 33vw"
                                     className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-60 group-hover:opacity-40"
                                 />
-                                {/* Overlay Content Always Visible but Enhanced on Hover */}
-                                <div className="absolute inset-0 flex flex-col justify-center items-center p-6 text-center z-10 hover:backdrop-blur-[2px] transition-all">
-                                    <h3 className="text-white text-2xl md:text-3xl font-serif font-bold mb-2 drop-shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">{img.title}</h3>
-                                    <div className="w-12 h-1 bg-gold-500 rounded-full mb-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                    <p className="text-coffee-100 text-sm md:text-base font-medium max-w-[80%] opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-100">{img.desc}</p>
+                                {/* Overlay Content - Bottom Aligned */}
+                                <div className="absolute inset-0 flex flex-col justify-end items-center p-6 pb-8 text-center z-10 hover:backdrop-blur-[2px] transition-all bg-gradient-to-t from-black/80 via-black/20 to-transparent">
+                                    <h3 className="text-white text-2xl md:text-3xl font-serif font-bold mb-1 drop-shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">{img.title}</h3>
+                                    <div className="w-12 h-1 bg-gold-500 rounded-full mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    <p className="text-coffee-100 text-sm md:text-base font-medium max-w-[90%] opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-100 leading-tight">{img.desc}</p>
                                     
-                                    <div className="absolute bottom-4 right-4 bg-white/10 backdrop-blur-md p-2 rounded-full text-gold-400 group-hover:bg-gold-500 group-hover:text-white transition-colors">
+                                    <div className="absolute top-4 right-4 bg-white/10 backdrop-blur-md p-2 rounded-full text-gold-400 group-hover:bg-gold-500 group-hover:text-white transition-colors">
                                         <Maximize2 size={20} />
                                     </div>
                                 </div>
@@ -604,8 +604,8 @@ export default function Home() {
                             <ChefHat className="text-gold-500" size={32} />
                         </div>
                         <h2 className="text-4xl md:text-5xl font-serif font-bold text-coffee-900 mb-4">Lo que vas a lograr</h2>
-                        <p className="text-coffee-600 font-light text-lg md:text-xl">
-                            Estas bebidas NO salen con una máquina barata.
+                        <p className="text-coffee-600 font-light text-lg md:text-xl max-w-2xl mx-auto">
+                            Resultados de cafetería de especialidad, sin el costo de equipos industriales. Calidad accesible y garantizada.
                         </p>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -826,11 +826,11 @@ export default function Home() {
                                     {item.icon}
                                 </div>
 
-                                {/* Text Overlay - Centered and Visible */}
-                                <div className="absolute inset-0 flex flex-col justify-center items-center p-6 text-center z-10">
-                                    <div className="w-10 h-1 bg-gold-500 mb-4 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
-                                    <p className="font-serif text-2xl md:text-3xl font-bold leading-none mb-3 text-white drop-shadow-md">{item.title}</p>
-                                    <p className="text-sm text-coffee-100 opacity-90 group-hover:text-white transition-colors duration-300">{item.desc}</p>
+                                {/* Text Overlay - Bottom Aligned */}
+                                <div className="absolute inset-0 flex flex-col justify-end items-center p-6 pb-8 text-center z-10 bg-gradient-to-t from-coffee-950/90 via-coffee-900/40 to-transparent">
+                                    <div className="w-10 h-1 bg-gold-500 mb-2 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+                                    <p className="font-serif text-2xl md:text-3xl font-bold leading-none mb-2 text-white drop-shadow-md">{item.title}</p>
+                                    <p className="text-sm text-coffee-100 opacity-90 group-hover:text-white transition-colors duration-300 leading-tight">{item.desc}</p>
                                 </div>
                                 
                                 <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500 z-0"></div>
@@ -1057,81 +1057,81 @@ export default function Home() {
                     </div>
                 </div>
 
-                <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-8 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] transform md:scale-105 border-4 border-gold-500/30 relative overflow-hidden transition-transform duration-300 flex flex-col h-full">
+                <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] p-4 md:p-8 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] transform md:scale-105 border-4 border-gold-500/30 relative overflow-hidden transition-transform duration-300 flex flex-col h-full">
                     
                     <div className="absolute top-0 right-0 bg-gold-500 text-white text-[10px] font-bold px-4 py-2 rounded-bl-2xl shadow-md tracking-wider">STOCK LIMITADO</div>
 
-                    <div className="mb-6">
+                    <div className="mb-4 md:mb-6">
                         <Countdown />
                         
                         {/* HERO DEL PRECIO */}
-                        <div className="flex items-start gap-4 border-b border-coffee-100 pb-4 mb-4">
-                            <div className="bg-coffee-100 p-3 rounded-xl">
-                                <Coffee size={32} className="text-coffee-900" />
+                        <div className="flex items-start gap-4 border-b border-coffee-100 pb-3 mb-3 md:pb-4 md:mb-4">
+                            <div className="bg-coffee-100 p-2 md:p-3 rounded-xl shrink-0">
+                                <Coffee size={28} className="text-coffee-900 md:w-8 md:h-8" />
                             </div>
                             <div>
-                                <h3 className="text-xl font-serif font-bold text-coffee-900 leading-tight">Estación Espresso Pro (Edición Acero)</h3>
-                                <p className="text-sm text-coffee-500 font-medium">Calidad de Cafetería en Casa u Oficina</p>
+                                <h3 className="text-lg md:text-xl font-serif font-bold text-coffee-900 leading-tight">Estación Espresso Pro (Edición Acero)</h3>
+                                <p className="text-xs md:text-sm text-coffee-500 font-medium">Calidad de Cafetería en Casa u Oficina</p>
                             </div>
                         </div>
 
                         {/* SECCION DE REGALOS */}
-                        <div className="bg-gold-50/50 rounded-xl p-4 border border-gold-100 mb-6">
-                            <p className="text-xs font-bold text-coffee-900 uppercase tracking-widest mb-3 flex items-center gap-2">
-                                <Gift size={14} className="text-gold-600" /> BONUS INCLUIDOS HOY:
+                        <div className="bg-gold-50/50 rounded-xl p-3 md:p-4 border border-gold-100 mb-4 md:mb-6">
+                            <p className="text-[10px] md:text-xs font-bold text-coffee-900 uppercase tracking-widest mb-2 flex items-center gap-2">
+                                <Gift size={12} className="text-gold-600" /> BONUS INCLUIDOS HOY:
                             </p>
-                            <ul className="space-y-3">
-                                <li className="flex justify-between items-center text-sm">
-                                    <span className="text-coffee-700 font-medium">Molino Eléctrico Ajustable</span>
-                                    <div className="flex flex-col items-end">
-                                        <span className="text-red-400 line-through text-xs">$180.000</span>
-                                        <span className="text-green-600 font-bold">GRATIS</span>
+                            <ul className="space-y-2">
+                                <li className="flex justify-between items-center text-xs md:text-sm">
+                                    <span className="text-coffee-700 font-medium truncate pr-2">Molino Eléctrico Ajustable</span>
+                                    <div className="flex flex-col items-end shrink-0">
+                                        <span className="text-red-400 line-through text-[10px]">$180.000</span>
+                                        <span className="text-green-600 font-bold text-[10px] md:text-xs">GRATIS</span>
                                     </div>
                                 </li>
-                                <li className="flex justify-between items-center text-sm">
-                                    <span className="text-coffee-700 font-medium">Kit Barista (Tamper + Cuchara)</span>
-                                    <div className="flex flex-col items-end">
-                                        <span className="text-red-400 line-through text-xs">$50.000</span>
-                                        <span className="text-green-600 font-bold">GRATIS</span>
+                                <li className="flex justify-between items-center text-xs md:text-sm">
+                                    <span className="text-coffee-700 font-medium truncate pr-2">Kit Barista (Tamper + Cuchara)</span>
+                                    <div className="flex flex-col items-end shrink-0">
+                                        <span className="text-red-400 line-through text-[10px]">$50.000</span>
+                                        <span className="text-green-600 font-bold text-[10px] md:text-xs">GRATIS</span>
                                     </div>
                                 </li>
-                                <li className="flex justify-between items-center text-sm">
-                                    <span className="text-coffee-700 font-medium">Curso Digital: Barista Master</span>
-                                    <div className="flex flex-col items-end">
-                                        <span className="text-red-400 line-through text-xs">$90.000</span>
-                                        <span className="text-green-600 font-bold">GRATIS</span>
+                                <li className="flex justify-between items-center text-xs md:text-sm">
+                                    <span className="text-coffee-700 font-medium truncate pr-2">Curso Digital: Barista Master</span>
+                                    <div className="flex flex-col items-end shrink-0">
+                                        <span className="text-red-400 line-through text-[10px]">$90.000</span>
+                                        <span className="text-green-600 font-bold text-[10px] md:text-xs">GRATIS</span>
                                     </div>
                                 </li>
                             </ul>
                         </div>
                         
                         {/* TOTAL PRICE */}
-                        <div className="text-center mb-6">
-                            <p className="text-coffee-400 uppercase text-xs font-bold tracking-widest mb-1">Precio Total Hoy</p>
-                             <div className="flex flex-col items-center justify-center gap-1">
-                                <span className="text-xl text-red-500 line-through font-medium opacity-60">{OLD_PRICE}</span>
-                                <span className="text-5xl md:text-6xl font-extrabold text-coffee-900 tracking-tighter">{PRICE}</span>
+                        <div className="text-center mb-4 md:mb-6">
+                            <p className="text-coffee-400 uppercase text-[10px] font-bold tracking-widest mb-0.5">Precio Total Hoy</p>
+                             <div className="flex flex-col items-center justify-center gap-0">
+                                <span className="text-base md:text-xl text-red-500 line-through font-medium opacity-60">{OLD_PRICE}</span>
+                                <span className="text-4xl md:text-6xl font-extrabold text-coffee-900 tracking-tighter">{PRICE}</span>
                             </div>
                         </div>
 
                         <button 
                             onClick={handleCheckoutClick}
-                            className="w-full bg-coffee-900 hover:bg-black text-white text-lg font-bold py-4 rounded-xl shadow-xl hover:shadow-gold-500/20 transition-all transform hover:-translate-y-1 active:scale-95 flex flex-col items-center justify-center gap-0.5 group relative overflow-hidden"
+                            className="w-full bg-coffee-900 hover:bg-black text-white text-base md:text-lg font-bold py-3.5 md:py-4 rounded-xl shadow-xl hover:shadow-gold-500/20 transition-all transform hover:-translate-y-1 active:scale-95 flex flex-col items-center justify-center gap-0.5 group relative overflow-hidden"
                         >
                             <div className="flex items-center gap-2 relative z-10">
                                 <span>RESERVAR MI KIT PRO + REGALOS</span>
                                 <ArrowRight size={20} className="text-gold-500" />
                             </div>
-                            <span className="text-[10px] font-medium text-coffee-200 uppercase tracking-wider relative z-10">Pago Contraentrega • Envío Asegurado</span>
+                            <span className="text-[9px] md:text-[10px] font-medium text-coffee-200 uppercase tracking-wider relative z-10">Pago Contraentrega • Envío Asegurado</span>
                             
                             <span className="absolute w-full h-full bg-white/5 top-0 left-0 animate-pulse"></span>
                         </button>
                         
-                        <div className="mt-4 pt-4 border-t border-coffee-100/50 text-xs text-coffee-500 font-medium">
-                            <p className="mb-2 font-bold">Pasarela de Pagos Segura:</p>
+                        <div className="mt-3 md:mt-4 pt-3 border-t border-coffee-100/50 text-[10px] md:text-xs text-coffee-500 font-medium text-center">
+                            <p className="mb-1.5 font-bold">Pasarela de Pagos Segura:</p>
                             <div className="flex flex-wrap justify-center gap-2 opacity-90">
-                                <span className="bg-green-100 text-green-700 px-3 py-1.5 rounded-lg font-bold border border-green-200 flex items-center gap-1">
-                                    <Banknote size={14} /> PAGO CONTRAENTREGA (Efectivo)
+                                <span className="bg-green-100 text-green-700 px-3 py-1 rounded-lg font-bold border border-green-200 flex items-center gap-1">
+                                    <Banknote size={12} /> PAGO CONTRAENTREGA (Efectivo)
                                 </span>
                             </div>
                         </div>
@@ -1168,9 +1168,9 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
                 <button 
                     onClick={handleCheckoutClick}
-                    className="bg-gold-500 hover:bg-gold-600 text-white text-xl font-bold py-4 px-10 rounded-full shadow-lg hover:shadow-gold-500/30 transition-all transform hover:-translate-y-1 flex items-center gap-2"
+                    className="bg-gold-500 hover:bg-gold-600 text-white text-xl md:text-2xl font-black py-5 px-10 rounded-full shadow-2xl hover:shadow-gold-500/50 transition-all transform hover:-translate-y-1 hover:scale-105 flex items-center gap-2 animate-pulse-slow"
                 >
-                    Sí, Quiero mi Kit Barista <ArrowRight size={24} />
+                    ¡QUIERO MI ESTACIÓN PRO + REGALOS! <ArrowRight size={28} strokeWidth={3} />
                 </button>
                 <p className="text-sm text-coffee-400 font-medium mt-2 sm:mt-0">
                     <span className="inline-block w-2 h-2 bg-red-500 rounded-full animate-pulse mr-2"></span>
