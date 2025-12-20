@@ -1,6 +1,7 @@
 'use server';
 
 import { GoogleGenAI } from "@google/genai";
+import { createClient } from "@supabase/supabase-js";
 
 const SYSTEM_INSTRUCTION = `
 Rol: Eres Marco, el Head Barista y experto en producto de "Coffee Maker Pro". Tu misión es cerrar la venta directa en la web.
@@ -25,16 +26,8 @@ PERSONALIDAD:
 - Generas urgencia real: "Nos quedan pocos molinos en inventario".
 
 OBJETIVO:
-Resolver dudas y dirigir al usuario a hacer clic en "COMPRAR AHORA" en la web.
+- Resolver dudas y dirigir al usuario a hacer clic en "COMPRAR AHORA" en la web.
 `;
-
-
-import { createClient } from "@supabase/supabase-js";
-
-// Initialize Supabase Client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export async function sendMessageToGemini(
     userMessage: string, 
@@ -48,25 +41,53 @@ export async function sendMessageToGemini(
         return "Error de configuración: Clave API no encontrada.";
     }
 
-    try {
-        // 1. Persist User Message (Fire and forget to not block)
-        if (sessionId) {
-            (async () => {
-                try {
-                    // Ensure session exists
-                    await supabase.from('chat_sessions').upsert({ id: sessionId }, { onConflict: 'id', ignoreDuplicates: true });
-                    // Save user message
-                    await supabase.from('chat_messages').insert({
+    // 1. Inicialización Lazy de Supabase
+    let supabase: any = null;
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (supabaseUrl && supabaseAnonKey) {
+        supabase = createClient(supabaseUrl, supabaseAnonKey);
+    } else {
+        console.warn("⚠️ Supabase credentials needed for chat history persistence are missing.");
+    }
+
+    // 2. Persistir Mensaje del Usuario (Fire-and-Forget controlado)
+    if (supabase && sessionId) {
+        (async () => {
+            try {
+                // Primero intentamos crear la sesión si no existe
+                const { error: sessionError } = await supabase
+                    .from('chat_sessions')
+                    .insert({ id: sessionId })
+                    .select(); // .select() es a menudo necesario para confirmar la inserción o recibir error
+
+                // Ignoramos error de duplicado (PGRST110 es violación de unique, pero 'ignoreDuplicates' en insert directo a veces es tricky sin upsert,
+                // el usuario pidió específicamente: "Si el error es por 'clave duplicada'... ignóralo".
+                // UPSERT es mas seguro para esto, pero seguiré la instrucción: insert y catch error.
+                if (sessionError && sessionError.code !== '23505') { 
+                     // 23505 es duplicate key value en Postgres
+                     console.error("Error creating session:", sessionError);
+                }
+
+                // Guardar mensaje
+                const { error: msgError } = await supabase
+                    .from('chat_messages')
+                    .insert({
                         session_id: sessionId,
                         role: 'user',
                         content: userMessage
                     });
-                } catch (dbError) {
-                    console.error("Supabase Persistence Error (User):", dbError);
-                }
-            })();
-        }
+                
+                if (msgError) console.error("Error saving user message:", msgError);
 
+            } catch (err) {
+                console.error("❌ Unexpected Error persisting user message:", err);
+            }
+        })();
+    }
+
+    try {
         const client = new GoogleGenAI({ apiKey });
 
         const chat = client.chats.create({
@@ -100,17 +121,22 @@ export async function sendMessageToGemini(
         
         const fullResponse = text + sourcesText;
 
-        // 2. Persist Model Response
-        if (sessionId) {
+        // 3. Persistir Respuesta del Modelo
+        if (supabase && sessionId) {
             (async () => {
                 try {
-                    await supabase.from('chat_messages').insert({
-                        session_id: sessionId,
-                        role: 'model',
-                        content: fullResponse
-                    });
+                    const { error } = await supabase
+                        .from('chat_messages')
+                        .insert({
+                            session_id: sessionId,
+                            role: 'model',
+                            content: fullResponse
+                        });
+                    
+                    if (error) console.error("Error saving model response:", error);
+
                 } catch (dbError) {
-                    console.error("Supabase Persistence Error (Model):", dbError);
+                    console.error("❌ Unexpected Error persisting model response:", dbError);
                 }
             })();
         }
