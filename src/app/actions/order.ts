@@ -3,12 +3,6 @@
 import { z } from 'zod';
 import { createClient } from '@supabase/supabase-js';
 
-// Re-initialize for server-side usage to ensure clean execution environment
-// or import from utils if acceptable. Importing strictly is fine usually.
-// But to be safe with 'use server' sometimes explicit client creation is clearer.
-// Let's reuse the variables/logic.
-// Client initialization moved inside action to handle missing env vars gracefully
-
 const orderSchema = z.object({
   fullName: z.string().min(3, 'El nombre debe tener al menos 3 caracteres'),
   phone: z.string().min(10, 'El teléfono debe tener al menos 10 dígitos'),
@@ -17,6 +11,22 @@ const orderSchema = z.object({
 });
 
 export async function createOrder(formData: any) {
+  // 1. Validar variables de entorno CRITICAS para Vercel/Local
+  // Se hace dentro de la función para no romper el build estático si faltan en build time
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.error('❌ CRITICAL: Supabase environment variables are missing.');
+    console.error('URL:', supabaseUrl ? 'Set' : 'Missing');
+    console.error('KEY:', supabaseAnonKey ? 'Set' : 'Missing');
+    return { 
+      success: false, 
+      message: 'Error de configuración del servidor. Por favor contacta al soporte.' 
+    };
+  }
+
+  // 2. Validar Input del Usuario
   const validation = orderSchema.safeParse(formData);
 
   if (!validation.success) {
@@ -26,23 +36,11 @@ export async function createOrder(formData: any) {
     };
   }
 
-  // Check for environment variables
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('CRITICAL ERROR: Supabase environment variables are missing.');
-    console.error('NEXT_PUBLIC_SUPABASE_URL:', supabaseUrl ? 'Set' : 'Missing');
-    console.error('NEXT_PUBLIC_SUPABASE_ANON_KEY:', supabaseAnonKey ? 'Set' : 'Missing');
-    return { 
-      success: false, 
-      message: 'Error de configuración del servidor. Contacta al soporte.' 
-    };
-  }
-
+  // 3. Inicializar Cliente
   const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
   try {
+    // 4. Insertar en Supabase y CAPTURAR ERROR EXPLICITAMENTE
     const { error } = await supabase
       .from('orders_cod')
       .insert([
@@ -51,17 +49,26 @@ export async function createOrder(formData: any) {
           phone: validation.data.phone,
           city: validation.data.city,
           address: validation.data.address,
+          total_price: 490000, // Hardcoded por ahora ya que es producto único
+          status: 'pending'
         },
       ]);
 
+    // 5. Manejo de Errores de Supabase
     if (error) {
-        console.error('Supabase Error:', error);
-        throw new Error(error.message);
+        console.error("❌ Supabase Insert Error:", error); // Log detallado para Vercel
+        return { 
+            success: false, 
+            message: 'Hubo un error guardando el pedido. Intenta nuevamente.' 
+        };
     }
 
-    return { success: true, message: 'Pedido recibido' };
+    // 6. Retorno Exitoso
+    return { success: true, message: 'Pedido confirmado exitosamente' };
+
   } catch (err: any) {
-    console.error('Error in createOrder:', err);
-    return { success: false, message: 'Error al procesar el pedido. Inténtalo de nuevo.' };
+    // Catch para errores de red o inesperados (no de Supabase logic per se)
+    console.error('❌ Unexpected Error in createOrder:', err);
+    return { success: false, message: 'Error inesperado al procesar el pedido.' };
   }
 }
