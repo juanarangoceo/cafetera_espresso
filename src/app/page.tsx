@@ -1057,57 +1057,57 @@ export default function Home() {
                     </div>
                 </div>
 
-                <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] p-4 md:p-8 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] transform md:scale-105 border-4 border-gold-500/30 relative overflow-hidden transition-transform duration-300 flex flex-col h-full">
+                <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] p-3 md:p-8 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] transform md:scale-105 border-4 border-gold-500/30 relative overflow-hidden transition-transform duration-300 flex flex-col h-full">
                     
                     <div className="absolute top-0 right-0 bg-gold-500 text-white text-[10px] font-bold px-4 py-2 rounded-bl-2xl shadow-md tracking-wider">STOCK LIMITADO</div>
 
-                    <div className="mb-4 md:mb-6">
+                    <div className="mb-2 md:mb-6">
                         <Countdown />
                         
                         {/* HERO DEL PRECIO */}
-                        <div className="flex items-start gap-4 border-b border-coffee-100 pb-3 mb-3 md:pb-4 md:mb-4">
+                        <div className="flex items-start gap-3 border-b border-coffee-100 pb-2 mb-2 md:pb-4 md:mb-4">
                             <div className="bg-coffee-100 p-2 md:p-3 rounded-xl shrink-0">
-                                <Coffee size={28} className="text-coffee-900 md:w-8 md:h-8" />
+                                <Coffee size={24} className="text-coffee-900 md:w-8 md:h-8" />
                             </div>
                             <div>
-                                <h3 className="text-lg md:text-xl font-serif font-bold text-coffee-900 leading-tight">Estación Espresso Pro (Edición Acero)</h3>
-                                <p className="text-xs md:text-sm text-coffee-500 font-medium">Calidad de Cafetería en Casa u Oficina</p>
+                                <h3 className="text-base md:text-xl font-serif font-bold text-coffee-900 leading-tight">Estación Espresso Pro</h3>
+                                <p className="text-[10px] md:text-sm text-coffee-500 font-medium leading-tight">Calidad de Cafetería</p>
                             </div>
                         </div>
 
                         {/* SECCION DE REGALOS */}
-                        <div className="bg-gold-50/50 rounded-xl p-3 md:p-4 border border-gold-100 mb-4 md:mb-6">
-                            <p className="text-[10px] md:text-xs font-bold text-coffee-900 uppercase tracking-widest mb-2 flex items-center gap-2">
-                                <Gift size={12} className="text-gold-600" /> BONUS INCLUIDOS HOY:
+                        <div className="bg-gold-50/50 rounded-xl p-2.5 md:p-4 border border-gold-100 mb-2 md:mb-6">
+                            <p className="text-[10px] md:text-xs font-bold text-coffee-900 uppercase tracking-widest mb-1.5 flex items-center gap-2">
+                                <Gift size={10} className="text-gold-600" /> BONUS ACTIVOS:
                             </p>
-                            <ul className="space-y-2">
+                            <ul className="space-y-1 md:space-y-2">
                                 <li className="flex justify-between items-center text-xs md:text-sm">
-                                    <span className="text-coffee-700 font-medium truncate pr-2">Molino Eléctrico Ajustable</span>
+                                    <span className="text-coffee-700 font-medium truncate pr-2">Molino Ajustable</span>
                                     <div className="flex flex-col items-end shrink-0">
-                                        <span className="text-red-400 line-through text-[10px]">$180.000</span>
-                                        <span className="text-green-600 font-bold text-[10px] md:text-xs">GRATIS</span>
+                                        <span className="text-red-400 line-through text-[9px] md:text-[10px]">$180.000</span>
+                                        <span className="text-green-600 font-bold text-[9px] md:text-xs">GRATIS</span>
                                     </div>
                                 </li>
                                 <li className="flex justify-between items-center text-xs md:text-sm">
-                                    <span className="text-coffee-700 font-medium truncate pr-2">Kit Barista (Tamper + Cuchara)</span>
+                                    <span className="text-coffee-700 font-medium truncate pr-2">Kit Barista</span>
                                     <div className="flex flex-col items-end shrink-0">
-                                        <span className="text-red-400 line-through text-[10px]">$50.000</span>
-                                        <span className="text-green-600 font-bold text-[10px] md:text-xs">GRATIS</span>
+                                        <span className="text-red-400 line-through text-[9px] md:text-[10px]">$50.000</span>
+                                        <span className="text-green-600 font-bold text-[9px] md:text-xs">GRATIS</span>
                                     </div>
                                 </li>
                                 <li className="flex justify-between items-center text-xs md:text-sm">
-                                    <span className="text-coffee-700 font-medium truncate pr-2">Curso Digital: Barista Master</span>
+                                    <span className="text-coffee-700 font-medium truncate pr-2">Curso Barista</span>
                                     <div className="flex flex-col items-end shrink-0">
-                                        <span className="text-red-400 line-through text-[10px]">$90.000</span>
-                                        <span className="text-green-600 font-bold text-[10px] md:text-xs">GRATIS</span>
+                                        <span className="text-red-400 line-through text-[9px] md:text-[10px]">$90.000</span>
+                                        <span className="text-green-600 font-bold text-[9px] md:text-xs">GRATIS</span>
                                     </div>
                                 </li>
                             </ul>
                         </div>
                         
                         {/* TOTAL PRICE */}
-                        <div className="text-center mb-4 md:mb-6">
-                            <p className="text-coffee-400 uppercase text-[10px] font-bold tracking-widest mb-0.5">Precio Total Hoy</p>
+                        <div className="text-center mb-2 md:mb-6">
+                            <p className="text-coffee-400 uppercase text-[9px] md:text-[10px] font-bold tracking-widest mb-0">Precio Total Hoy</p>
                              <div className="flex flex-col items-center justify-center gap-0">
                                 <span className="text-base md:text-xl text-red-500 line-through font-medium opacity-60">{OLD_PRICE}</span>
                                 <span className="text-4xl md:text-6xl font-extrabold text-coffee-900 tracking-tighter">{PRICE}</span>
@@ -1116,10 +1116,10 @@ export default function Home() {
 
                         <button 
                             onClick={handleCheckoutClick}
-                            className="w-full bg-coffee-900 hover:bg-black text-white text-base md:text-lg font-bold py-3.5 md:py-4 rounded-xl shadow-xl hover:shadow-gold-500/20 transition-all transform hover:-translate-y-1 active:scale-95 flex flex-col items-center justify-center gap-0.5 group relative overflow-hidden"
+                            className="w-full bg-coffee-900 hover:bg-black text-white text-base md:text-lg font-bold py-3 md:py-4 rounded-xl shadow-xl hover:shadow-gold-500/20 transition-all transform hover:-translate-y-1 active:scale-95 flex flex-col items-center justify-center gap-0.5 group relative overflow-hidden"
                         >
                             <div className="flex items-center gap-2 relative z-10">
-                                <span>RESERVAR MI KIT PRO + REGALOS</span>
+                                <span>OBTENER OFERTA</span>
                                 <ArrowRight size={20} className="text-gold-500" />
                             </div>
                             <span className="text-[9px] md:text-[10px] font-medium text-coffee-200 uppercase tracking-wider relative z-10">Pago Contraentrega • Envío Asegurado</span>
@@ -1127,8 +1127,8 @@ export default function Home() {
                             <span className="absolute w-full h-full bg-white/5 top-0 left-0 animate-pulse"></span>
                         </button>
                         
-                        <div className="mt-3 md:mt-4 pt-3 border-t border-coffee-100/50 text-[10px] md:text-xs text-coffee-500 font-medium text-center">
-                            <p className="mb-1.5 font-bold">Pasarela de Pagos Segura:</p>
+                        <div className="mt-2 md:mt-4 pt-2 md:pt-3 border-t border-coffee-100/50 text-[9px] md:text-xs text-coffee-500 font-medium text-center">
+                            <p className="mb-1 font-bold">Pasarela de Pagos Segura:</p>
                             <div className="flex flex-wrap justify-center gap-2 opacity-90">
                                 <span className="bg-green-100 text-green-700 px-3 py-1 rounded-lg font-bold border border-green-200 flex items-center gap-1">
                                     <Banknote size={12} /> PAGO CONTRAENTREGA (Efectivo)
