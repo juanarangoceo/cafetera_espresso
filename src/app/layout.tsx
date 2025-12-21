@@ -2,6 +2,7 @@ import Script from 'next/script'
 import type { Metadata } from "next";
 import { Inter, Fraunces, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const inter = Inter({
     subsets: ["latin"],
@@ -29,6 +30,7 @@ export const metadata: Metadata = {
     description: "El café perfecto exige molienda fresca. Llévate hoy el Kit Barista Completo y deja de tomar café oxidado.",
 };
 
+
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -41,6 +43,7 @@ export default function RootLayout({
             </head>
             <body className="font-sans antialiased text-coffee-900 bg-coffee-50" suppressHydrationWarning>
                 {children}
+                <SpeedInsights />
                 <Script id="facebook-pixel" strategy="afterInteractive">
           {`
             !function(f,b,e,v,n,t,s)
