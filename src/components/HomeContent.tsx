@@ -267,7 +267,7 @@ export default function HomeContent() {
                 </div>
             </section>
 
-             <section id="roi" className="py-20 md:py-32 bg-coffee-50 border-t border-coffee-200 relative">
+             <section id="roi" className="py-20 md:py-32 bg-coffee-50 border-t border-coffee-200 relative overflow-hidden">
                  <div className="max-w-6xl mx-auto px-6">
                      <div className="text-center mb-16">
                          <h2 className="text-4xl md:text-5xl font-serif font-bold text-coffee-900 mb-6">Matemáticas Simples</h2>
@@ -351,11 +351,11 @@ export default function HomeContent() {
                  </div>
              </section>
 
-            <section id={SectionId.PRICING} className="py-16 md:py-24 bg-gradient-to-b from-coffee-50 to-white relative scroll-mt-20">
+            <section id={SectionId.PRICING} className="py-16 md:py-24 bg-gradient-to-b from-coffee-50 to-white relative scroll-mt-20 overflow-hidden">
               <div className="max-w-7xl mx-auto px-6">
                 <div className="grid lg:grid-cols-2 gap-10 md:gap-16 items-center">
                     
-                    <div className="order-2 lg:order-1 space-y-8">
+                    <div className="order-2 lg:order-1 space-y-8 text-center lg:text-left">
                         <div>
                             <span className="text-red-500 font-bold tracking-widest uppercase text-sm animate-pulse mb-2 block">🔥 Oferta por Tiempo Limitado</span>
                             <h2 className="text-4xl md:text-6xl font-serif font-bold text-coffee-900 leading-tight">
@@ -367,14 +367,14 @@ export default function HomeContent() {
                         </p>
                         
                         <div className="space-y-4">
-                            <div className="flex items-center gap-4 p-4 bg-white rounded-2xl shadow-sm border border-coffee-100">
+                            <div className="flex items-center gap-4 p-4 bg-white rounded-2xl shadow-sm border border-coffee-100 mx-auto lg:mx-0 max-w-md">
                                 <div className="bg-green-100 p-2 rounded-full text-green-700"><CheckCircle2 size={24} /></div>
                                 <div>
                                     <h4 className="font-bold text-coffee-900">Molino Eléctrico (Regalo #1)</h4>
                                     <p className="text-sm text-coffee-500">Valor real: $180.000. Molienda fresca = Sabor real.</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-4 p-4 bg-white rounded-2xl shadow-sm border border-coffee-100">
+                            <div className="flex items-center gap-4 p-4 bg-white rounded-2xl shadow-sm border border-coffee-100 mx-auto lg:mx-0 max-w-md">
                                 <div className="bg-green-100 p-2 rounded-full text-green-700"><CheckCircle2 size={24} /></div>
                                 <div>
                                     <h4 className="font-bold text-coffee-900">Kit de Herramientas (Regalo #2)</h4>
@@ -483,7 +483,7 @@ export default function HomeContent() {
                 </div>
               </section>
         
-              <section className="py-16 md:py-24 bg-coffee-50 border-t border-coffee-200 relative z-10">
+              <section className="py-16 md:py-24 bg-coffee-50 border-t border-coffee-200 relative z-10 overflow-hidden">
                  <div className="reveal fade-bottom">
                       <FAQ />
                  </div>
