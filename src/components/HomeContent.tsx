@@ -398,8 +398,8 @@ export default function HomeContent() {
                         </div>
                     </div>
 
-                    <div className="order-1 lg:order-2 h-full w-full flex justify-center lg:block"> 
-                        <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] p-3 md:p-8 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] transform md:scale-105 border-4 border-gold-500/30 relative overflow-hidden transition-transform duration-300 flex flex-col h-full w-full max-w-md mx-auto lg:max-w-none">
+                    <div className="order-1 lg:order-2 h-full w-full flex justify-center items-center lg:block"> 
+                        <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] p-3 md:p-8 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] md:scale-105 border-4 border-gold-500/30 relative overflow-hidden transition-transform duration-300 flex flex-col h-full w-full max-w-md mx-auto lg:max-w-none">
                             
                             <div className="absolute top-0 right-0 bg-gold-500 text-white text-[10px] font-bold px-4 py-2 rounded-bl-2xl shadow-md tracking-wider">STOCK LIMITADO</div>
         
