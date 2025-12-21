@@ -45,7 +45,7 @@ const FAQ: React.FC = () => {
             </button>
             <div 
               className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                openIndex === index ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'
+                openIndex === index ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'
               }`}
             >
               <div className="p-5 pt-0 text-coffee-600 leading-relaxed text-sm md:text-base border-t border-transparent">

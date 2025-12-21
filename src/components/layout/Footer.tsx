@@ -131,8 +131,7 @@ export default function Footer() {
                                     <Instagram size={18} className="text-gold-500" />
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="block font-medium text-white">Síguenos</span>
-                                    <a href="https://instagram.com/coffeemakerprofesional" target="_blank" rel="noopener" className="hover:text-gold-500 transition-colors">@coffeemakerprofesional</a>
+                                    <span className="text-gray-300">@coffeemakerprofesional</span>
                                 </div>
                             </li>
                         </ul>
