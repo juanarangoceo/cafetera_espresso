@@ -20,7 +20,7 @@ const Countdown: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full bg-gradient-to-r from-coffee-950 via-coffee-900 to-coffee-950 border-b border-gold-500/20 py-3 px-4 rounded-lg mb-6 flex justify-between items-center shadow-inner">
+    <div className="w-full bg-gradient-to-r from-coffee-950 via-coffee-900 to-coffee-950 border-b border-gold-500/20 py-3 px-4 rounded-lg mb-6 flex flex-col sm:flex-row justify-between items-center shadow-inner gap-3 sm:gap-0">
       {/* Left: Status */}
       <div className="flex items-center gap-2 md:gap-3">
         <span className="relative flex h-2 w-2">
