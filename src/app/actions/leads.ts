@@ -42,25 +42,31 @@ export async function subscribeToMasterclass(prevState: any, formData: FormData)
       });
 
     if (error) {
+      console.error("Supabase error inserting lead:", error);
       if (error.code === "23505") { // Unique violation
         return {
           success: true, // Treat duplicate as success for UX (idempotent)
-          message: "¡Ya te habías registrado! Revisa tu correo.",
+          message: "¡Ya te habías registrado! Revisa tu bandeja de entrada (o spam).",
         };
       }
-      console.error("Supabase error:", error);
+      if (error.code === "42P01") { // Undefined table
+         return {
+            success: false,
+            message: "Error de sistema: La tabla de registros no existe. Contacta al soporte.",
+         }
+      }
       throw error;
     }
 
     return {
       success: true,
-      message: "¡Enviado! Tu Masterclass llegará pronto.",
+      message: "¡Genial! Tu Masterclass ha sido enviada a tu correo.",
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error subscribing lead:", error);
     return {
       success: false,
-      message: "Hubo un error al guardar tu contacto. Intenta de nuevo.",
+      message: error.message || "Hubo un error al guardar tu contacto. Intenta de nuevo.",
     };
   }
 }

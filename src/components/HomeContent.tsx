@@ -180,57 +180,68 @@ export default function HomeContent() {
 
 
             {/* --- SECTION 5: GIFT KIT (RESTORED & IMPROVED) --- */}
-            <section id={SectionId.BONUS} className="py-20 md:py-32 bg-coffee-900 text-white relative overflow-hidden">
+            <section id={SectionId.BONUS} className="py-24 md:py-32 bg-coffee-900 text-white relative overflow-hidden">
                 {/* Background Decor */}
-                <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/black-felt.png')]"></div>
-                <div className="absolute -top-24 -right-24 w-96 h-96 bg-gold-500/20 rounded-full blur-3xl"></div>
-                <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-gold-600/20 rounded-full blur-3xl"></div>
+                <div className="absolute top-0 left-0 w-full h-full opacity-5 bg-[url('https://www.transparenttextures.com/patterns/black-felt.png')]"></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gold-600/10 rounded-full blur-[100px] pointer-events-none"></div>
+                <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-gold-500/10 to-transparent blur-3xl opacity-50"></div>
 
                 <div className="max-w-7xl mx-auto px-6 relative z-10">
                     <div className="text-center mb-16 md:mb-24">
-                        <span className="text-gold-400 font-bold tracking-[0.2em] text-sm uppercase border border-gold-500/30 px-4 py-1.5 rounded-full backdrop-blur-sm">Solo por Hoy</span>
-                        <h2 className="text-4xl md:text-6xl font-serif font-bold text-white mt-6 leading-tight">
+                        <div className="inline-flex items-center gap-2 mb-6">
+                            <span className="w-12 h-[1px] bg-gold-500/50"></span>
+                            <span className="text-gold-400 font-bold tracking-[0.3em] text-xs md:text-sm uppercase shadow-gold-glow">Solo Por Hoy</span>
+                            <span className="w-12 h-[1px] bg-gold-500/50"></span>
+                        </div>
+                        <h2 className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold text-white leading-none tracking-tight">
                             Tu Cafetería en Casa <br/>
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-gold-200">No Estaría Completa Sin...</span>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-300 via-gold-500 to-gold-200 animate-shimmer">Completa & Gratis</span>
                         </h2>
+                        <p className="text-coffee-200 mt-6 max-w-2xl mx-auto text-lg leading-relaxed">
+                            Equipamiento profesional valorado en <span className="text-gold-400 font-bold">$430.000</span> incluido sin costo adicional con tu orden.
+                        </p>
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-stretch">
+                    <div className="grid md:grid-cols-2 gap-8 md:gap-16 lg:gap-24 items-stretch">
                         {/* GIFT 1: MOLINO */}
                         <div className="group relative">
-                            <div className="absolute inset-0 bg-gold-500/5 rounded-[3rem] transform rotate-3 scale-105 transition-transform group-hover:rotate-6"></div>
-                            <div className="relative h-full bg-white/5 backdrop-blur-sm border border-white/10 rounded-[2.5rem] p-8 md:p-12 overflow-hidden hover:bg-white/10 transition-colors duration-500 hover:shadow-gold-500/10 hover:border-gold-500/20 flex flex-col">
-                                <div className="absolute top-0 right-0">
-                                    <span className="bg-gold-500 text-coffee-950 font-bold px-6 py-2 rounded-bl-3xl shadow-lg block">GRATIS</span>
+                            <div className="absolute inset-0 bg-gradient-to-br from-gold-500/20 to-transparent rounded-[3rem] transform rotate-2 group-hover:rotate-3 transition-transform duration-500"></div>
+                            <div className="relative h-full bg-coffee-950/80 backdrop-blur-xl border border-white/5 rounded-[2.5rem] p-8 md:p-12 overflow-hidden hover:border-gold-500/30 transition-all duration-500 flex flex-col shadow-2xl">
+                                
+                                <div className="absolute top-0 right-0 z-20">
+                                    <span className="bg-gradient-to-r from-gold-500 to-gold-600 text-white font-bold px-8 py-3 rounded-bl-3xl shadow-lg block text-sm tracking-widest">GRATIS</span>
                                 </div>
+
                                 <div className="h-64 md:h-80 relative mb-8 transform group-hover:scale-105 transition-transform duration-700">
                                    <Image 
                                         src="https://cdn.shopify.com/s/files/1/0608/6433/1831/files/molino_cafe_electrico_raf.webp?v=1758255802"
                                         alt="Molino de Café Eléctrico"
                                         fill
-                                        className="object-contain drop-shadow-2xl"
+                                        className="object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
                                    />
                                 </div>
-                                <h3 className="text-3xl md:text-4xl font-serif font-bold text-white mb-4">Molino Eléctrico de Muelas</h3>
-                                <div className="flex items-baseline gap-3 mb-4">
-                                    <span className="text-2xl font-bold text-gold-400">Regalo #1</span>
-                                    <span className="text-gray-400 line-through text-lg">Antes $180.000</span>
-                                </div>
-                                <p className="text-gray-300 text-lg leading-relaxed mb-6">
-                                    El secreto del espresso perfecto no es la máquina, es la molienda. Este molino de precisión asegura que cada grano libere sus aceites justo en el momento de la extracción.
+                                
+                                <span className="text-gold-500 font-medium tracking-widest text-xs uppercase mb-2 block">Regalo Exclusivo #1</span>
+                                <h3 className="text-3xl md:text-4xl font-serif font-bold text-white mb-4 leading-tight">Molino de Muelas <br/><span className="text-gray-400 text-2xl">Edición Titanio</span></h3>
+                                
+                                <p className="text-gray-400 text-base leading-relaxed mb-8 border-l-2 border-gold-500/30 pl-4">
+                                    "La consistencia es clave". Olvídate de las cuchillas. Muelas cónicas de acero para una extracción uniforme.
                                 </p>
-                                <ul className="space-y-3">
-                                    <li className="flex items-center gap-3 text-gold-300 font-medium">
-                                        <CheckCircle2 size={20} /> <span>Molienda ajustable (Fina a Gruesa)</span>
-                                    </li>
-                                    <li className="flex items-center gap-3 text-gold-300 font-medium">
-                                        <CheckCircle2 size={20} /> <span>Tolva de 250g con cierre hermético</span>
-                                    </li>
-                                </ul>
+                                
+                                <div className="mt-auto space-y-4">
+                                    <div className="flex items-center gap-3 text-gray-200">
+                                        <div className="bg-gold-500/10 p-2 rounded-full text-gold-500"><CheckCircle2 size={18} /></div>
+                                        <span className="font-medium">25 Ajustes de Molienda</span>
+                                    </div>
+                                    <div className="flex items-center gap-3 text-gray-200">
+                                        <div className="bg-gold-500/10 p-2 rounded-full text-gold-500"><CheckCircle2 size={18} /></div>
+                                        <span className="font-medium">Valorado en $180.000</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        {/* GIFT 2: EBOOK & KIT */}
+                        {/* GIFT 2: LEAD MAGNET */}
                         <LeadMagnet />
                     </div>
                 </div>

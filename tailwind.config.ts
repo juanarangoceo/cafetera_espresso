@@ -43,6 +43,9 @@ const config: Config = {
                 sans: ['var(--font-inter)', 'sans-serif'],
                 mono: ['var(--font-jetbrains)', 'monospace'],
             },
+            boxShadow: {
+                'gold-glow': '0 0 20px rgba(204, 151, 16, 0.6)',
+            },
             animation: {
                 'fade-in-up': 'fadeInUp 0.5s ease-out',
                 'slide-up': 'slideUp 0.5s ease-out',
@@ -50,6 +53,7 @@ const config: Config = {
                 'float': 'float 6s ease-in-out infinite',
                 'float-delayed': 'float 6s ease-in-out 3s infinite',
                 'spin-slow': 'spin 8s linear infinite',
+                'shimmer': 'shimmer 3s linear infinite',
             },
             keyframes: {
                 fadeInUp: {
@@ -63,6 +67,10 @@ const config: Config = {
                 float: {
                     '0%, 100%': { transform: 'translateY(0)' },
                     '50%': { transform: 'translateY(0)' }, /* DISABLED FLOAT */
+                },
+                shimmer: {
+                    '0%': { backgroundPosition: '200% 0' },
+                    '100%': { backgroundPosition: '-200% 0' },
                 },
             },
         },

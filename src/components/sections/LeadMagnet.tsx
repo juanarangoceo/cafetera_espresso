@@ -62,10 +62,10 @@ export default function LeadMagnet() {
         </div>
 
         {/* Title & Price */}
-        <h3 className="text-2xl md:text-3xl font-serif font-bold text-white mb-2">Masterclass: "Arte Latte"</h3>
+        <h3 className="text-2xl md:text-3xl font-serif font-bold text-white mb-2 leading-tight">Masterclass: "De Novato a Barista"</h3>
         <div className="flex items-baseline gap-3 mb-4">
             <span className="text-xl font-bold text-gold-400">Regalo #2</span>
-            <span className="text-gray-400 line-through text-base">Antes $90.000</span>
+            <span className="text-gray-400 line-through text-base">Antes $250.000</span>
         </div>
 
         {/* Content or Success State */}
@@ -74,16 +74,16 @@ export default function LeadMagnet() {
                 <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mb-3 shadow-lg shadow-green-500/30">
                   <CheckCircle2 size={24} className="text-white" />
                 </div>
-                <h4 className="text-lg font-bold text-white mb-1">¡Regalo Desbloqueado!</h4>
-                <p className="text-gray-300 text-sm">{state.message}</p>
+                <h4 className="text-lg font-bold text-white mb-1">¡Acceso Enviado! 📧</h4>
+                <p className="text-gray-300 text-sm">Revisa tu bandeja de entrada (y spam). Tu camino al espresso perfecto empieza hoy.</p>
                  <div className="mt-4 flex items-center gap-2 text-green-400 text-xs font-bold">
-                    <CheckCircle2 size={12} /> Revisa tu correo
+                    <CheckCircle2 size={12} /> Enviado a {state.message.includes('@') ? 'tu correo' : 'ti'}
                 </div>
              </div>
         ) : (
             <div className="flex-1 flex flex-col">
                 <p className="text-gray-300 text-sm leading-relaxed mb-4">
-                    Ingresa tu correo para <strong>desbloquear inmediatamente</strong> el acceso al curso y aprender a cremar leche como un profesional.
+                    Deja de adivinar. Aprende a <strong>calibrar tu molino</strong>, texturizar leche de seda y servir como un profesional. Curso completo en video.
                 </p>
 
                 <form action={formAction} className="mt-auto space-y-3">
