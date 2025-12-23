@@ -357,8 +357,8 @@ export default function HomeContent() {
                             <div className="flex items-center gap-4 p-4 bg-white rounded-2xl shadow-sm border border-coffee-100 mx-auto lg:mx-0 max-w-md">
                                 <div className="bg-green-100 p-2 rounded-full text-green-700"><CheckCircle2 size={24} /></div>
                                 <div>
-                                    <h4 className="font-bold text-coffee-900">Masterclass Barista (Regalo #2)</h4>
-                                    <p className="text-sm text-coffee-500">Aprende Arte Latte desde casa con expertos.</p>
+                                    <h4 className="font-bold text-coffee-900">E-book Barista (Regalo #2)</h4>
+                                    <p className="text-sm text-coffee-500">Guía práctica "Barista en 5 min".</p>
                                 </div>
                             </div>
                             
@@ -409,9 +409,9 @@ export default function HomeContent() {
                                             </div>
                                         </li>
                                         <li className="flex justify-between items-center text-sm">
-                                            <span className="text-coffee-700 font-medium truncate pr-2">Masterclass Barista</span>
+                                            <span className="text-coffee-700 font-medium truncate pr-2">E-book Barista</span>
                                             <div className="flex flex-col items-end shrink-0">
-                                                <span className="text-red-400 line-through text-[10px] md:text-xs">$90.000</span>
+                                                <span className="text-red-400 line-through text-[10px] md:text-xs">$47.000</span>
                                                 <span className="text-green-600 font-bold text-[10px] md:text-xs">GRATIS</span>
                                             </div>
                                         </li>

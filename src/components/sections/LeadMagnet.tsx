@@ -1,8 +1,6 @@
-'use client';
-
 import React from 'react';
 import { useFormState, useFormStatus } from 'react-dom';
-import { Mail, BookOpen, CheckCircle2, Lock, Gift } from 'lucide-react';
+import { Mail, BookOpen, CheckCircle2, Lock, Gift, FileText, Coffee } from 'lucide-react';
 import { subscribeToMasterclass } from '@/app/actions/leads';
 import Image from 'next/image';
 
@@ -27,8 +25,8 @@ function SubmitButton() {
         </>
       ) : (
         <>
-          <Lock size={18} />
-          Desbloquear Regalo
+          <BookOpen size={18} />
+          ENVIARME EL E-BOOK GRATIS
         </>
       )}
     </button>
@@ -55,17 +53,20 @@ export default function LeadMagnet() {
         <div className="h-48 md:h-56 relative mb-6 transform group-hover:scale-105 transition-transform duration-700 shrink-0">
              <Image 
                 src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=400&auto=format&fit=crop"
-                alt="Curso Barista Masterclass"
+                alt="Guía Barista E-book"
                 fill
-                className="object-cover rounded-2xl drop-shadow-2xl"
+                className="object-cover rounded-2xl drop-shadow-2xl grayscale-[30%] group-hover:grayscale-0 transition-all"
              />
+             <div className="absolute inset-0 bg-gradient-to-t from-coffee-950/80 to-transparent rounded-2xl flex items-end p-4">
+                <span className="text-white font-bold flex items-center gap-2"><FileText size={16} className="text-gold-400"/> Formato PDF</span>
+             </div>
         </div>
 
         {/* Title & Price */}
-        <h3 className="text-2xl md:text-3xl font-serif font-bold text-white mb-2 leading-tight">Masterclass: "De Novato a Barista"</h3>
+        <h3 className="text-2xl md:text-3xl font-serif font-bold text-white mb-2 leading-tight">No tomes más café quemado. Aprende el secreto.</h3>
         <div className="flex items-baseline gap-3 mb-4">
             <span className="text-xl font-bold text-gold-400">Regalo #2</span>
-            <span className="text-gray-400 line-through text-base">Antes $250.000</span>
+            <span className="text-gray-400 line-through text-base">Antes $47.000</span>
         </div>
 
         {/* Content or Success State */}
@@ -74,8 +75,8 @@ export default function LeadMagnet() {
                 <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mb-3 shadow-lg shadow-green-500/30">
                   <CheckCircle2 size={24} className="text-white" />
                 </div>
-                <h4 className="text-lg font-bold text-white mb-1">¡Acceso Enviado! 📧</h4>
-                <p className="text-gray-300 text-sm">Revisa tu bandeja de entrada (y spam). Tu camino al espresso perfecto empieza hoy.</p>
+                <h4 className="text-lg font-bold text-white mb-1">¡Listo! 📘</h4>
+                <p className="text-gray-300 text-sm">Tu guía va en camino a tu correo. Disfruta la lectura.</p>
                  <div className="mt-4 flex items-center gap-2 text-green-400 text-xs font-bold">
                     <CheckCircle2 size={12} /> Enviado a {state.message.includes('@') ? 'tu correo' : 'ti'}
                 </div>
@@ -83,8 +84,23 @@ export default function LeadMagnet() {
         ) : (
             <div className="flex-1 flex flex-col">
                 <p className="text-gray-300 text-sm leading-relaxed mb-4">
-                    Deja de adivinar. Aprende a <strong>calibrar tu molino</strong>, texturizar leche de seda y servir como un profesional. Curso completo en video.
+                    Descarga GRATIS nuestra guía práctica <strong>'Barista en 5 Minutos'</strong>. Deja de arruinar tus granos y empieza a extraer como un profesional hoy mismo.
                 </p>
+                
+                <ul className="space-y-2 mb-6">
+                    <li className="flex items-start gap-2 text-gray-300 text-xs md:text-sm">
+                        <Coffee size={16} className="text-gold-500 shrink-0 mt-0.5" />
+                        <span>La regla de oro de la molienda (que el 90% ignora).</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-gray-300 text-xs md:text-sm">
+                        <Gift size={16} className="text-gold-500 shrink-0 mt-0.5" />
+                        <span>Temperatura exacta para evitar el sabor amargo.</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-gray-300 text-xs md:text-sm">
+                        <CheckCircle2 size={16} className="text-gold-500 shrink-0 mt-0.5" />
+                        <span>Cómo texturizar leche sin que parezca jabón.</span>
+                    </li>
+                </ul>
 
                 <form action={formAction} className="mt-auto space-y-3">
                     <div>
@@ -95,7 +111,7 @@ export default function LeadMagnet() {
                                 type="email"
                                 id="email"
                                 name="email"
-                                placeholder="Tu correo aquí..."
+                                placeholder="Tu mejor correo..."
                                 required
                                 className="w-full bg-white/90 text-coffee-900 placeholder:text-coffee-500 pl-10 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-gold-500 transition-all font-medium text-sm"
                             />
@@ -104,14 +120,14 @@ export default function LeadMagnet() {
 
                     <SubmitButton />
 
-                    {state.message && (
+                    {state.message && !state.success && (
                          <p className="text-red-400 text-xs text-center bg-red-900/20 py-1 rounded">
                             {state.message}
                         </p>
                     )}
 
                     <p className="text-[10px] text-center text-gray-500 leading-tight">
-                        Al suscribirme acepto recibir consejos de café. Dáte de baja cuando quieras. 🔒 100% Seguro.
+                        Al suscribirme acepto recibir consejos de café. Dáte de baja cuando quieras. 🔒 Libre de Spam.
                     </p>
                 </form>
             </div>

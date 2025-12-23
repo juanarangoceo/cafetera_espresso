@@ -38,7 +38,7 @@ export async function subscribeToMasterclass(prevState: any, formData: FormData)
       .from("leads")
       .insert({
         email: validation.data.email,
-        source: "barista_masterclass",
+        source: "ebook_barista_guide",
       });
 
     if (error) {
