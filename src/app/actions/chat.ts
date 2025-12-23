@@ -2,6 +2,7 @@
 
 import { GoogleGenAI } from "@google/genai";
 import { createClient } from "@supabase/supabase-js";
+import { createOrder } from "@/app/actions/order"; // 1. Importar acción de orden
 
 const SYSTEM_INSTRUCTION = `
 ROL:
@@ -13,18 +14,48 @@ LA OFERTA IRRESISTIBLE (PACK BARISTA PRO):
 - PRECIO: **$490.000** (Escríbelo así, sin puntos al final de la cifra para evitar confusiones, y siempre en una sola línea).
 - ENVÍO: Gratis y SOLO PAGAS AL RECIBIR (Contraentrega).
 
-REGLAS DE INTERACCIÓN:
-1.  **EDUCAR PARA VENDER:** Antes de pedir la compra, da un dato curioso o consejo breve. Ejemplo: "Una cafetera de 20 bares extrae más aceites del grano, dándote esa crema espesa que ves en cafeterías."
-2.  **FORMATO DE PRECIO:** Escribe siempre "$490.000" completo. Nunca separes la cifra.
-3.  **CIERRE OBLIGATORIO:** *CADA* respuesta tuya debe terminar con una PREGUNTA.
-    - Si estás educando: "¿Sabías que el molino es el 70% del sabor de tu espresso?"
-    - Si estás cerrando: "¿Te gustaría recibir el Pack Barista mañana mismo?"
-4.  **LONGITUD:** Mantén tus respuestas conversacionales pero concisas (máx 40-50 palabras).
+OBJETIVO PRINCIPAL (VENTA AUTOMATIZADA):
+**Tu meta principal es cerrar la venta AQUÍ MISMO.**
+Si el usuario muestra interés en comprar, NO lo mandes a la web. **Pídele sus datos amablemente** (Nombre, Celular, Ciudad, Dirección) uno por uno o todos juntos.
 
-EJEMPLO DE FLUJO:
-- Usuario: "¿Es buena?"
-- Marco: "¡Es una máquina profesional adaptada para casa! Su bomba de 20 bares garantiza una extracción perfecta, sin amargor quemado. Además, al ser de acero inoxidable, te durará años. ¿Buscas tu primera cafetera espresso o ya tienes experiencia?"
+REGLAS DE ORO DE INTERACCIÓN:
+1.  **EDUCAR PARA VENDER:** Antes de pedir la compra o datos, da un dato curioso o consejo breve.
+2.  **FORMATO DE PRECIO:** Escribe siempre "$490.000" completo.
+3.  **TOMA DE PEDIDO:**
+    - Si el usuario dice "quiero comprar", responde: "¡Perfecto! 🎉 Para enviarte tu Pack Barista Pro con pago contraentrega, necesito unos datos. ¿Cuál es tu Nombre completo?"
+    - Ve pidiendo los datos que falten (Celular, Ciudad, Dirección).
+4.  **EJECUCIÓN DE ORDEN (CRÍTICO):**
+    - Una vez tengas los 4 datos (Nombre, Celular, Ciudad, Dirección), **NO confirmes con texto**.
+    - **EJECUTA INMEDIATAMENTE la función \`create_cod_order\`** con los datos recolectados.
+    - NO digas "voy a crear tu orden", HAZLO.
+
+EJEMPLO DE FLUJO DE CIERRE:
+- Usuario: "Vivo en Bogotá, Calle 123, Juan Perez, 3001234567"
+- Marco: (NO ESCRIBE TEXTO, LLAMA A LA FUNCIÓN \`create_cod_order\` SILENCIOSAMENTE).
 `;
+
+// 2. Definir la Herramienta (Tool) para Gemini
+// Usamos 'any' para evitar conflictos de tipos con la versión instalada del SDK
+const tools: any = [
+  {
+    functionDeclarations: [
+      {
+        name: "create_cod_order",
+        description: "Creates a Cash on Delivery (COD) order for the Coffee Maker Pro Pack. Use this IMMEDIATELY when you have collected the user's Full Name, Phone, City, and Address.",
+        parameters: {
+          type: "OBJECT",
+          properties: {
+            fullName: { type: "STRING", description: "Customer's full name" },
+            phone: { type: "STRING", description: "Customer's phone number" },
+            city: { type: "STRING", description: "City for delivery" },
+            address: { type: "STRING", description: "Full delivery address" },
+          },
+          required: ["fullName", "phone", "city", "address"],
+        },
+      },
+    ],
+  },
+];
 
 export async function sendMessageToGemini(
     userMessage: string, 
@@ -49,32 +80,22 @@ export async function sendMessageToGemini(
         console.warn("⚠️ Supabase credentials needed for chat history persistence are missing.");
     }
 
-    // 2. Persistir Mensaje del Usuario (Fire-and-Forget controlado)
+    // 2. Persistir Mensaje del Usuario
     if (supabase && sessionId) {
         (async () => {
             try {
-                // Primero intentamos crear la sesión si no existe
                 const { error: sessionError } = await supabase
                     .from('chat_sessions')
                     .insert({ id: sessionId })
-                    .select(); // .select() es a menudo necesario para confirmar la inserción o recibir error
+                    .select();
 
-                // Ignoramos error de duplicado (PGRST110 es violación de unique, pero 'ignoreDuplicates' en insert directo a veces es tricky sin upsert,
-                // el usuario pidió específicamente: "Si el error es por 'clave duplicada'... ignóralo".
-                // UPSERT es mas seguro para esto, pero seguiré la instrucción: insert y catch error.
                 if (sessionError && sessionError.code !== '23505') { 
-                     // 23505 es duplicate key value en Postgres
                      console.error("Error creating session:", sessionError);
                 }
 
-                // Guardar mensaje
                 const { error: msgError } = await supabase
                     .from('chat_messages')
-                    .insert({
-                        session_id: sessionId,
-                        role: 'user',
-                        content: userMessage
-                    });
+                    .insert({ session_id: sessionId, role: 'user', content: userMessage });
                 
                 if (msgError) console.error("Error saving user message:", msgError);
 
@@ -91,6 +112,7 @@ export async function sendMessageToGemini(
             model: 'gemini-2.0-flash', 
             config: {
                 systemInstruction: SYSTEM_INSTRUCTION,
+                tools: tools, 
             },
             history: history.map(h => ({
                 role: h.role,
@@ -98,50 +120,76 @@ export async function sendMessageToGemini(
             }))
         });
 
-        const result = await chat.sendMessage({
-            message: userMessage
-        });
-
-        const text = result.text || "Disculpa, no entendí bien.";
-
-        // Check for grounding (sources)
-        let sourcesText = "";
-        if (result.candidates?.[0]?.groundingMetadata?.groundingChunks) {
-            const chunks = result.candidates[0].groundingMetadata.groundingChunks;
-            const sources = chunks
-                .map((chunk: any) => chunk.web?.uri)
-                .filter((uri: string) => uri)
-                .map((uri: string) => `[Fuente: ${new URL(uri).hostname}]`)
-                .join(' ');
-            if (sources) sourcesText = ` ${sources}`;
-        }
+        // Enviamos mensaje
+        const result: any = await chat.sendMessage(userMessage);
         
-        const fullResponse = text + sourcesText;
-
-        // 3. Persistir Respuesta del Modelo
-        if (supabase && sessionId) {
-            (async () => {
-                try {
-                    const { error } = await supabase
-                        .from('chat_messages')
-                        .insert({
-                            session_id: sessionId,
-                            role: 'model',
-                            content: fullResponse
-                        });
-                    
-                    if (error) console.error("Error saving model response:", error);
-
-                } catch (dbError) {
-                    console.error("❌ Unexpected Error persisting model response:", dbError);
-                }
-            })();
+        // 3. Manejar Llamada a Función (Function Calling)
+        // Intentamos obtener las llamadas a función de forma segura para varias versiones del SDK
+        let functionCalls = null;
+        
+        if (typeof result.functionCalls === 'function') {
+             functionCalls = result.functionCalls();
+        } else if (result.functionCalls) {
+             functionCalls = result.functionCalls;
+        } else if (result.response && typeof result.response.functionCalls === 'function') {
+             functionCalls = result.response.functionCalls();
         }
 
-        return fullResponse;
+        let finalResponseText = "";
+
+        if (functionCalls && functionCalls.length > 0) {
+            const call = functionCalls[0];
+            
+            if (call.name === "create_cod_order") {
+                const args = call.args as any;
+                console.log("🤖 Gemini triggering order creation:", args);
+
+                // Ejecutamos la Server Action real
+                const orderResult = await createOrder({
+                    fullName: args.fullName,
+                    phone: args.phone,
+                    city: args.city,
+                    address: args.address
+                });
+
+                if (orderResult.success) {
+                    finalResponseText = `¡Listo ${args.fullName}! ☕🎉\n\nYa agendé tu pedido para **${args.city}**. Te llegará la confirmación y guía pronto.\n\nGracias por elegir Coffee Maker Pro. ¡Prepárate para el mejor café de tu vida!`;
+                } else {
+                    finalResponseText = `Uuups, tuve un pequeño problema técnico al guardar el pedido: ${orderResult.message}. \n\n¿Podrías intentar enviarme los datos nuevamente o usar el formulario de arriba?`;
+                }
+            }
+        } else {
+            // Obtener texto de respuesta de manera segura
+            if (result.response && typeof result.response.text === 'function') {
+                finalResponseText = result.response.text();
+            } else if (result.response && result.response.text) {
+                 finalResponseText = result.response.text;
+            } else if (typeof result.text === 'function') {
+                 finalResponseText = result.text();
+            } else {
+                 finalResponseText = "Disculpa, no entendí bien.";
+            }
+        }
+
+        // 4. Persistir Respuesta del Bot
+        if (supabase && sessionId) {
+             (async () => {
+                try {
+                     const { error } = await supabase
+                        .from('chat_messages')
+                        .insert({ session_id: sessionId, role: 'model', content: finalResponseText });
+                
+                    if (error) console.error("Error saving bot response:", error);
+                } catch (err) {
+                     console.error("Error persisting bot response:", err);
+                }
+             })();
+        }
+
+        return finalResponseText;
 
     } catch (error) {
-        console.error("Gemini API Error:", error);
-        return "Lo siento, tuve un problema técnico preparando el café. ¿Puedes repetir?";
+        console.error("Error communicating with Gemini:", error);
+        return "Lo siento, estoy teniendo problemas para conectar con la central de café. ¿Podrías intentar de nuevo en un momento?";
     }
 }
