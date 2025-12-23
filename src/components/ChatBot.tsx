@@ -71,10 +71,9 @@ const ChatBot: React.FC = () => {
       // Pass sessionId to the server action
       const responseFullText = await sendMessageToGemini(userText, history, sessionId);
 
-      // Improved regex to split by sentence endings (. ! ?) but NOT when they are part of a number (like 490.000) or abbreviation.
-      // Lookbehind for non-digit, match dot/punctuation, lookahead for space or end of string.
-      // Simple approximation: split by [.!?] followed by a space or end of string.
-      const rawSentences = responseFullText.match(/[^.!?]+[.!?]+(\s|$)/g) || [responseFullText];
+      // Improved sentence splitting: only split on punctuation followed by whitespace.
+      // This protects numbers like "490.000" from being split.
+      const rawSentences = responseFullText.split(/(?<=[.!?])\s+/);
 
       const sentences = rawSentences
         .map(s => s.trim())
@@ -90,8 +89,9 @@ const ChatBot: React.FC = () => {
         };
         setMessages(prev => [...prev, botMsg]);
 
+        // Increase delay between messages to feel more like "thinking/waiting"
         if (i < sentences.length - 1) {
-          await new Promise(r => setTimeout(r, 400));
+          await new Promise(r => setTimeout(r, 800)); // Increased from 400ms to 800ms
         }
       }
 
