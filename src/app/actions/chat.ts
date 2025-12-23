@@ -120,19 +120,23 @@ export async function sendMessageToGemini(
             }))
         });
 
-        // Enviamos mensaje
-        const result: any = await chat.sendMessage(userMessage);
+        // Enviamos mensaje usando la firma que parece funcionar en este SDK
+        const result: any = await chat.sendMessage({
+            message: userMessage
+        });
         
         // 3. Manejar Llamada a Función (Function Calling)
-        // Intentamos obtener las llamadas a función de forma segura para varias versiones del SDK
-        let functionCalls = null;
+        // Intentamos obtener las llamadas a función de forma segura e inspeccionamos candidates si es necesario
+        let functionCalls: any[] = [];
         
         if (typeof result.functionCalls === 'function') {
              functionCalls = result.functionCalls();
-        } else if (result.functionCalls) {
+        } else if (result.functionCalls && Array.isArray(result.functionCalls)) {
              functionCalls = result.functionCalls;
-        } else if (result.response && typeof result.response.functionCalls === 'function') {
-             functionCalls = result.response.functionCalls();
+        } else if (result.candidates?.[0]?.content?.parts) {
+             functionCalls = result.candidates[0].content.parts
+                 .filter((p: any) => p.functionCall)
+                 .map((p: any) => p.functionCall);
         }
 
         let finalResponseText = "";
@@ -140,32 +144,35 @@ export async function sendMessageToGemini(
         if (functionCalls && functionCalls.length > 0) {
             const call = functionCalls[0];
             
-            if (call.name === "create_cod_order") {
-                const args = call.args as any;
-                console.log("🤖 Gemini triggering order creation:", args);
+            // Normalizar nombre y argumentos
+            const fnName = call.name || call.functionCall?.name;
+            const fnArgs = call.args || call.functionCall?.args;
+
+            if (fnName === "create_cod_order") {
+                console.log("🤖 Gemini triggering order creation:", fnArgs);
 
                 // Ejecutamos la Server Action real
                 const orderResult = await createOrder({
-                    fullName: args.fullName,
-                    phone: args.phone,
-                    city: args.city,
-                    address: args.address
+                    fullName: fnArgs.fullName,
+                    phone: fnArgs.phone,
+                    city: fnArgs.city,
+                    address: fnArgs.address
                 });
 
                 if (orderResult.success) {
-                    finalResponseText = `¡Listo ${args.fullName}! ☕🎉\n\nYa agendé tu pedido para **${args.city}**. Te llegará la confirmación y guía pronto.\n\nGracias por elegir Coffee Maker Pro. ¡Prepárate para el mejor café de tu vida!`;
+                    finalResponseText = `¡Listo ${fnArgs.fullName}! ☕🎉\n\nYa agendé tu pedido para **${fnArgs.city}**. Te llegará la confirmación y guía pronto.\n\nGracias por elegir Coffee Maker Pro. ¡Prepárate para el mejor café de tu vida!`;
                 } else {
-                    finalResponseText = `Uuups, tuve un pequeño problema técnico al guardar el pedido: ${orderResult.message}. \n\n¿Podrías intentar enviarme los datos nuevamente o usar el formulario de arriba?`;
+                    finalResponseText = `Uuups, tuve un pequeño problema técnico al guardar el pedido: ${orderResult.message || 'Error desconocido'}. \n\n¿Podrías intentar enviarme los datos nuevamente o usar el formulario de arriba?`;
                 }
             }
         } else {
-            // Obtener texto de respuesta de manera segura
-            if (result.response && typeof result.response.text === 'function') {
-                finalResponseText = result.response.text();
-            } else if (result.response && result.response.text) {
-                 finalResponseText = result.response.text;
-            } else if (typeof result.text === 'function') {
-                 finalResponseText = result.text();
+            // Respuesta normal de texto
+            if (typeof result.text === 'function') {
+                finalResponseText = result.text();
+            } else if (result.text) {
+                 finalResponseText = result.text;
+            } else if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
+                 finalResponseText = result.candidates[0].content.parts[0].text;
             } else {
                  finalResponseText = "Disculpa, no entendí bien.";
             }
