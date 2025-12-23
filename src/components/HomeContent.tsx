@@ -13,6 +13,7 @@ import { HotspotSection } from './HotspotSection';
 import { TimerReset, Gauge, ChevronRight } from 'lucide-react';
 import Footer from './layout/Footer';
 import StickyMobileCTA from './layout/StickyMobileCTA';
+import LeadMagnet from './sections/LeadMagnet';
 
 // Helper for dynamic icon rendering in Gallery
 const GalleryIcon = ({ type }: { type: string }) => {
@@ -481,6 +482,8 @@ export default function HomeContent() {
                       <FAQ />
                  </div>
               </section>
+
+            <LeadMagnet />
         
             <StickyMobileCTA />
             <Footer />
