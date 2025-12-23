@@ -231,39 +231,7 @@ export default function HomeContent() {
                         </div>
 
                         {/* GIFT 2: EBOOK & KIT */}
-                        {/* GIFT 2: MASTERCLASS (Redesigned) */}
-                        <div className="group relative">
-                             <div className="absolute inset-0 bg-gold-500/5 rounded-[3rem] transform -rotate-2 scale-105 transition-transform group-hover:-rotate-4"></div>
-                             <div className="relative h-full bg-white/5 backdrop-blur-sm border border-white/10 rounded-[2.5rem] p-8 md:p-12 overflow-hidden hover:bg-white/10 transition-colors duration-500 hover:shadow-gold-500/10 hover:border-gold-500/20 flex flex-col">
-                                <div className="absolute top-0 right-0">
-                                    <span className="bg-gold-500 text-coffee-950 font-bold px-6 py-2 rounded-bl-3xl shadow-lg block">GRATIS</span>
-                                </div>
-                                <div className="h-64 md:h-80 relative mb-8 transform group-hover:scale-105 transition-transform duration-700">
-                                     <Image 
-                                        src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=400&auto=format&fit=crop"
-                                        alt="Curso Barista Masterclass"
-                                        fill
-                                        className="object-cover rounded-2xl drop-shadow-2xl"
-                                     />
-                                </div>
-                                <h3 className="text-3xl md:text-4xl font-serif font-bold text-white mb-4">Masterclass: "Arte Latte"</h3>
-                                <div className="flex items-baseline gap-3 mb-4">
-                                    <span className="text-2xl font-bold text-gold-400">Regalo #2</span>
-                                    <span className="text-gray-400 line-through text-lg">Antes $90.000</span>
-                                </div>
-                                <p className="text-gray-300 text-lg leading-relaxed mb-6">
-                                    Aprende a vaporizar la leche para crear corazones y tulipanes en tu primer mes. Incluye videos paso a paso para dominar la técnica.
-                                </p>
-                                <ul className="space-y-3 mt-auto">
-                                    <li className="flex items-center gap-3 text-gold-300 font-medium">
-                                        <CheckCircle2 size={20} /> <span>Técnica de cremado perfecta</span>
-                                    </li>
-                                    <li className="flex items-center gap-3 text-gold-300 font-medium">
-                                        <CheckCircle2 size={20} /> <span>Acceso de por vida al curso</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+                        <LeadMagnet />
                     </div>
                 </div>
             </section>
@@ -483,7 +451,6 @@ export default function HomeContent() {
                  </div>
               </section>
 
-            <LeadMagnet />
         
             <StickyMobileCTA />
             <Footer />
