@@ -13,7 +13,7 @@ const ChatBot: React.FC = () => {
     {
       id: 'welcome',
       role: 'model',
-      text: '¡Hola! 👋 Soy Marco. ¿Viste que hoy regalamos el Molino Eléctrico con tu compra?'
+      text: '¡Hola! 👋 Soy Marco. Nos quedan pocos Molinos Eléctricos de regalo hoy. ¿Buscas la cafetera para tu casa o para la oficina?'
     }
   ]);
   const [inputText, setInputText] = useState('');
@@ -41,7 +41,7 @@ const ChatBot: React.FC = () => {
 
   const simulateTyping = async (text: string) => {
     setIsTyping(true);
-    const typingTime = 400 + (text.length * 15) + (Math.random() * 400);
+    const typingTime = Math.min(1500, 400 + (text.length * 10));
     await new Promise(resolve => setTimeout(resolve, typingTime));
     setIsTyping(false);
   };
