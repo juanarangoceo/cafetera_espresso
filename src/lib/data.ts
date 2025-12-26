@@ -205,6 +205,8 @@ export const POLICIES: Record<string, Policy> = {
 export const NAV_LINKS = [
     { name: 'Experiencia', id: SectionId.FEATURES },
     { name: 'Resultados', id: 'recipes' },
+    { name: 'Blog', href: '/blog' },
     { name: 'Kit Regalo', id: SectionId.BONUS },
     { name: 'Ahorro', id: 'roi' },
+
 ];

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Coffee, Menu, X, ArrowRight, Gift } from 'lucide-react';
+import Link from 'next/link';
 import { useLanding } from '@/context/LandingContext';
 import { NAV_LINKS } from '@/lib/data';
 import { SectionId } from '@/types';
@@ -50,14 +51,24 @@ export default function Navbar() {
             </div>
 
             <div className="hidden md:flex items-center gap-8">
-                {NAV_LINKS.map(link => (
-                    <button
-                        key={link.name}
-                        onClick={() => scrollToSection(link.id)}
-                        className="text-base font-bold uppercase tracking-wide hover:text-gold-600 transition-colors text-coffee-800"
-                    >
-                        {link.name}
-                    </button>
+                {NAV_LINKS.map((link: any) => (
+                    link.href ? (
+                        <Link
+                            key={link.name}
+                            href={link.href}
+                            className="text-base font-bold uppercase tracking-wide hover:text-gold-600 transition-colors text-coffee-800"
+                        >
+                            {link.name}
+                        </Link>
+                    ) : (
+                        <button
+                            key={link.name}
+                            onClick={() => scrollToSection(link.id)}
+                            className="text-base font-bold uppercase tracking-wide hover:text-gold-600 transition-colors text-coffee-800"
+                        >
+                            {link.name}
+                        </button>
+                    )
                 ))}
                 <button
                     onClick={() => scrollToSection(SectionId.PRICING)}
@@ -78,14 +89,25 @@ export default function Navbar() {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
             <div className="md:hidden fixed inset-0 z-40 bg-white/98 backdrop-blur-xl flex flex-col pt-28 px-8 gap-8 animate-fade-in-up">
-                {NAV_LINKS.map(link => (
-                    <button
-                        key={link.name}
-                        onClick={() => scrollToSection(link.id)}
-                        className="text-3xl font-serif font-bold text-coffee-900 text-left border-b-2 border-transparent hover:border-gold-500 pb-2 active:text-gold-600 transition-all"
-                    >
-                        {link.name}
-                    </button>
+                {NAV_LINKS.map((link: any) => (
+                    link.href ? (
+                         <Link
+                            key={link.name}
+                            href={link.href}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="text-3xl font-serif font-bold text-coffee-900 text-left border-b-2 border-transparent hover:border-gold-500 pb-2 active:text-gold-600 transition-all"
+                        >
+                            {link.name}
+                        </Link>
+                    ) : (
+                        <button
+                            key={link.name}
+                            onClick={() => scrollToSection(link.id)}
+                            className="text-3xl font-serif font-bold text-coffee-900 text-left border-b-2 border-transparent hover:border-gold-500 pb-2 active:text-gold-600 transition-all"
+                        >
+                            {link.name}
+                        </button>
+                    )
                 ))}
                 <div className="mt-auto mb-12 space-y-4">
                     <p className="text-coffee-400 text-base text-center">Incluye Molino Gratis por tiempo limitado.</p>

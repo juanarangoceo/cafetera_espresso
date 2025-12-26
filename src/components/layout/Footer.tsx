@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Coffee, MapPin, Instagram, Mail, ChevronRight, Scale, ShieldCheck, FileText } from 'lucide-react';
+import Link from 'next/link';
 import { useLanding } from '@/context/LandingContext';
 import { POLICIES } from '@/lib/data';
 import { SectionId } from '@/types';
@@ -78,6 +79,11 @@ export default function Footer() {
                                 <button onClick={() => scrollTo(SectionId.BONUS)} className="hover:text-gold-500 flex items-center gap-2 transition-colors group">
                                     <ChevronRight size={14} className="text-gold-500/50 group-hover:text-gold-500 transition-colors" /> Regalos
                                 </button>
+                            </li>
+                             <li>
+                                <Link href="/blog" className="hover:text-gold-500 flex items-center gap-2 transition-colors group">
+                                    <ChevronRight size={14} className="text-gold-500/50 group-hover:text-gold-500 transition-colors" /> Blog
+                                </Link>
                             </li>
                         </ul>
                     </div>
