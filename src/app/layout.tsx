@@ -1,4 +1,5 @@
 import Script from 'next/script'
+import { GoogleAnalytics } from '@next/third-parties/google'
 import type { Metadata } from "next";
 import { Inter, Fraunces, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
@@ -44,6 +45,7 @@ export default function RootLayout({
             <body className="font-sans antialiased text-coffee-900 bg-coffee-50" suppressHydrationWarning>
                 {children}
                 <SpeedInsights />
+                <GoogleAnalytics gaId="G-HKC4P9Y4N7" />
                 <Script id="facebook-pixel" strategy="afterInteractive">
           {`
             !function(f,b,e,v,n,t,s)
