@@ -88,7 +88,7 @@ export default function Home() {
                                         fill
                                         priority={true}
                                         fetchPriority="high"
-                                        sizes="100vw"
+                                        sizes="(max-width: 768px) 100vw, 50vw"
                                         className="rounded-[2rem] shadow-2xl border-[4px] border-white bg-coffee-200 object-cover"
                                     />
                                 </div>
@@ -101,7 +101,7 @@ export default function Home() {
                                         fill
                                         priority={true}
                                         fetchPriority="high"
-                                        sizes="50vw"
+                                        sizes="(max-width: 768px) 100vw, 50vw"
                                         className="rounded-[2rem] shadow-2xl border-[4px] border-white bg-coffee-200 object-contain"
                                     />
                                 </div>
