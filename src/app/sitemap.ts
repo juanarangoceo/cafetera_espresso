@@ -1,7 +1,8 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://cafeteraespresso.com'
+  // IMPORTANTE: Incluye www. porque el dominio hace redirección
+  const baseUrl = 'https://www.cafeteraespresso.com'
 
   return [
     {

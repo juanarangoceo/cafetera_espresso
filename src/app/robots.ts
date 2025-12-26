@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
     },
-    sitemap: 'https://cafeteraespresso.com/sitemap.xml',
+    sitemap: 'https://www.cafeteraespresso.com/sitemap.xml',
   }
 }
