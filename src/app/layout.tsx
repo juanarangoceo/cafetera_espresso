@@ -32,6 +32,8 @@ export const metadata: Metadata = {
 };
 
 
+import ClientLayout from '@/components/layout/ClientLayout';
+
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -43,7 +45,9 @@ export default function RootLayout({
                 <link rel="preconnect" href="https://www.transparenttextures.com" />
             </head>
             <body className="font-sans antialiased text-coffee-900 bg-coffee-50" suppressHydrationWarning>
-                {children}
+                <ClientLayout>
+                    {children}
+                </ClientLayout>
                 <SpeedInsights />
                 <GoogleAnalytics gaId="G-HKC4P9Y4N7" />
                 <Script id="facebook-pixel" strategy="afterInteractive">

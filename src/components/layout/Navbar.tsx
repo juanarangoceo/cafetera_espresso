@@ -17,11 +17,14 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const isHomePage = pathname === '/';
+  const isBlogPage = pathname?.startsWith('/blog') || false;
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
+    // Inicializar estado de scroll al montar
+    handleScroll();
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -48,18 +51,19 @@ export default function Navbar() {
     }
   };
 
-  // Forzar fondo blanco si NO estamos en home
-  const navBackground = isScrolled || !isHomePage 
+  // Forzar fondo blanco si NO estamos en home - asegurar visibilidad siempre
+  // En páginas de blog, siempre mostrar fondo blanco desde el inicio
+  const navBackground = isScrolled || !isHomePage || isBlogPage
     ? 'bg-white/95 backdrop-blur-xl shadow-sm py-3' 
     : 'bg-transparent py-4 md:py-8';
 
-  const textColor = isScrolled || !isHomePage ? 'text-coffee-900' : 'text-coffee-900 lg:text-coffee-900';
-  const logoBg = isScrolled || !isHomePage ? 'bg-coffee-900 text-gold-500' : 'bg-white text-coffee-900 shadow-lg';
+  const textColor = isScrolled || !isHomePage || isBlogPage ? 'text-coffee-900' : 'text-coffee-900 lg:text-coffee-900';
+  const logoBg = isScrolled || !isHomePage || isBlogPage ? 'bg-coffee-900 text-gold-500' : 'bg-white text-coffee-900 shadow-lg';
 
   return (
     <>
-      <nav className={`fixed w-full z-50 transition-all duration-300 ease-in-out ${navBackground}`}>
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+      <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out ${navBackground}`}>
+        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center min-h-[64px]">
             <Link href="/" className="flex items-center gap-2 cursor-pointer group">
                 <div className={`w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center transition-colors duration-300 ${logoBg}`}>
                     <Coffee size={20} strokeWidth={2.5} className="md:w-6 md:h-6" />

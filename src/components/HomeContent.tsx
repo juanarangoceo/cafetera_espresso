@@ -11,7 +11,6 @@ import FAQ from './FAQ';
 import VideoPlayer from './VideoPlayer';
 import { HotspotSection } from './HotspotSection';
 import { TimerReset, Gauge, ChevronRight } from 'lucide-react';
-import Footer from './layout/Footer';
 import StickyMobileCTA from './layout/StickyMobileCTA';
 import LeadMagnet from './sections/LeadMagnet';
 
@@ -464,7 +463,7 @@ export default function HomeContent() {
 
         
             <StickyMobileCTA />
-            <Footer />
+
         </>
     );
 }

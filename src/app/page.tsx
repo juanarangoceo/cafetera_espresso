@@ -5,24 +5,16 @@ import dynamic from 'next/dynamic';
 import { Truck, Banknote, CheckCircle2, AlertTriangle, ArrowRight } from 'lucide-react';
 
 // Components
-import { LandingProvider } from '@/context/LandingContext';
-import Navbar from '@/components/layout/Navbar';
-import GlobalModals from '@/components/layout/GlobalModals';
 import HeroActions from '@/components/sections/HeroActions';
 import HomeContent from '@/components/HomeContent';
-
-import ChatBotWrapper from '@/components/ChatBotWrapper';
 
 import { SectionId } from '@/types';
 
 export default function Home() {
     return (
-        <LandingProvider>
-            <div className="min-h-screen bg-coffee-50 text-coffee-900 font-sans antialiased overflow-x-hidden selection:bg-gold-200 selection:text-coffee-900 pb-24 md:pb-0">
-                
-                <Navbar />
+        <div className="min-h-screen bg-coffee-50 text-coffee-900 font-sans antialiased overflow-x-hidden selection:bg-gold-200 selection:text-coffee-900 pb-24 md:pb-0">
 
-                {/* --- HERO SECTION (Server Component) --- */}
+            {/* --- HERO SECTION (Server Component) --- */}
                 <section id={SectionId.HERO} className="relative pt-28 pb-16 lg:pt-48 lg:pb-32 overflow-hidden bg-noise">
                     {/* Decorative Backgrounds */}
                     <div className="absolute top-0 right-0 w-[500px] lg:w-[800px] h-[500px] lg:h-[800px] bg-gradient-to-br from-gold-100/40 to-transparent rounded-full blur-3xl opacity-50 -translate-y-1/3 translate-x-1/3 z-0"></div>
@@ -113,14 +105,6 @@ export default function Home() {
 
                 {/* --- CLIENT CONTENT --- */}
                 <HomeContent />
-                
-                {/* --- GLOBAL MODALS --- */}
-                <GlobalModals />
-
-                {/* --- CHATBOT --- */}
-                <ChatBotWrapper />
-
             </div>
-        </LandingProvider>
     );
 }
