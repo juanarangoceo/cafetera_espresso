@@ -1,7 +1,8 @@
-import { client, POST_QUERY } from '@/lib/sanity';
+import { client, POST_QUERY, urlFor } from '@/lib/sanity';
 import { PortableText, PortableTextComponents } from '@portabletext/react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export const revalidate = 60;
 
@@ -19,6 +20,29 @@ const ptComponents: PortableTextComponents = {
   listItem: {
     bullet: ({children}) => <li className="pl-1">{children}</li>,
     number: ({children}) => <li className="pl-1">{children}</li>,
+  },
+  types: {
+    image: ({value}) => {
+      if (!value?.asset?._ref) {
+        return null;
+      }
+      return (
+        <div className="my-8 md:my-12 relative w-full aspect-video rounded-2xl overflow-hidden bg-coffee-100">
+          <Image
+            src={urlFor(value).width(1200).height(675).url()}
+            alt={value.alt || 'Imagen del artículo'}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 800px"
+          />
+          {value.caption && (
+            <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white p-4 text-sm text-center">
+              {value.caption}
+            </div>
+          )}
+        </div>
+      );
+    },
   },
 };
 
@@ -46,17 +70,31 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
         </div>
 
         <article className="bg-white p-6 md:p-12 rounded-3xl shadow-sm border border-coffee-100">
-          <header className="mb-8 md:mb-10 text-center">
-             <div className="mb-4 text-xs md:text-sm font-sans text-coffee-500 uppercase tracking-wider">
-              {new Date(post.publishedAt).toLocaleDateString('es-ES', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
-             </div>
-            <h1 className="text-3xl md:text-5xl font-serif font-bold text-coffee-900 leading-tight mb-6">
-              {post.title}
-            </h1>
+          <header className="mb-8 md:mb-10">
+            {post.mainImage && (
+              <div className="relative w-full aspect-video md:aspect-[16/9] mb-8 rounded-2xl overflow-hidden bg-coffee-100">
+                <Image
+                  src={urlFor(post.mainImage).width(1200).height(675).url()}
+                  alt={post.title || 'Imagen principal del artículo'}
+                  fill
+                  priority
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 800px"
+                />
+              </div>
+            )}
+            <div className="text-center">
+              <div className="mb-4 text-xs md:text-sm font-sans text-coffee-500 uppercase tracking-wider">
+                {new Date(post.publishedAt).toLocaleDateString('es-ES', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </div>
+              <h1 className="text-3xl md:text-5xl font-serif font-bold text-coffee-900 leading-tight mb-6">
+                {post.title}
+              </h1>
+            </div>
           </header>
 
           <div className="prose prose-coffee prose-lg max-w-none text-coffee-900">
