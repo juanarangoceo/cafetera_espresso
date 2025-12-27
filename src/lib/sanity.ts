@@ -27,6 +27,12 @@ export const POSTS_QUERY = `*[_type == "post"] | order(publishedAt desc) {
   excerpt
 }`;
 
+// Query optimizada para sitemap (solo campos necesarios)
+export const SITEMAP_POSTS_QUERY = `*[_type == "post"] | order(publishedAt desc) {
+  "slug": slug.current,
+  publishedAt
+}`;
+
 export const POST_QUERY = `*[_type == "post" && slug.current == $slug][0] {
   _id,
   title,
