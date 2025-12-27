@@ -8,10 +8,10 @@ export default async function BlogIndex() {
   const posts = await client.fetch(POSTS_QUERY);
 
   return (
-    <main className="min-h-screen bg-coffee-50 py-20 px-4 md:px-8">
+    <main className="min-h-screen bg-coffee-50 pt-32 pb-20 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
         <header className="mb-16 text-center">
-          <h1 className="text-5xl md:text-6xl font-serif font-bold text-coffee-900 mb-6 tracking-tight">
+          <h1 className="text-4xl md:text-6xl font-serif font-bold text-coffee-900 mb-6 tracking-tight">
             El Diario del Barista
           </h1>
           <p className="text-xl md:text-2xl font-sans text-coffee-700 max-w-2xl mx-auto leading-relaxed">
@@ -27,7 +27,7 @@ export default async function BlogIndex() {
                 className="group bg-white rounded-2xl overflow-hidden border border-coffee-200 transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
               >
                 {post.mainImage && (
-                  <div className="relative h-64 w-full overflow-hidden">
+                  <div className="relative h-56 md:h-64 w-full overflow-hidden">
                     <Image
                       src={urlFor(post.mainImage).url()}
                       alt={post.title}
@@ -36,7 +36,7 @@ export default async function BlogIndex() {
                     />
                   </div>
                 )}
-                <div className="p-8">
+                <div className="p-6 md:p-8">
                   <div className="mb-4 flex items-center text-sm font-sans text-coffee-500">
                     <time dateTime={post.publishedAt}>
                       {new Date(post.publishedAt).toLocaleDateString('es-ES', {

@@ -7,8 +7,8 @@ export const revalidate = 60;
 
 const ptComponents: PortableTextComponents = {
   block: {
-    h2: ({children}) => <h2 className="text-3xl font-serif font-bold text-coffee-900 mt-8 mb-4">{children}</h2>,
-    h3: ({children}) => <h3 className="text-2xl font-serif font-bold text-coffee-900 mt-6 mb-3">{children}</h3>,
+    h2: ({children}) => <h2 className="text-2xl md:text-3xl font-serif font-bold text-coffee-900 mt-8 mb-4">{children}</h2>,
+    h3: ({children}) => <h3 className="text-xl md:text-2xl font-serif font-bold text-coffee-900 mt-6 mb-3">{children}</h3>,
     normal: ({children}) => <p className="text-lg font-sans text-coffee-800 mb-6 leading-relaxed">{children}</p>,
     blockquote: ({children}) => <blockquote className="border-l-4 border-gold-500 pl-4 italic text-coffee-700 my-6">{children}</blockquote>,
   },
@@ -31,7 +31,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
   }
 
   return (
-    <main className="min-h-screen bg-coffee-50 py-12 px-4 md:px-8">
+    <main className="min-h-screen bg-coffee-50 pt-32 pb-12 px-4 md:px-8">
       <div className="max-w-3xl mx-auto">
         <div className="mb-8">
           <Link 
@@ -45,7 +45,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
           </Link>
         </div>
 
-        <article>
+        <article className="bg-white rounded-3xl shadow-sm border border-coffee-100 p-6 md:p-12">
           <header className="mb-10 text-center">
              <div className="mb-4 text-sm font-sans text-coffee-500 uppercase tracking-wider">
               {new Date(post.publishedAt).toLocaleDateString('es-ES', {

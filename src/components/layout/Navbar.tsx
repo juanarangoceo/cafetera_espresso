@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Coffee, Menu, X, ArrowRight, Gift } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { useLanding } from '@/context/LandingContext';
 import { NAV_LINKS } from '@/lib/data';
 import { SectionId } from '@/types';
@@ -11,6 +12,11 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { openCheckout } = useLanding();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  // Force filled navbar on non-home pages
+  const isNavbarFilled = isScrolled || pathname !== '/';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,6 +27,11 @@ export default function Navbar() {
   }, []);
 
   const scrollToSection = (id: string) => {
+    if (pathname !== '/') {
+      router.push(`/#${id}`);
+      return;
+    }
+
     const element = document.getElementById(id);
     if (element) {
       const headerOffset = 80;
@@ -36,19 +47,19 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className={`fixed w-full z-50 transition-all duration-300 ease-in-out ${isScrolled ? 'bg-white/95 backdrop-blur-xl shadow-sm py-3' : 'bg-transparent py-4 md:py-8'}`}>
+      <nav className={`fixed w-full z-50 transition-all duration-300 ease-in-out ${isNavbarFilled ? 'bg-white/95 backdrop-blur-xl shadow-sm py-3' : 'bg-transparent py-4 md:py-8'}`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-            <div className="flex items-center gap-2 cursor-pointer group" onClick={() => window.scrollTo(0, 0)}>
-                <div className={`w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center transition-colors duration-300 ${isScrolled ? 'bg-coffee-900 text-gold-500' : 'bg-white text-coffee-900 shadow-lg'}`}>
+            <Link href="/" className="flex items-center gap-2 cursor-pointer group">
+                <div className={`w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center transition-colors duration-300 ${isNavbarFilled ? 'bg-coffee-900 text-gold-500' : 'bg-white text-coffee-900 shadow-lg'}`}>
                     <Coffee size={20} strokeWidth={2.5} className="md:w-6 md:h-6" />
                 </div>
                 <div className="flex flex-col justify-center">
-                    <div className={`text-xl md:text-2xl font-serif font-black tracking-tight leading-none transition-colors duration-300 ${isScrolled ? 'text-coffee-900' : 'text-coffee-900 lg:text-coffee-900'}`}>
+                    <div className={`text-xl md:text-2xl font-serif font-black tracking-tight leading-none transition-colors duration-300 ${isNavbarFilled ? 'text-coffee-900' : 'text-coffee-900 lg:text-coffee-900'}`}>
                         CoffeeMaker<span className="text-gold-500">Pro</span>
                     </div>
-                    <span className={`text-[9px] md:text-[10px] tracking-widest uppercase font-bold ${isScrolled ? 'text-coffee-400' : 'text-coffee-600'} hidden sm:block`}>Tienda Oficial</span>
+                    <span className={`text-[9px] md:text-[10px] tracking-widest uppercase font-bold ${isNavbarFilled ? 'text-coffee-400' : 'text-coffee-600'} hidden sm:block`}>Tienda Oficial</span>
                 </div>
-            </div>
+            </Link>
 
             <div className="hidden md:flex items-center gap-8">
                 {NAV_LINKS.map((link: any) => (
@@ -89,6 +100,15 @@ export default function Navbar() {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
             <div className="md:hidden fixed inset-0 z-40 bg-white/98 backdrop-blur-xl flex flex-col pt-28 px-8 gap-8 animate-fade-in-up">
+                {pathname !== '/' && (
+                    <Link
+                        href="/"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="text-xl font-serif font-bold text-coffee-600 text-left hover:text-gold-600 flex items-center gap-2"
+                    >
+                        <ArrowRight className="rotate-180" size={20} /> Volver al Inicio
+                    </Link>
+                )}
                 {NAV_LINKS.map((link: any) => (
                     link.href ? (
                          <Link
