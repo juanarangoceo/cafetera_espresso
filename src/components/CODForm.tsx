@@ -9,6 +9,7 @@ import { createOrder } from '@/app/actions/order';
 
 const formSchema = z.object({
   fullName: z.string().min(3, 'El nombre debe tener al menos 3 caracteres'),
+  email: z.string().email('Ingresa un correo válido'),
   phone: z.string().min(10, 'El teléfono debe tener al menos 10 dígitos'),
   city: z.string().min(1, 'La ciudad es requerida'),
   address: z.string().min(1, 'La dirección es requerida'),
@@ -92,6 +93,22 @@ export default function CODForm() {
           />
           {errors.fullName && (
             <p className="text-red-500 text-xs font-medium ml-1">{errors.fullName.message}</p>
+          )}
+        </div>
+
+        {/* Email - NEW */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+            <span className="text-gray-500">@</span> Correo Electrónico
+          </label>
+          <input
+            {...register('email')}
+            type="email"
+            placeholder="Ej: juan@ejemplo.com"
+            className="w-full p-4 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
+          />
+          {errors.email && (
+            <p className="text-red-500 text-xs font-medium ml-1">{errors.email.message}</p>
           )}
         </div>
 
