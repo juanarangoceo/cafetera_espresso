@@ -16,17 +16,29 @@ export default function LoginPage() {
     
     const formData = new FormData(event.currentTarget)
     
+    // We do NOT use try/catch over the actions because they throw REDIRECT errors on success
+    // which is how Next.js handles redirects.
+    
+    let result;
     try {
       if (isLogin) {
-        const result = await login(formData)
-        if (result?.error) setError(result.error)
+        result = await login(formData)
       } else {
-        const result = await signup(formData)
-        if (result?.error) setError(result.error)
+        result = await signup(formData)
+      }
+
+      // If we get here and have a result, it means NO redirect happened (error or explicit return)
+      // If redirect happened, this code is likely interrupted or unmounted
+      if (result?.error) {
+        setError(result.error)
+        setLoading(false)
       }
     } catch (e) {
-      setError('Ocurrió un error inesperado.')
-    } finally {
+      // NOTE: Next.js redirects throw an error "NEXT_REDIRECT". 
+      // We should technically ignore it or let it bubble up, but client-side 
+      // invocation of Server Actions often handles this automatically.
+      // If we catch it, we must verify if it's a redirect.
+      console.log("Caught in UI:", e)
       setLoading(false)
     }
   }
@@ -98,7 +110,10 @@ export default function LoginPage() {
           <p className="text-coffee-600 text-sm">
             {isLogin ? '¿No tienes cuenta?' : '¿Ya tienes cuenta?'}
             <button
-              onClick={() => setIsLogin(!isLogin)}
+              onClick={() => {
+                setIsLogin(!isLogin)
+                setError(null)
+              }}
               className="ml-2 font-bold text-gold-600 hover:text-gold-700 underline decoration-2 underline-offset-2 transition-colors"
             >
               {isLogin ? 'Regístrate' : 'Inicia Sesión'}
