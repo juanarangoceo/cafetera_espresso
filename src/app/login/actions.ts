@@ -30,7 +30,7 @@ export async function login(formData: FormData) {
   
   // Redirect MUST fail (throw) to work, so do NOT wrap in try/catch in the UI if possible,
   // or handle the specific NEXT_REDIRECT error.
-  redirect('/')
+  redirect('/dashboard')
 }
 
 export async function signup(formData: FormData) {
@@ -54,5 +54,5 @@ export async function signup(formData: FormData) {
   console.log('Signup successful, redirecting...')
   
   revalidatePath('/', 'layout')
-  redirect('/')
+  redirect('/dashboard')
 }
