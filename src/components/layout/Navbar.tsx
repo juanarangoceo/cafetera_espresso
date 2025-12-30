@@ -1,17 +1,20 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Coffee, Menu, X, ArrowRight } from "lucide-react";
+import { Coffee, Menu, X, ArrowRight, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useLanding } from "@/context/LandingContext";
 import { NAV_LINKS } from "@/lib/data";
 import { SectionId } from "@/types";
+import { createClient } from "@/utils/supabase/client";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const { openCheckout } = useLanding();
+  const supabase = createClient();
 
   // Detectar ruta actual
   const pathname = usePathname();
@@ -26,6 +29,16 @@ export default function Navbar() {
     // Inicializar estado de scroll al montar
     handleScroll();
     window.addEventListener("scroll", handleScroll);
+
+    // Verificar sesión
+    const checkUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    checkUser();
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -117,6 +130,24 @@ export default function Navbar() {
                 </button>
               )
             )}
+
+            {user ? (
+              <Link
+                href="/dashboard"
+                className="p-2 rounded-full hover:bg-coffee-50 transition-colors text-coffee-900"
+                title="Mi Cuenta"
+              >
+                <User size={24} />
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className="text-sm font-bold uppercase tracking-wide hover:text-gold-600 transition-colors text-coffee-900"
+              >
+                LOGIN
+              </Link>
+            )}
+
             <button
               onClick={() => handleNavigation(SectionId.PRICING)}
               className="bg-gold-500 hover:bg-gold-600 text-white px-6 py-2.5 rounded-full font-bold text-sm transition-all transform hover:scale-105 shadow-lg shadow-gold-500/20 flex items-center gap-2 border border-gold-400"
@@ -125,12 +156,29 @@ export default function Navbar() {
             </button>
           </div>
 
-          <button
-            className="md:hidden text-coffee-900 bg-white/90 p-2 rounded-lg backdrop-blur-sm border border-coffee-100 shadow-sm active:bg-coffee-50 z-50"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          <div className="flex items-center gap-4 md:hidden">
+            {user ? (
+                <Link
+                  href="/dashboard"
+                  className="p-2 rounded-full hover:bg-coffee-50 transition-colors text-coffee-900"
+                >
+                  <User size={24} />
+                </Link>
+              ) : (
+                <Link
+                  href="/login"
+                  className={`text-sm font-bold uppercase ${textColor}`}
+                >
+                  LOGIN
+                </Link>
+              )}
+            <button
+              className="text-coffee-900 bg-white/90 p-2 rounded-lg backdrop-blur-sm border border-coffee-100 shadow-sm active:bg-coffee-50 z-50"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
       </nav>
 
