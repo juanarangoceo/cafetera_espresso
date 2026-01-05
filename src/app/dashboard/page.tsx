@@ -14,6 +14,12 @@ export default async function DashboardPage() {
     redirect('/login')
   }
 
+  const { data: orders } = await supabase
+    .from('orders_cod')
+    .select('*')
+    .eq('email', user.email)
+    .order('created_at', { ascending: false })
+
   return (
     <div className="min-h-screen bg-coffee-50">
       <div className="max-w-7xl mx-auto px-6 py-24 md:py-32">
@@ -59,27 +65,67 @@ export default async function DashboardPage() {
                   <Package className="text-gold-500" />
                   Mis Pedidos
                 </h2>
-                {/* <button className="text-gold-600 font-bold text-sm hover:underline">Ver todo</button> */}
               </div>
 
-              {/* Empty State */}
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="w-24 h-24 bg-coffee-50 rounded-full flex items-center justify-center mb-6 text-coffee-300">
-                  <Coffee size={48} strokeWidth={1.5} />
+              {orders && orders.length > 0 ? (
+                <div className="space-y-4">
+                  {orders.map((order) => (
+                    <div 
+                      key={order.id} 
+                      className="flex flex-col md:flex-row items-start md:items-center justify-between p-6 rounded-2xl border border-coffee-100 hover:border-gold-200 hover:shadow-md transition-all bg-coffee-50/30"
+                    >
+                      <div className="space-y-1 mb-4 md:mb-0">
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className="text-sm font-bold text-coffee-400">
+                            #{order.id.slice(0, 8)}...
+                          </span>
+                          <span className={`px-3 py-1 rounded-full text-xs font-bold capitalize ${
+                            order.status === 'delivered' ? 'bg-green-100 text-green-700' :
+                            order.status === 'shipped' ? 'bg-blue-100 text-blue-700' :
+                            'bg-yellow-100 text-yellow-700'
+                          }`}>
+                            {order.status === 'pending' ? 'Pendiente' : order.status}
+                          </span>
+                        </div>
+                        <p className="font-bold text-coffee-900">{order.full_name}</p>
+                        <p className="text-sm text-coffee-500">
+                          {new Date(order.created_at).toLocaleDateString('es-CO', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                      
+                      <div className="text-right">
+                        <p className="text-lg font-bold text-coffee-900">
+                          ${order.total_price?.toLocaleString('es-CO')}
+                        </p>
+                        <p className="text-sm text-coffee-500">Contraentrega</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <h3 className="text-xl font-bold text-coffee-800 mb-2">
-                  Aún no tienes pedidos
-                </h3>
-                <p className="text-coffee-500 max-w-sm mb-8">
-                  Cuando realices tu primera compra de café de especialidad, podrás ver el estado de tu envío aquí.
-                </p>
-                <a 
-                  href="/#pricing" 
-                  className="bg-gold-500 hover:bg-gold-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-gold-500/20 transition-all transform hover:scale-105"
-                >
-                  Explorar Café
-                </a>
-              </div>
+              ) : (
+                /* Empty State */
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <div className="w-24 h-24 bg-coffee-50 rounded-full flex items-center justify-center mb-6 text-coffee-300">
+                    <Coffee size={48} strokeWidth={1.5} />
+                  </div>
+                  <h3 className="text-xl font-bold text-coffee-800 mb-2">
+                    Aún no tienes pedidos
+                  </h3>
+                  <p className="text-coffee-500 max-w-sm mb-8">
+                    Cuando realices tu primera compra de café de especialidad, podrás ver el estado de tu envío aquí.
+                  </p>
+                  <a 
+                    href="/#pricing" 
+                    className="bg-gold-500 hover:bg-gold-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-gold-500/20 transition-all transform hover:scale-105"
+                  >
+                    Explorar Café
+                  </a>
+                </div>
+              )}
             </div>
           </div>
 
