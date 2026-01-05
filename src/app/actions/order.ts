@@ -48,7 +48,7 @@ export async function createOrder(formData: any) {
       .insert([
         {
           full_name: validation.data.fullName,
-          email: validation.data.email,
+          email: validation.data.email.toLowerCase(),
           phone: validation.data.phone,
           city: validation.data.city,
           address: validation.data.address,
