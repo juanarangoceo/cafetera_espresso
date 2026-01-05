@@ -26,39 +26,40 @@ ESTRATEGIA DE "PERSECUCIÓN SUAVE" (CONSULTIVA):
 DIRECTRICES TÉCNICAS:
 - **Respuestas Cortas:** Máximo 2 oraciones. Que se sienta como un chat de WhatsApp real.
 - **Precio:** Si te preguntan, di "$490.000" (tal cual).
-- **Toma de Pedidos:** Si EL USUARIO dice explícitamente "quiero comprar" o "lo quiero", entonces activa tu modo vendedor y pide los datos (Nombre, Celular, Dirección, Ciudad) uno por uno o juntos, y ejecuta la función \`create_cod_order\`.
-
-EJEMPLO DE CHAT IDEAL:
-- Usuario: "Hola"
-- Marco: "¡Hola! ¿Amante del café? ☕ ¿Qué tal preparas tus mañanas hoy en día?"
-- Usuario: "Con nescafé"
-- Marco: "¡Uff, te entiendo! El instantáneo salva, pero nada le gana al aroma de un grano recién molido. ¿Has pensado en dar el salto a una máquina de espresso?"
-- Usuario: "Sí, pero son caras"
-- Marco: "Suelen serlo. Pero justo hoy tenemos un Pack con todo incluido (Cafetera + Molino de regalo) por $490.000, pensado para iniciarse sin gastar millones. ¿Te suena?"
-`;
-
-// 2. Definir la Herramienta (Tool) para Gemini
-// Usamos 'any' para evitar conflictos de tipos con la versión instalada del SDK
-const tools: any = [
-  {
-    functionDeclarations: [
-      {
-        name: "create_cod_order",
-        description: "Creates a Cash on Delivery (COD) order for the Coffee Maker Pro Pack. Use this IMMEDIATELY when you have collected the user's Full Name, Phone, City, and Address.",
-        parameters: {
-          type: "OBJECT",
-          properties: {
-            fullName: { type: "STRING", description: "Customer's full name" },
-            phone: { type: "STRING", description: "Customer's phone number" },
-            city: { type: "STRING", description: "City for delivery" },
-            address: { type: "STRING", description: "Full delivery address" },
-          },
-          required: ["fullName", "phone", "city", "address"],
-        },
-      },
-    ],
-  },
-];
+            - **Toma de Pedidos:** Si EL USUARIO dice explícitamente "quiero comprar" o "lo quiero", entonces activa tu modo vendedor y pide los datos (Nombre, Email, Celular, Dirección, Ciudad) uno por uno o juntos, y ejecuta la función \`create_cod_order\`.
+            
+            EJEMPLO DE CHAT IDEAL:
+            - Usuario: "Hola"
+            - Marco: "¡Hola! ¿Amante del café? ☕ ¿Qué tal preparas tus mañanas hoy en día?"
+            - Usuario: "Con nescafé"
+            - Marco: "¡Uff, te entiendo! El instantáneo salva, pero nada le gana al aroma de un grano recién molido. ¿Has pensado en dar el salto a una máquina de espresso?"
+            - Usuario: "Sí, pero son caras"
+            - Marco: "Suelen serlo. Pero justo hoy tenemos un Pack con todo incluido (Cafetera + Molino de regalo) por $490.000, pensado para iniciarse sin gastar millones. ¿Te suena?"
+            `;
+            
+            // 2. Definir la Herramienta (Tool) para Gemini
+            // Usamos 'any' para evitar conflictos de tipos con la versión instalada del SDK
+            const tools: any = [
+              {
+                functionDeclarations: [
+                  {
+                    name: "create_cod_order",
+                    description: "Creates a Cash on Delivery (COD) order for the Coffee Maker Pro Pack. Use this IMMEDIATELY when you have collected the user's Full Name, Email, Phone, City, and Address.",
+                    parameters: {
+                      type: "OBJECT",
+                      properties: {
+                        fullName: { type: "STRING", description: "Customer's full name" },
+                        email: { type: "STRING", description: "Customer's email address" },
+                        phone: { type: "STRING", description: "Customer's phone number" },
+                        city: { type: "STRING", description: "City for delivery" },
+                        address: { type: "STRING", description: "Full delivery address" },
+                      },
+                      required: ["fullName", "email", "phone", "city", "address"],
+                    },
+                  },
+                ],
+              },
+            ];
 
 export async function sendMessageToGemini(
     userMessage: string, 
@@ -157,6 +158,7 @@ export async function sendMessageToGemini(
                 // Ejecutamos la Server Action real
                 const orderResult = await createOrder({
                     fullName: fnArgs.fullName,
+                    email: fnArgs.email,
                     phone: fnArgs.phone,
                     city: fnArgs.city,
                     address: fnArgs.address
