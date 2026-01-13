@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Inter, Fraunces, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({
     subsets: ["latin"],
@@ -49,6 +50,7 @@ export default function RootLayout({
                     {children}
                 </ClientLayout>
                 <SpeedInsights />
+                <Analytics />
                 <GoogleAnalytics gaId="G-HKC4P9Y4N7" />
                 <Script id="facebook-pixel" strategy="afterInteractive">
           {`
