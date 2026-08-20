@@ -4,7 +4,7 @@ import { Hotspot } from './Hotspot';
 import { ProductFeature } from '../types';
 
 // Using the main LCP image for consistency, or we could use the "scuare" one if different
-const PRODUCT_IMAGE_URL = "https://cdn.shopify.com/s/files/1/0608/6433/1831/files/scuare.jpg?v=1757995325";
+const PRODUCT_IMAGE_URL = "/product/scuare.jpg";
 
 // Coffee Maker Pro Hotspot Data
 const FEATURES: ProductFeature[] = [
@@ -17,8 +17,8 @@ const FEATURES: ProductFeature[] = [
   },
   {
     id: 'portafilter',
-    title: 'Portafiltro Comercial 58mm',
-    description: 'Estabilidad térmica y peso profesional. Compatible con filtros de competencia.',
+    title: 'Portafiltro para una o dos tazas',
+    description: 'Elige el filtro según la cantidad que quieras preparar y ajusta la dosis a tu gusto.',
     x: 50,
     y: 60, 
   },

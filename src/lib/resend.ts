@@ -1,9 +1,8 @@
 import { Resend } from 'resend';
 
-const apiKey = process.env.RESEND_API_KEY || 're_missing_key';
+const apiKey = process.env.RESEND_API_KEY?.trim();
 
-if (!process.env.RESEND_API_KEY) {
-  console.warn('⚠️ RESEND_API_KEY is missing. Email sending will fail.');
-}
-
-export const resend = new Resend(apiKey);
+// El correo es complementario: un pedido contraentrega guardado no puede
+// convertirse en error solo porque el dueño decidió aplazar Resend. Cuando no
+// hay clave se omite el envío sin crear un cliente con credenciales falsas.
+export const resend = apiKey ? new Resend(apiKey) : null;

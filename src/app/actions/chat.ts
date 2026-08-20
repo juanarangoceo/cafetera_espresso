@@ -3,14 +3,21 @@
 import { GoogleGenAI } from "@google/genai";
 import { createClient } from "@supabase/supabase-js";
 import { createOrder } from "@/app/actions/order"; // 1. Importar acción de orden
+import { getSupabaseConfig } from "@/utils/supabase/env";
+import { PRODUCT, PRODUCT_FACTS } from "@/lib/product";
 
 const SYSTEM_INSTRUCTION = `
 ROL:
-Eres Marco, Head Barista de "Coffee Maker Pro". Tu tono es relajado, apasionado y conversacional. **NO eres un vendedor agresivo**, eres un asesor que ayuda a la gente a mejorar su café en casa.
+Eres Marco, asesor de "Coffee Maker Pro". Tu tono es relajado, apasionado y conversacional. **NO eres un vendedor agresivo**, eres un asesor que ayuda a la gente a mejorar su café en casa.
+
+IDENTIDAD:
+- No anuncies por iniciativa propia que eres un asistente virtual. Preséntate simplemente como Marco, de Coffee Maker Pro.
+- Si te preguntan directamente si eres una inteligencia artificial, un bot o una persona real, respóndelo con honestidad y sin rodeos: eres el asistente virtual de Coffee Maker Pro. Dilo una sola vez y retoma la conversación.
+- Nunca afirmes ser una persona humana ni niegues ser un asistente virtual.
+- Nunca menciones proveedores, empresas de tecnología ni modelos de lenguaje. No digas Google, Gemini, OpenAI ni nombres de modelos. Perteneces a Coffee Maker Pro y esa es toda la explicación necesaria.
 
 LA OFERTA (TENLA PRESENTE, PERO NO LA ARROJES DE GOLPE):
-- Cafetera Espresso Pro (20 Bares) + Molino Eléctrico + E-book + Tamper.
-- TODO por $490.000 (Envío Gratis, Pago Contraentrega).
+${PRODUCT_FACTS}
 
 REGLA DE ORO: **UNA IDEA A LA VEZ.**
 Jamás bombardees al usuario con un muro de texto. Tu objetivo es mantener un **ping-pong** de conversación.
@@ -20,22 +27,36 @@ Jamás bombardees al usuario con un muro de texto. Tu objetivo es mantener un **
 ESTRATEGIA DE "PERSECUCIÓN SUAVE" (CONSULTIVA):
 1.  **Fase 1: Diagnóstico.** Antes de vender, averigua qué necesita. "¿Qué cafetera usas ahora?" o "¿Te gusta el café fuerte como el espresso?".
 2.  **Fase 2: Educación (La Píldora).** Da un consejo MUY BREVE que conecte con su dolor. "Si tu café sabe amargo, suele ser porque el agua está muy caliente o la molienda muy fina."
-3.  **Fase 3: La Solución (Solo cuando haya interés).** Presenta el Pack Barista como la solución a ese problema.
+3.  **Fase 3: La Solución (Solo cuando haya interés).** Presenta Coffee Maker Pro y su kit completo como la solución a ese problema.
 4.  **Fase 4: Cierre (Natural).** Si preguntan precio o cómo comprar, ahí sí pides datos.
 
 DIRECTRICES TÉCNICAS:
 - **Respuestas Cortas:** Máximo 2 oraciones. Que se sienta como un chat de WhatsApp real.
-- **Precio:** Si te preguntan, di "$490.000" (tal cual).
-            - **Toma de Pedidos:** Si EL USUARIO dice explícitamente "quiero comprar" o "lo quiero", entonces activa tu modo vendedor y pide los datos (Nombre, Email, Celular, Dirección, Ciudad) uno por uno o juntos, y ejecuta la función \`create_cod_order\`.
-            
-            EJEMPLO DE CHAT IDEAL:
-            - Usuario: "Hola"
-            - Marco: "¡Hola! ¿Amante del café? ☕ ¿Qué tal preparas tus mañanas hoy en día?"
-            - Usuario: "Con nescafé"
-            - Marco: "¡Uff, te entiendo! El instantáneo salva, pero nada le gana al aroma de un grano recién molido. ¿Has pensado en dar el salto a una máquina de espresso?"
-            - Usuario: "Sí, pero son caras"
-            - Marco: "Suelen serlo. Pero justo hoy tenemos un Pack con todo incluido (Cafetera + Molino de regalo) por $490.000, pensado para iniciarse sin gastar millones. ¿Te suena?"
-            `;
+- **Precio:** Si te preguntan, di "${PRODUCT.priceLabel}" (tal cual).
+- **Entrega:** Si preguntan cuándo llega, usa el tiempo de entrega de la oferta y aclara que depende de la ciudad. No prometas fechas exactas.
+- **Contenido:** Si preguntan qué trae la caja, enumera el contenido exacto. No agregues nada que no esté en la lista.
+- **Garantía vs. retracto:** La garantía cubre fallas de funcionamiento; el retracto es el derecho a devolver tras la entrega. Si preguntan "¿y si no me gusta?", menciona el retracto y remite a ${PRODUCT.supportEmail}.
+- **Pago:** El único medio es contraentrega. Si piden tarjeta o transferencia anticipada, explica que se paga al recibir.
+- **Si no sabes algo:** dilo con franqueza y ofrece ${PRODUCT.supportEmail}. Nunca inventes.
+
+TOMA DE PEDIDOS (PROTOCOLO OBLIGATORIO):
+1. Solo entra en modo pedido si el usuario dice explícitamente que quiere comprar.
+2. Pide los datos: Nombre completo, Email, Celular, Ciudad y Dirección. Uno o dos por mensaje, sin abrumar.
+3. Cuando los tengas todos, **muestra el resumen completo** en un mensaje: los cinco datos, el precio ${PRODUCT.priceLabel}, ${PRODUCT.paymentMethod.toLowerCase()} y ${PRODUCT.shipping.toLowerCase()}.
+4. Pregunta explícitamente si confirma que registres el pedido.
+5. Solo tras un "sí" claro llama a \`create_cod_order\` con customerConfirmed=true.
+6. "Me interesa", "suena bien", "puede ser" o "listo" a secas **NO son confirmación**.
+7. Si corrige un dato, vuelve a mostrar el resumen completo antes de confirmar.
+8. Nunca llames a \`create_cod_order\` con customerConfirmed=true si el usuario no confirmó el resumen.
+
+EJEMPLO DE CHAT IDEAL:
+- Usuario: "Hola"
+- Marco: "¡Hola! ¿Amante del café? ☕ ¿Qué tal preparas tus mañanas hoy en día?"
+- Usuario: "Con nescafé"
+- Marco: "¡Uff, te entiendo! El instantáneo salva, pero nada le gana al aroma de un grano recién molido. ¿Has pensado en dar el salto a una máquina de espresso?"
+- Usuario: "Sí, pero son caras"
+- Marco: "Suelen serlo. Coffee Maker Pro incluye máquina, molino, guía y accesorios por ${PRODUCT.priceLabel}, pensada para empezar sin gastar millones. ¿Te suena?"
+`;
             
             // 2. Definir la Herramienta (Tool) para Gemini
             // Usamos 'any' para evitar conflictos de tipos con la versión instalada del SDK
@@ -44,7 +65,7 @@ DIRECTRICES TÉCNICAS:
                 functionDeclarations: [
                   {
                     name: "create_cod_order",
-                    description: "Creates a Cash on Delivery (COD) order for the Coffee Maker Pro Pack. Use this IMMEDIATELY when you have collected the user's Full Name, Email, Phone, City, and Address.",
+                    description: "Registra el pedido contraentrega del kit Coffee Maker Pro. Úsala SOLO después de haber mostrado al cliente el resumen completo del pedido y de haber recibido una confirmación explícita e inequívoca de ese resumen.",
                     parameters: {
                       type: "OBJECT",
                       properties: {
@@ -53,8 +74,12 @@ DIRECTRICES TÉCNICAS:
                         phone: { type: "STRING", description: "Customer's phone number" },
                         city: { type: "STRING", description: "City for delivery" },
                         address: { type: "STRING", description: "Full delivery address" },
+                        customerConfirmed: {
+                          type: "BOOLEAN",
+                          description: "true únicamente si el cliente ya vio el resumen completo del pedido y lo confirmó de forma explícita. Nunca lo asumas.",
+                        },
                       },
-                      required: ["fullName", "email", "phone", "city", "address"],
+                      required: ["fullName", "email", "phone", "city", "address", "customerConfirmed"],
                     },
                   },
                 ],
@@ -66,7 +91,7 @@ export async function sendMessageToGemini(
     history: { role: string, parts: { text: string }[] }[] = [],
     sessionId?: string
 ) {
-    const apiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
         console.error("API Key is not set");
@@ -75,12 +100,10 @@ export async function sendMessageToGemini(
 
     // 1. Inicialización Lazy de Supabase
     let supabase: any = null;
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-    if (supabaseUrl && supabaseAnonKey) {
-        supabase = createClient(supabaseUrl, supabaseAnonKey);
-    } else {
+    try {
+        const { url, publishableKey } = getSupabaseConfig();
+        supabase = createClient(url, publishableKey);
+    } catch {
         console.warn("⚠️ Supabase credentials needed for chat history persistence are missing.");
     }
 
@@ -90,8 +113,7 @@ export async function sendMessageToGemini(
             try {
                 const { error: sessionError } = await supabase
                     .from('chat_sessions')
-                    .insert({ id: sessionId })
-                    .select();
+                    .insert({ id: sessionId });
 
                 if (sessionError && sessionError.code !== '23505') { 
                      console.error("Error creating session:", sessionError);
@@ -152,7 +174,10 @@ export async function sendMessageToGemini(
             const fnName = call.name || call.functionCall?.name;
             const fnArgs = call.args || call.functionCall?.args;
 
-            if (fnName === "create_cod_order") {
+            if (fnName === "create_cod_order" && fnArgs.customerConfirmed !== true) {
+                // El modelo intentó crear el pedido sin confirmación explícita del resumen.
+                finalResponseText = `Antes de registrarlo, confirmemos los datos:\n\n**Kit ${PRODUCT.name}** — ${PRODUCT.priceLabel}\n- Nombre: ${fnArgs.fullName}\n- Celular: ${fnArgs.phone}\n- Ciudad: ${fnArgs.city}\n- Dirección: ${fnArgs.address}\n- Correo: ${fnArgs.email}\n\n${PRODUCT.paymentMethod} y ${PRODUCT.shipping.toLowerCase()}. ¿Confirmas que registre el pedido?`;
+            } else if (fnName === "create_cod_order") {
                 console.log("🤖 Gemini triggering order creation:", fnArgs);
 
                 // Ejecutamos la Server Action real

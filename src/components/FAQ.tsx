@@ -1,25 +1,26 @@
 import React, { useState } from 'react';
 import { Plus, Minus } from 'lucide-react';
+import { PRODUCT } from '@/lib/product';
 
 const FAQ: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const faqs = [
     {
-      question: "¿Qué diferencia hay entre 15 y 20 bares?",
-      answer: "La gran diferencia está en la extracción. Coffee Maker Pro utiliza 20 bares (5 más que el estándar del mercado), lo que garantiza una presión superior para extraer todos los aceites esenciales del grano. El resultado es un espresso con más cuerpo, un aroma más intenso y esa crema dorada y espesa que caracteriza al café de especialidad."
+      question: "¿Necesito experiencia para usarla?",
+      answer: "No. Puedes comenzar con la guía incluida y ajustar la molienda, la cantidad de café y el tiempo de extracción según tu gusto. Como cualquier método de espresso, los resultados mejoran con unas pocas preparaciones de práctica."
     },
     {
       question: "¿Qué viene incluido en la caja?",
-      answer: "Tu experiencia barista está completa desde el día uno. Recibirás: 1x Máquina Coffee Maker Pro 850W, 1x Mango portafiltro profesional, 1x Filtro sencillo (1 taza), 1x Filtro doble (2 tazas), 1x Cuchara medidora con compactador (tamper) y el manual de uso."
+      answer: `Recibirás: ${PRODUCT.boxContents.join(', ')}.`
     },
     {
       question: "¿Cómo funciona la garantía y devoluciones?",
-      answer: "Comprando en Todopolis tienes doble respaldo: 30 días de Garantía de Satisfacción (si no te enamora, la devuelves) y 3 meses de Garantía Técnica directa por cualquier defecto de fabricación. Tu inversión está 100% protegida."
+      answer: `${PRODUCT.name} cuenta con ${PRODUCT.warranty}, que cubre fallas de funcionamiento. Además tienes ${PRODUCT.withdrawalRight.toLowerCase()}. En cualquiera de los dos casos escríbenos a ${PRODUCT.supportEmail} y te orientamos con el proceso.`
     },
     {
       question: "¿Cuánto tarda el envío y cómo pago?",
-      answer: "El envío es GRATIS a todo el país y tarda entre 2 a 5 días hábiles con transportadoras certificadas (Servientrega, Envia, Interrapidisimo). Lo mejor es que manejamos Pago Contraentrega: no pagas nada hasta que recibes el producto en la puerta de tu casa."
+      answer: `${PRODUCT.shipping} y normalmente tarda entre ${PRODUCT.deliveryEstimate}. Puedes pagar contraentrega al recibir tu pedido.`
     }
   ];
 

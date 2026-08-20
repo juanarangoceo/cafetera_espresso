@@ -1,5 +1,6 @@
 import React from 'react';
 import { X } from 'lucide-react';
+import Image from 'next/image';
 
 interface ImageModalProps {
   src: string;
@@ -16,12 +17,13 @@ const ImageModal: React.FC<ImageModalProps> = ({ src, alt, onClose }) => {
       >
         <X size={32} />
       </button>
-      <div className="relative max-w-5xl w-full max-h-[90vh] flex items-center justify-center">
-        <img 
+      <div className="relative h-[85vh] max-w-5xl w-full" onClick={(event) => event.stopPropagation()}>
+        <Image
           src={src} 
           alt={alt} 
-          className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
-          onClick={(e) => e.stopPropagation()} 
+          fill
+          sizes="90vw"
+          className="rounded-lg object-contain shadow-2xl"
         />
       </div>
     </div>

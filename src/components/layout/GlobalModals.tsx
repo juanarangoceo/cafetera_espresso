@@ -35,7 +35,6 @@ export default function GlobalModals() {
         <ImageModal 
           src={selectedImage.src} 
           alt={selectedImage.alt} 
-          isOpen={true} 
           onClose={closeImage} 
         />
       )}

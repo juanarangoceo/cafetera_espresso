@@ -1,0 +1,76 @@
+import Script from 'next/script'
+import { GoogleAnalytics } from '@next/third-parties/google'
+import type { Metadata } from "next";
+import { Inter, Fraunces, JetBrains_Mono } from "next/font/google";
+import "./globals.css";
+import { SpeedInsights } from "@vercel/speed-insights/next"
+
+const inter = Inter({
+    subsets: ["latin"],
+    variable: "--font-inter",
+    display: "swap",
+    adjustFontFallback: true,
+});
+
+const fraunces = Fraunces({
+    subsets: ["latin"],
+    variable: "--font-fraunces",
+    display: "swap",
+    adjustFontFallback: true,
+});
+
+const jetbrains = JetBrains_Mono({
+    subsets: ["latin"],
+    variable: "--font-jetbrains",
+    display: "swap",
+    adjustFontFallback: true,
+});
+
+export const metadata: Metadata = {
+    title: "Coffee Maker Pro | Café con calidad de cafetería en casa",
+    description: "Prepara espresso, cappuccino y latte en casa con Coffee Maker Pro. Kit con molino incluido, envío gratis y pago contraentrega en Colombia.",
+};
+
+
+import ClientLayout from '@/components/layout/ClientLayout';
+import { getSiteConfig } from '@/lib/site-config';
+
+export default async function RootLayout({
+    children,
+}: Readonly<{
+    children: React.ReactNode;
+}>) {
+    // Qué asistentes se muestran, y si la landing sigue conectada, es
+    // configuración que administra la plataforma. Se revalida por tiempo, así
+    // que un cambio en el panel tarda hasta un minuto en verse aquí.
+    const site = await getSiteConfig();
+
+    return (
+        <html lang="es" className={`${inter.variable} ${fraunces.variable} ${jetbrains.variable}`} suppressHydrationWarning>
+            <head>
+                <link rel="preconnect" href="https://www.transparenttextures.com" />
+            </head>
+            <body className="font-sans antialiased text-coffee-900 bg-coffee-50" suppressHydrationWarning>
+                <ClientLayout site={site}>
+                    {children}
+                </ClientLayout>
+                <SpeedInsights />
+                <GoogleAnalytics gaId="G-HKC4P9Y4N7" />
+                <Script id="facebook-pixel" strategy="afterInteractive">
+          {`
+            !function(f,b,e,v,n,t,s)
+            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t,s)}(window, document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '562585775680913');
+            fbq('track', 'PageView');
+          `}
+        </Script>
+            </body>
+        </html>
+    );
+}

@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { User, Phone, MapPin, CheckCircle, Loader2, Navigation, Home, ShieldCheck, Lock } from 'lucide-react';
 import { createOrder } from '@/app/actions/order';
+import { PRODUCT } from '@/lib/product';
 
 const formSchema = z.object({
   fullName: z.string().min(3, 'El nombre debe tener al menos 3 caracteres'),
@@ -13,6 +14,9 @@ const formSchema = z.object({
   phone: z.string().min(10, 'El teléfono debe tener al menos 10 dígitos'),
   city: z.string().min(1, 'La ciudad es requerida'),
   address: z.string().min(1, 'La dirección es requerida'),
+  dataConsent: z.literal(true, {
+    message: 'Debes autorizar el tratamiento de tus datos para continuar',
+  }),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -30,7 +34,7 @@ export default function CODForm() {
     resolver: zodResolver(formSchema),
   });
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async ({ dataConsent: _consent, ...data }: FormData) => {
     setIsLoading(true);
     setErrorMessage(null);
 
@@ -73,7 +77,7 @@ export default function CODForm() {
       <div className="bg-coffee-50 border border-coffee-100 p-4 rounded-xl mb-6">
         <div className="flex items-center gap-2 mb-1">
             <ShieldCheck className="text-green-600" size={20} />
-            <h3 className="font-bold text-coffee-900">Solicitar Envío de mi Estación de Café</h3>
+            <h3 className="font-bold text-coffee-900">Solicitar envío de mi Coffee Maker Pro</h3>
         </div>
         <p className="text-sm text-coffee-600">Perfecta para transformar tus mañanas en casa o elevar el nivel de tu oficina. Paga al recibir.</p>
       </div>
@@ -160,6 +164,26 @@ export default function CODForm() {
           )}
         </div>
 
+        <div className="rounded-xl border border-coffee-100 bg-coffee-50/40 p-3">
+          <label htmlFor="dataConsent" className="flex cursor-pointer items-start gap-3 text-xs leading-5 text-coffee-700">
+            <input
+              id="dataConsent"
+              type="checkbox"
+              {...register('dataConsent')}
+              className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-coffee-900"
+            />
+            <span>
+              Autorizo a {PRODUCT.name} a tratar mis datos personales para gestionar
+              este pedido, coordinar la entrega y brindar soporte posventa. Puedo
+              consultar, actualizar o solicitar la eliminación de mis datos
+              escribiendo a {PRODUCT.supportEmail}.
+            </span>
+          </label>
+          {errors.dataConsent && (
+            <p className="ml-7 mt-1.5 text-xs font-medium text-red-500">{errors.dataConsent.message}</p>
+          )}
+        </div>
+
         {errorMessage && (
           <div className="p-3 bg-red-50 text-red-600 rounded-lg text-sm border border-red-100">
             {errorMessage}
@@ -169,7 +193,7 @@ export default function CODForm() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full py-4 mt-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-lg font-bold shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-coffee-950 py-4 text-lg font-bold text-white shadow-lg transition-all hover:bg-coffee-800 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
         >
           {isLoading ? (
             <>
@@ -180,12 +204,12 @@ export default function CODForm() {
           )}
         </button>
         <p className="text-xs text-center text-gray-500 mt-2 px-4">
-            🔒 Garantía de Satisfacción: Si el café no te sabe a gloria, tienes 30 días de devolución.
+            {PRODUCT.warranty} · Pago al recibir
         </p>
       </form>
 
       <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-400">
-        <Lock size={12} /> Tus datos están encriptados SSL
+        <Lock size={12} /> Conexión cifrada. Usamos tus datos solo para gestionar el pedido
       </div>
     </div>
   );

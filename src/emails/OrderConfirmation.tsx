@@ -4,7 +4,6 @@ import {
   Head,
   Heading,
   Html,
-  Img,
   Preview,
   Section,
   Text,
@@ -14,37 +13,43 @@ import {
 import React from 'react';
 
 interface OrderConfirmationProps {
+  siteName: string;
+  productName: string;
   fullName: string;
   totalPrice: number;
   paymentMethod: string;
   city: string;
-  orderId?: string;
+  orderId: string;
 }
 
 export const OrderConfirmation = ({
-  fullName = 'Amante del Café',
-  totalPrice = 490000,
+  siteName,
+  productName,
+  fullName,
+  totalPrice,
   paymentMethod = 'Contraentrega',
   city = 'Bogotá',
-  orderId = 'PENDIENTE',
+  orderId,
 }: OrderConfirmationProps) => {
+  const firstName = fullName.trim().split(/\s+/)[0] || 'cliente';
+
   return (
     <Html>
       <Head />
-      <Preview>¡Tu pedido de Coffee Maker Pro está confirmado!</Preview>
+      <Preview>Tu pedido en {siteName} está confirmado.</Preview>
       <Tailwind
         config={{
           theme: {
             extend: {
               colors: {
-                coffee: {
-                  50: '#fcf9f6',
-                  100: '#f6f0ea',
-                  600: '#834d3b',
-                  900: '#58362e',
+                ink: {
+                  50: '#f8fafc',
+                  100: '#e2e8f0',
+                  600: '#475569',
+                  900: '#0f172a',
                 },
-                gold: {
-                  500: '#cc9710',
+                accent: {
+                  500: '#f59e0b',
                 },
               },
             },
@@ -53,68 +58,61 @@ export const OrderConfirmation = ({
       >
         <Body className="bg-white font-sans">
           <Container className="mx-auto py-10 px-4 max-w-xl">
-            {/* Header / Logo */}
             <Section className="mb-8 text-center">
-             {/* Replace with your actual logo URL usually hosted on public bucket or website */}
-             <Heading className="text-3xl font-serif font-bold text-coffee-900 m-0">
-               Coffee<span className="text-gold-500">Maker</span>Pro
-             </Heading>
+              <Heading className="m-0 text-3xl font-bold text-ink-900">{siteName}</Heading>
             </Section>
 
-            {/* Main Card */}
-            <Section className="bg-coffee-50 border border-coffee-100 rounded-2xl p-8 shadow-sm">
-              <Heading className="text-2xl font-bold text-coffee-900 mb-4 text-center">
-                ¡Gracias por tu compra, {fullName.split(' ')[0]}! ☕
+            <Section className="rounded-2xl border border-ink-100 bg-ink-50 p-8 shadow-sm">
+              <Heading className="mb-4 text-center text-2xl font-bold text-ink-900">
+                ¡Gracias por tu compra, {firstName}!
               </Heading>
-              
-              <Text className="text-coffee-600 text-base leading-relaxed text-center mb-8">
-                Hemos recibido tu pedido correctamente. Estamos preparando tu <strong>Pack Barista</strong> para que inicies tu viaje en el mundo del café de especialidad.
+
+              <Text className="mb-8 text-center text-base leading-relaxed text-ink-600">
+                Recibimos correctamente tu pedido de <strong>{productName}</strong>. El equipo de{' '}
+                {siteName} continuará con la preparación y entrega.
               </Text>
 
-              <Hr className="border-coffee-100 my-6" />
+              <Hr className="my-6 border-ink-100" />
 
-              {/* Order Details */}
-              <Section className="bg-white rounded-xl p-6 border border-coffee-100">
-                <Text className="text-xs uppercase tracking-wider font-bold text-coffee-600 mb-4">
+              <Section className="rounded-xl border border-ink-100 bg-white p-6">
+                <Text className="mb-4 text-xs font-bold uppercase tracking-wider text-ink-600">
                   Resumen del Pedido
                 </Text>
-                
+
                 <div className="flex justify-between items-center mb-3">
-                  <Text className="text-coffee-900 m-0 font-medium">Cafetera Espresso Pro + Kit Regalo</Text>
-                  <Text className="text-coffee-900 m-0 font-bold">$490.000</Text>
+                  <Text className="m-0 font-medium text-ink-900">{productName}</Text>
+                  <Text className="m-0 font-bold text-ink-900">
+                    ${totalPrice.toLocaleString('es-CO')}
+                  </Text>
                 </div>
-                 <div className="flex justify-between items-center mb-3">
-                  <Text className="text-coffee-900 m-0 font-medium">Envío</Text>
-                  <Text className="text-green-600 m-0 font-bold">Gratis</Text>
-                </div>
-                
-                <Hr className="border-dashed border-coffee-100 my-4" />
-                
+
+                <Hr className="my-4 border-dashed border-ink-100" />
+
                 <div className="flex justify-between items-center">
-                  <Text className="text-lg font-bold text-coffee-900 m-0">Total</Text>
-                  <Text className="text-xl font-bold text-gold-500 m-0">
+                  <Text className="m-0 text-lg font-bold text-ink-900">Total</Text>
+                  <Text className="m-0 text-xl font-bold text-accent-500">
                     ${totalPrice.toLocaleString('es-CO')}
                   </Text>
                 </div>
               </Section>
 
               <Section className="mt-6">
-                <Text className="text-sm text-coffee-600 m-0 mb-2">
+                <Text className="m-0 mb-2 text-sm text-ink-600">
+                  <strong>Número de pedido:</strong> {orderId}
+                </Text>
+                <Text className="m-0 mb-2 text-sm text-ink-600">
                   <strong>Método de Pago:</strong> {paymentMethod} (Pagas al recibir)
                 </Text>
-                <Text className="text-sm text-coffee-600 m-0">
+                <Text className="m-0 text-sm text-ink-600">
                   <strong>Ciudad de Destino:</strong> {city}
                 </Text>
               </Section>
             </Section>
 
-            {/* Footer */}
             <Section className="text-center mt-8">
-              <Text className="text-sm text-coffee-600 mb-2">
-                ¿Tienes alguna duda? Responde a este correo.
-              </Text>
-              <Text className="text-xs text-coffee-400">
-                © 2024 Coffee Maker Pro. Todos los derechos reservados.
+              <Text className="text-xs text-ink-600">
+                Este mensaje confirma la recepción del pedido. {siteName} podrá contactarte para
+                coordinar la entrega.
               </Text>
             </Section>
           </Container>

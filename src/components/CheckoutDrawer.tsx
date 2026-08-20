@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { X, CheckCircle2, Coffee, Gift, BookOpen, Star } from 'lucide-react';
+import { X, CheckCircle2, Coffee, Gift, BookOpen } from 'lucide-react';
 import CODForm from './CODForm';
+import Image from 'next/image';
+import { PRODUCT } from '@/lib/product';
 
 interface CheckoutDrawerProps {
   isOpen: boolean;
@@ -44,8 +46,7 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({ isOpen, onClose }) => {
         {/* Header */}
         <div className="bg-white border-b border-coffee-100 p-4 flex justify-between items-center shadow-sm z-10">
           <div className="flex items-center gap-2 text-coffee-900">
-            {/* Logo Replaced */}
-            <img src="/images/logo-chekout.jpg" alt="Logo Checkout" className="h-8 w-auto object-contain" />
+            <Coffee className="h-6 w-6 text-gold-600" />
             <span className="font-bold text-sm tracking-wide uppercase">Resumen del Pedido</span>
           </div>
           <button 
@@ -61,19 +62,16 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({ isOpen, onClose }) => {
             
             {/* 1. Hero Product Summary */}
             <div className="bg-white rounded-2xl p-4 shadow-sm border border-coffee-100 relative overflow-hidden group">
-                 <div className="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl z-10 animate-pulse">
-                    AHORRAS $700k
+                <div className="absolute top-0 right-0 bg-coffee-900 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl z-10">
+                    MOLINO INCLUIDO
                 </div>
                 <div className="flex gap-4 items-center">
                     <div className="w-24 h-24 bg-coffee-100 rounded-xl overflow-hidden shrink-0 border border-coffee-200">
-                        <img src="/images/logo-chekout.jpg" className="w-full h-full object-contain" alt="Kit Barista" />
+                        <Image src="/images/hero-mobile.webp" width={96} height={96} className="h-full w-full object-contain mix-blend-multiply" alt="Coffee Maker Pro" />
                     </div>
                     <div>
-                        <h3 className="font-serif font-bold text-coffee-900 text-lg leading-tight">Kit Barista Pro Edición Limitada</h3>
-                        <div className="flex items-center gap-1 mt-1">
-                             <Star size={12} className="text-gold-500 fill-gold-500" />
-                             <span className="text-xs text-coffee-500 font-bold">4.9/5 (1.2k reseñas)</span>
-                        </div>
+                        <h3 className="font-serif font-bold text-coffee-900 text-lg leading-tight">Kit Coffee Maker Pro</h3>
+                        <p className="mt-1 text-xs font-medium text-coffee-500">Máquina, molino y guía de preparación</p>
                     </div>
                 </div>
             </div>
@@ -81,7 +79,7 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({ isOpen, onClose }) => {
             {/* 2. The Value Stack (What they get) */}
             <div>
                 <h4 className="font-bold text-coffee-900 mb-3 text-sm uppercase tracking-wider flex items-center gap-2">
-                    <CheckCircle2 size={16} className="text-green-600" /> Tu Pack Incluye:
+                    <CheckCircle2 size={16} className="text-green-600" /> Tu kit incluye:
                 </h4>
                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-coffee-100 space-y-4">
                     
@@ -91,10 +89,10 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({ isOpen, onClose }) => {
                             <div className="bg-coffee-100 p-2 rounded-lg text-coffee-700"><Coffee size={18} /></div>
                             <div>
                                 <p className="font-bold text-coffee-900 text-sm">Cafetera Coffee Maker Pro</p>
-                                <p className="text-xs text-coffee-500">Garantía 1 Año</p>
+                                <p className="text-xs text-coffee-500">{PRODUCT.warranty}</p>
                             </div>
                         </div>
-                        <span className="text-sm font-bold text-coffee-900">$490.000</span>
+                        <span className="text-sm font-bold text-coffee-900">{PRODUCT.priceLabel}</span>
                     </div>
 
                     {/* Item 2 (GIFT) */}
@@ -102,13 +100,12 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({ isOpen, onClose }) => {
                         <div className="flex items-center gap-3">
                             <div className="bg-green-100 p-2 rounded-lg text-green-600"><Gift size={18} /></div>
                             <div>
-                                <p className="font-bold text-coffee-900 text-sm">🎁 Regalo: Molino Eléctrico</p>
-                                <p className="text-xs text-green-600 font-bold">¡Ahorras $180.000!</p>
+                                <p className="font-bold text-coffee-900 text-sm">Molino eléctrico incluido</p>
+                                <p className="text-xs text-green-600 font-bold">Parte del kit completo</p>
                             </div>
                         </div>
                         <div className="text-right">
-                            <span className="block text-xs text-red-400 line-through">$180.000</span>
-                            <span className="block text-sm font-bold text-green-600">GRATIS</span>
+                            <span className="block text-sm font-bold text-green-600">INCLUIDO</span>
                         </div>
                     </div>
 
@@ -117,13 +114,12 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({ isOpen, onClose }) => {
                         <div className="flex items-center gap-3">
                             <div className="bg-green-100 p-2 rounded-lg text-green-600"><BookOpen size={18} /></div>
                             <div>
-                                <p className="font-bold text-coffee-900 text-sm">🎁 Regalo: E-book Barista</p>
-                                <p className="text-xs text-green-600 font-bold">Curso Digital</p>
+                                <p className="font-bold text-coffee-900 text-sm">Guía de preparación</p>
+                                <p className="text-xs text-green-600 font-bold">Formato digital</p>
                             </div>
                         </div>
                          <div className="text-right">
-                            <span className="block text-xs text-red-400 line-through"></span>
-                            <span className="block text-sm font-bold text-green-600">GRATIS</span>
+                            <span className="block text-sm font-bold text-green-600">INCLUIDA</span>
                         </div>
                     </div>
 
@@ -135,12 +131,16 @@ const CheckoutDrawer: React.FC<CheckoutDrawerProps> = ({ isOpen, onClose }) => {
                 <div className="bg-coffee-50 p-4 border-b border-coffee-100 flex justify-between items-center">
                     <span className="text-coffee-500 text-sm font-medium">Total a Pagar:</span>
                     <div className="text-right">
-                        <span className="text-xs text-red-400 line-through mr-2 font-medium">$1.190.000</span>
-                        <span className="text-2xl font-serif font-bold text-coffee-900">$490.000</span>
+                        <span className="text-2xl font-serif font-bold text-coffee-900">{PRODUCT.priceLabel}</span>
                     </div>
                 </div>
                 <CODForm />
             </div>
+
+            <p className="text-center text-xs leading-5 text-coffee-500">
+              ¿Necesitas ayuda antes de pedir? Escríbenos a{' '}
+              <a href={`mailto:${PRODUCT.supportEmail}`} className="font-bold text-coffee-800 underline underline-offset-2">{PRODUCT.supportEmail}</a>
+            </p>
             
         </div>
       </div>

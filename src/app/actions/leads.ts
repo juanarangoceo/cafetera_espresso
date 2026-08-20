@@ -1,72 +1,94 @@
 'use server';
 
-import { createClient } from "@supabase/supabase-js";
-import { z } from "zod";
+import { z } from 'zod';
+import { createServiceClient } from '@/utils/supabase/service';
+import { activeSiteSlug } from '@/lib/site-config';
+
+/**
+ * Captación de correos de la landing.
+ *
+ * Mismos dos modos que `createOrder`: con `NITRO_SITE_KEY` reenvía a la API de
+ * la plataforma —la landing de un cliente no tiene claves de Supabase—, y sin
+ * ella escribe directo resolviendo su propio sitio.
+ *
+ * El correo se atribuye siempre a un sitio. `leads` era único por correo a
+ * secas, de modo que la misma persona suscrita en dos landings distintas hacía
+ * fallar la segunda; ahora la unicidad es por sitio.
+ */
 
 const leadSchema = z.object({
-  email: z.string().email({ message: "Por favor ingresa un email válido." }),
+  email: z.string().email({ message: 'Por favor ingresa un email válido.' }),
 });
 
-export async function subscribeToMasterclass(prevState: any, formData: FormData) {
-  const email = formData.get("email");
+type LeadResult = { success: boolean; message: string };
 
-  // Validate email
-  const validation = leadSchema.safeParse({ email });
+export async function subscribeToMasterclass(
+  _previous: unknown,
+  formData: FormData,
+): Promise<LeadResult> {
+  const validation = leadSchema.safeParse({ email: formData.get('email') });
 
   if (!validation.success) {
-    return {
-      success: false,
-      message: validation.error.issues[0].message,
-    };
+    return { success: false, message: validation.error.issues[0].message };
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const email = validation.data.email.toLowerCase();
+  const siteKey = process.env.NITRO_SITE_KEY?.trim();
 
-  if (!supabaseUrl || !supabaseAnonKey) {
-    console.error("Missing Supabase credentials");
-    return {
-      success: false,
-      message: "Error de configuración del servidor.",
-    };
-  }
-
-  const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-  try {
-    const { error } = await supabase
-      .from("leads")
-      .insert({
-        email: validation.data.email,
-        source: "ebook_barista_guide",
-      });
-
-    if (error) {
-      console.error("Supabase error inserting lead:", error);
-      if (error.code === "23505") { // Unique violation
-        return {
-          success: true, // Treat duplicate as success for UX (idempotent)
-          message: "¡Ya te habías registrado! Revisa tu bandeja de entrada (o spam).",
-        };
-      }
-      if (error.code === "42P01") { // Undefined table
-         return {
-            success: false,
-            message: "Error de sistema: La tabla de registros no existe. Contacta al soporte.",
-         }
-      }
-      throw error;
+  if (siteKey) {
+    const endpoint = process.env.NITRO_API_URL?.trim();
+    if (!endpoint) {
+      console.error('❌ CRITICAL: hay NITRO_SITE_KEY pero falta NITRO_API_URL.');
+      return { success: false, message: 'Error de configuración del servidor.' };
     }
 
-    return {
-      success: true,
-      message: "¡Genial! Tu Masterclass ha sido enviada a tu correo.",
-    };
-  } catch (error: any) {
-    console.error("Error subscribing lead:", error);
-    return {
-      success: false,
-      message: error.message || "Hubo un error al guardar tu contacto. Intenta de nuevo.",
-    };
+    try {
+      const response = await fetch(`${endpoint.replace(/\/$/, '')}/api/v1/leads`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${siteKey}` },
+        body: JSON.stringify({ email }),
+        cache: 'no-store',
+      });
+      return (await response.json()) as LeadResult;
+    } catch (error) {
+      console.error('❌ No se pudo alcanzar la plataforma:', error);
+      return { success: false, message: 'Hubo un error al guardar tu contacto. Intenta de nuevo.' };
+    }
   }
+
+  const service = createServiceClient();
+  if (!service) {
+    console.error('❌ CRITICAL: falta SUPABASE_SECRET_KEY, no hay camino de escritura para correos.');
+    return { success: false, message: 'Error de configuración del servidor.' };
+  }
+
+  const { data: site } = await service
+    .from('sites')
+    .select('id')
+    .eq('slug', activeSiteSlug())
+    .maybeSingle();
+
+  const { error } = await service.from('leads').insert({
+    email,
+    source: 'ebook_barista_guide',
+    // Sin sitio resuelto actúa el valor por defecto de la columna: mejor eso
+    // que perder el correo por un identificador inválido.
+    ...(site ? { site_id: site.id } : {}),
+  });
+
+  if (error) {
+    // Volver a suscribirse no es un fallo que el visitante deba resolver: ya
+    // está en la lista. Se responde como éxito a propósito.
+    if (error.code === '23505') {
+      return {
+        success: true,
+        message: '¡Ya te habías registrado! Revisa tu bandeja de entrada (o spam).',
+      };
+    }
+
+    console.error('❌ No se pudo guardar el correo captado:', error);
+    return { success: false, message: 'Hubo un error al guardar tu contacto. Intenta de nuevo.' };
+  }
+
+  return { success: true, message: '¡Genial! Tu Masterclass ha sido enviada a tu correo.' };
 }

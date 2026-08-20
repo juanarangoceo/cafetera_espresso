@@ -1,92 +1,125 @@
 'use server';
 
-import { z } from 'zod';
-import { createClient } from '@supabase/supabase-js';
-import { sendOrderConfirmationEmail } from './email';
+import { checkBotId } from 'botid/server';
+import { createServiceClient } from '@/utils/supabase/service';
+import { activeSiteSlug } from '@/lib/site-config';
+import { PRODUCT } from '@/lib/product';
+import { createOrderForSite, resolveSiteFromSlug, type IntakeResult } from '@/lib/orders-intake';
 
-const orderSchema = z.object({
-  fullName: z.string().min(3, 'El nombre debe tener al menos 3 caracteres'),
-  email: z.string().email('Ingresa un correo válido'),
-  phone: z.string().min(10, 'El teléfono debe tener al menos 10 dígitos'),
-  city: z.string().min(1, 'La ciudad es requerida'),
-  address: z.string().min(1, 'La dirección es requerida'),
-});
+/**
+ * Creación de pedidos desde la landing.
+ *
+ * Sigue siendo el punto por donde entran los tres canales —formulario, chat y
+ * voz—, pero la lógica de escritura ya no vive aquí: se comparte con la API de
+ * ingesta en `src/lib/orders-intake.ts`, para que una landing de cliente en
+ * otro proyecto de Vercel no acabe con una copia divergente de las
+ * validaciones.
+ *
+ * Lo que sí se queda aquí es BotID, y tiene que quedarse: protege la ruta donde
+ * está el formulario, y esa ruta vive en el proyecto de la landing.
+ *
+ * Dos modos, según el entorno:
+ *
+ *   `NITRO_SITE_KEY` presente → landing de cliente. Reenvía a la API con su
+ *   llave y no toca Supabase, porque no tiene ninguna clave para hacerlo.
+ *
+ *   Sin esa variable → landing y plataforma comparten despliegue, que es el
+ *   caso de Coffee Maker Pro. Resuelve el sitio por su slug y escribe directo.
+ */
 
-export async function createOrder(formData: any) {
-  // 1. Validar variables de entorno CRITICAS para Vercel/Local
-  // Se hace dentro de la función para no romper el build estático si faltan en build time
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+async function forwardToPlatform(formData: unknown, siteKey: string): Promise<IntakeResult> {
+  const endpoint = process.env.NITRO_API_URL?.trim();
 
-  if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('❌ CRITICAL: Supabase environment variables are missing.');
-    console.error('URL:', supabaseUrl ? 'Set' : 'Missing');
-    console.error('KEY:', supabaseAnonKey ? 'Set' : 'Missing');
-    return { 
-      success: false, 
-      message: 'Error de configuración del servidor. Por favor contacta al soporte.' 
-    };
-  }
-
-  // 2. Validar Input del Usuario
-  const validation = orderSchema.safeParse(formData);
-
-  if (!validation.success) {
+  if (!endpoint) {
+    console.error('❌ CRITICAL: hay NITRO_SITE_KEY pero falta NITRO_API_URL.');
     return {
       success: false,
-      errors: validation.error.flatten().fieldErrors,
+      message: 'Error de configuración del servidor. Por favor contacta al soporte.',
     };
   }
 
-  // 3. Inicializar Cliente
-  const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
   try {
-    // 4. Insertar en Supabase y CAPTURAR ERROR EXPLICITAMENTE
-    const { error } = await supabase
-      .from('orders_cod')
-      .insert([
-        {
-          full_name: validation.data.fullName,
-          email: validation.data.email.toLowerCase(),
-          phone: validation.data.phone,
-          city: validation.data.city,
-          address: validation.data.address,
-          total_price: 490000, // Hardcoded por ahora ya que es producto único
-          status: 'pending'
-        },
-      ]);
+    const response = await fetch(`${endpoint.replace(/\/$/, '')}/api/v1/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${siteKey}`,
+      },
+      body: JSON.stringify(formData),
+      cache: 'no-store',
+    });
 
-    // 5. Manejo de Errores de Supabase
-    if (error) {
-        console.error("❌ Supabase Insert Error:", error); // Log detallado para Vercel
-        return { 
-            success: false, 
-            message: 'Hubo un error guardando el pedido. Intenta nuevamente.' 
-        };
+    const result = (await response.json()) as IntakeResult;
+
+    // Un 401 significa que la llave de esta landing no sirve. Al comprador no
+    // le dice nada, pero en los registros tiene que ser inconfundible: sin
+    // llave válida esta landing no vende.
+    if (response.status === 401) {
+      console.error('❌ CRITICAL: la plataforma rechazó la llave de este sitio.');
+      return {
+        success: false,
+        message: 'Error de configuración del servidor. Por favor contacta al soporte.',
+      };
     }
 
-    // 6. Enviar Correo de Confirmación (Fire and Forget / Non-blocking)
-    // No bloqueamos el retorno exitoso si el correo falla, pero lo intentamos.
-    try {
-      await sendOrderConfirmationEmail({
-        fullName: validation.data.fullName,
-        email: validation.data.email,
-        totalPrice: 490000,
-        paymentMethod: 'Contraentrega',
-        city: validation.data.city,
-      });
-    } catch (emailErr) {
-      console.error('⚠️ Error sending confirmation email:', emailErr);
-      // No retornamos error al usuario, ya que el pedido SÍ se guardó.
-    }
-
-    // 7. Retorno Exitoso
-    return { success: true, message: 'Pedido confirmado exitosamente' };
-
-  } catch (err: any) {
-    // Catch para errores de red o inesperados (no de Supabase logic per se)
-    console.error('❌ Unexpected Error in createOrder:', err);
+    return result;
+  } catch (error) {
+    console.error('❌ No se pudo alcanzar la plataforma:', error);
     return { success: false, message: 'Error inesperado al procesar el pedido.' };
   }
+}
+
+export async function createOrder(formData: unknown) {
+  // En contraentrega un pedido automatizado se convierte en un despacho físico
+  // y un flete real, así que se descarta antes de tocar nada. En desarrollo
+  // local siempre resuelve como humano.
+  const verification = await checkBotId();
+
+  if (verification.isBot) {
+    console.warn('🤖 Intento de pedido bloqueado por BotID');
+    return {
+      success: false,
+      message: 'No pudimos verificar tu solicitud. Recarga la página e intenta de nuevo.',
+    };
+  }
+
+  const siteKey = process.env.NITRO_SITE_KEY?.trim();
+  if (siteKey) {
+    return forwardToPlatform(formData, siteKey);
+  }
+
+  const service = createServiceClient();
+
+  if (!service) {
+    console.error('❌ CRITICAL: falta SUPABASE_SECRET_KEY, no hay camino de escritura para pedidos.');
+    return {
+      success: false,
+      message: 'Error de configuración del servidor. Por favor contacta al soporte.',
+    };
+  }
+
+  const site = await resolveSiteFromSlug(service, activeSiteSlug());
+
+  if (!site) {
+    console.error(`❌ CRITICAL: no se pudo resolver el sitio "${activeSiteSlug()}" ni su producto.`);
+    return {
+      success: false,
+      message: 'Error de configuración del servidor. Por favor contacta al soporte.',
+    };
+  }
+
+  // `product.ts` sigue siendo la fuente de verdad comercial de la landing y la
+  // base lo es del cobro. Mientras no se separen, deben coincidir; si dejan de
+  // hacerlo, es mejor no vender que vender al precio equivocado.
+  if (site.price !== PRODUCT.price) {
+    console.error(
+      `❌ CRITICAL: el precio de la landing (${PRODUCT.price}) no coincide con el del sitio (${site.price}).`,
+    );
+    return {
+      success: false,
+      message: 'Error de configuración del servidor. Por favor contacta al soporte.',
+    };
+  }
+
+  return createOrderForSite(formData, site);
 }
