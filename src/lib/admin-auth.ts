@@ -4,8 +4,9 @@ import { createClient } from '@/utils/supabase/server';
 /**
  * Quién entra al panel y con qué alcance.
  *
- * `platform` es la operación de Nitro Landing: ve todos los sitios y administra
- * las cuentas de los clientes. `client` es el dueño de una landing: ve la suya.
+ * `platform` es la central corporativa: administra fichas, landings, accesos y
+ * facturación, pero no entra a la operación. `client` ve únicamente los sitios
+ * donde tiene una membresía explícita.
  *
  * La distinción no la decide este archivo. La decide la base: `platform` sale
  * de una fila en `platform_admins`, y lo que un `client` alcanza sale de

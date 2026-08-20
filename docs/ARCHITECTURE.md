@@ -43,9 +43,12 @@ Eliminados del proyecto: Sanity, blog y Shopify. No reintroducir sin solicitud.
 - `src/components/VoiceSalesAssistant.tsx` → `src/lib/marco-voice-prompt.ts` — voz.
 - `src/app/api/realtime/token/route.ts` — credencial efímera de OpenAI.
 
-**Panel de operación y portal del cliente**
+**Central corporativa, panel de operación y portal del comprador**
 
-- `src/app/admin/` — panel Nitro Landing: pedidos, métricas, CRM y canales. Detalle en `ADMIN_DASHBOARD.md`.
+- `src/app/platform/` — central corporativa Nitro: clientes, landings, accesos,
+  llaves, despliegues y facturación. Nunca entrega PII operativa.
+- `src/app/admin/` — panel del cliente: pedidos, métricas, CRM y canales de sus
+  propias landings. Detalle en `ADMIN_DASHBOARD.md`.
 - `src/lib/admin-site.ts` — tienda activa del panel. `src/lib/crm.ts` — etapas del CRM.
 - `src/app/admin/platform-actions.ts` — alta de clientes, usuarios, llaves,
   cuenta y marca. Los logos se validan y suben desde el servidor al bucket
@@ -106,7 +109,7 @@ Orden interno de la función:
 
 | Tabla | Uso | RLS |
 |---|---|---|
-| `orders_cod` | Pedidos contraentrega | Sí. Insert solo `service_role`; lectura del propio correo verificado o de un administrador; `update` solo de `status` y solo administradores. |
+| `orders_cod` | Pedidos contraentrega | Sí. Insert solo `service_role`; lectura del comprador verificado o miembros del sitio; plataforma sin acceso de sesión. |
 | `leads` | Suscripciones | Sí. Insert anónimo permitido. |
 | `chat_sessions` | Sesiones de chat | Sí. Insert anónimo permitido. |
 | `chat_messages` | Historial | Sí. Insert anónimo permitido. |
@@ -116,7 +119,7 @@ Orden interno de la función:
 | `site_members` | Quién pertenece a cada sitio de cliente | Sí. Cada miembro ve los de sus propios sitios. |
 | `site_products` | Producto y precio por sitio | Sí. Lectura pública del activo; escritura solo desde el servidor. |
 | `site_api_keys` | Llaves de ingesta por sitio | Sí, y **sin ninguna política**: solo `service_role` las lee. |
-| `site_accounts` | Cuenta y facturación del cliente | Sí. Solo plataforma. |
+| `clients` | Ficha corporativa, contacto, onboarding y facturación | Sí, sin políticas ni grants de navegador; solo acciones de plataforma con `service_role`. |
 | `order_status_events` | Historial de cambios de estado | Sí. Lo escribe un trigger; nadie lo edita ni lo borra desde la app. |
 | `contacts` | Una ficha por persona, incluidos prospectos sin pedido | Sí. Solo administradores. |
 | `contact_notes` | Notas de seguimiento con autor | Sí. Solo administradores. |
@@ -138,8 +141,9 @@ longitudes acotadas.
 `private.verified_email()` resuelve el correo del usuario **solo si está
 confirmado**, leyendo `auth.users` y no el claim del JWT.
 `private.is_platform_admin()` se apoya en la anterior y comprueba `platform_admins`.
-`private.accessible_site_ids()` devuelve los sitios que la sesión alcanza, y es
-donde se decide la frontera entre clientes. Detalle en `PLATFORM.md`.
+`private.accessible_site_ids()` devuelve únicamente los sitios con una fila en
+`site_members`. Ser `platform_admin` no concede acceso operativo. Detalle en
+`PLATFORM.md`.
 `private.enforce_order_price()` sustituye al `check` de precio, que estaba
 cableado a 490000 e impedía que un segundo cliente vendiera nada.
 `private.record_order_status_event()` escribe el historial de estados.

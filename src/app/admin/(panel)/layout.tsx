@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import { redirect } from 'next/navigation';
 import { LogOut, Zap } from 'lucide-react';
 import { requireAdmin } from '@/lib/admin-auth';
 import { getSelectedSite, listSites } from '@/lib/admin-site';
@@ -26,8 +27,9 @@ export default async function AdminPanelLayout({
   // Corta aquí y en cada página. La barrera real no es esta comprobación sino
   // las políticas RLS: sin ellas, saltarse este `redirect` bastaría.
   const admin = await requireAdmin();
+  if (admin.role === 'platform') redirect('/platform');
   const [sites, site] = await Promise.all([listSites(), getSelectedSite()]);
-  const clientBranding = admin.role === 'client' ? site : null;
+  const clientBranding = site;
 
   return (
     <div className="min-h-screen bg-ink-950 md:flex">
@@ -57,7 +59,7 @@ export default async function AdminPanelLayout({
               )}
             </p>
             <p className="text-xs text-ink-400">
-              {admin.role === 'platform' ? 'Plataforma' : 'Panel de operación'}
+              Panel de operación
             </p>
           </div>
         </div>
@@ -81,7 +83,7 @@ export default async function AdminPanelLayout({
         )}
 
         <div className="px-4 pb-4 md:flex-1">
-          <AdminNav role={admin.role} />
+          <AdminNav />
         </div>
 
         <div className="border-t border-ink-800 px-6 py-4">

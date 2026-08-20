@@ -203,8 +203,8 @@ const { data: allOrders, error: allOrdersError } = await admin
   .from('orders_cod')
   .select('id,email,status');
 if (allOrdersError) throw allOrdersError;
-if ((allOrders?.length ?? 0) < 2) {
-  throw new Error('El administrador no pudo leer los pedidos de todos los clientes.');
+if (allOrders?.length) {
+  throw new Error('La sesión de plataforma pudo leer pedidos de un cliente.');
 }
 
 const { data: updated, error: statusError } = await admin
@@ -213,27 +213,17 @@ const { data: updated, error: statusError } = await admin
   .eq('id', ownOrders[0].id)
   .select('id,status');
 if (statusError) throw statusError;
-if (updated?.[0]?.status !== 'confirmed') {
-  throw new Error('El administrador no pudo cambiar el estado de un pedido.');
+if (updated?.length) {
+  throw new Error('La sesión de plataforma pudo cambiar un pedido de cliente.');
 }
 
-// El permiso está otorgado columna por columna: `status` y nada más.
-const { error: addressTamperError } = await admin
-  .from('orders_cod')
-  .update({ address: 'Dirección reescrita desde el panel' })
-  .eq('id', ownOrders[0].id);
-if (!addressTamperError) {
-  throw new Error('El administrador pudo reescribir la dirección de entrega.');
+const { error: platformClientsError } = await admin.from('clients').select('id');
+if (!platformClientsError) {
+  throw new Error('La sesión del navegador pudo leer la ficha corporativa de clientes.');
 }
-
-const { error: channelError } = await admin
-  .from('site_channels')
-  .update({ chat_enabled: false })
-  .eq('site_id', 'c0ffee00-0000-4000-8000-000000000001');
-if (channelError) throw channelError;
 
 // Un botón de WhatsApp encendido sin número apuntaría a una página de error.
-const { error: whatsappError } = await admin
+const { error: whatsappError } = await service
   .from('site_channels')
   .update({ whatsapp_enabled: true, whatsapp_phone: null })
   .eq('site_id', 'c0ffee00-0000-4000-8000-000000000001');
@@ -328,12 +318,9 @@ if (tenantSite) {
     throw new Error('Las métricas filtraron datos de otro cliente.');
   }
 
-  const { data: tenantAccounts, error: tenantAccountsError } = await tenant
-    .from('site_accounts')
-    .select('site_id');
-  if (tenantAccountsError) throw tenantAccountsError;
-  if (tenantAccounts?.length) {
-    throw new Error('Un cliente pudo leer datos de facturación.');
+  const { error: tenantClientsError } = await tenant.from('clients').select('id');
+  if (!tenantClientsError) {
+    throw new Error('Un cliente pudo leer datos corporativos o de facturación.');
   }
 
   const { error: tenantKeysError } = await tenant.from('site_api_keys').select('id');
@@ -360,6 +347,6 @@ await service
 console.log(
   'PASS: escritura de pedidos solo desde el servidor; bloqueo anónimo de creación, lectura y configuración; ' +
     'restricción de precio; un registro sin confirmar no lee pedidos ajenos; el cliente confirmado ve solo el suyo; ' +
-    'el administrador ve todos y cambia estados pero no direcciones; ' +
+    'la sesión de plataforma no puede leer ni modificar la operación de clientes; ' +
     'y un cliente de la plataforma no alcanza pedidos, sitios, métricas, facturación ni llaves de otro.',
 );

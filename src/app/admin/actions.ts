@@ -26,7 +26,7 @@ export async function updateOrderStatus(
   status: string,
 ): Promise<ActionResult> {
   const identity = await getAdminIdentity();
-  if (!identity) {
+  if (!identity || identity.role !== 'client') {
     return { ok: false, message: 'Tu sesión no tiene acceso al panel.' };
   }
 
@@ -74,7 +74,7 @@ export async function updateChannels(
   formData: FormData,
 ): Promise<ActionResult> {
   const identity = await getAdminIdentity();
-  if (!identity) {
+  if (!identity || identity.role !== 'client') {
     return { ok: false, message: 'Tu sesión no tiene acceso al panel.' };
   }
 
@@ -184,7 +184,7 @@ export async function adminSignIn(
   }
 
   revalidatePath('/admin', 'layout');
-  redirect('/admin');
+  redirect(identity.role === 'platform' ? '/platform' : '/admin');
 }
 
 /**
@@ -196,7 +196,7 @@ export async function adminSignIn(
  */
 export async function selectSite(slug: string): Promise<ActionResult> {
   const identity = await getAdminIdentity();
-  if (!identity) {
+  if (!identity || identity.role !== 'client') {
     return { ok: false, message: 'Tu sesión no tiene acceso al panel.' };
   }
 

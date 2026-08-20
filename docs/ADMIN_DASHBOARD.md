@@ -2,11 +2,9 @@
 
 **Última actualización: 20 de agosto de 2026.**
 
-El superadmin se llama **Nitro Landing** y viste negro y verde neón,
-deliberadamente separado de Coffee Maker Pro. Cuando entra un usuario de
-cliente, la cabecera usa el nombre y el logo de su propio sitio; nunca recibe la
-marca de otro cliente. La paleta de la interfaz sigue siendo común y vive en
-`tailwind.config.ts` bajo `nitro` e `ink`.
+`/admin` es exclusivamente el panel operativo de los clientes. La cabecera usa
+el nombre y logo del sitio activo; nunca muestra la marca de otro cliente. La
+central del dueño de Nitro vive aparte en `/platform`.
 
 ## Selector de tienda
 
@@ -18,16 +16,15 @@ a una tienda que ya no existe, se cae a la primera en vez de romper la página.
 Con varias tiendas aparece un selector. Con una sola se muestra su nombre sin
 desplegable; un cliente no necesita una selección de un único elemento.
 
-**Consecuencia:** el panel no muestra "todos los pedidos", sino los de la
-tienda elegida y permitida por RLS. El superadmin crea nuevas filas desde
-`/admin/plataforma`.
+**Consecuencia:** el panel muestra solo las tiendas donde el usuario tiene una
+fila explícita en `site_members`. Un superadmin que intente abrir `/admin` es
+redirigido a `/platform` y RLS tampoco le entrega datos.
 
 ## Marca por cliente
 
-Al crear un cliente en `/admin/plataforma` se puede adjuntar un logo opcional.
+Al crear un cliente en `/platform` se puede adjuntar un logo opcional.
 El nombre del sitio y ese logo aparecen en la cabecera del dashboard cuando
-entra un miembro de ese sitio. El superadmin conserva la cabecera Nitro aunque
-tenga seleccionada una tienda.
+entra un miembro de ese sitio. La central `/platform` conserva la marca Nitro.
 
 Cada tarjeta de cliente tiene además una pestaña **Marca** para cambiar el
 nombre, reemplazar el logo o quitarlo. Se aceptan PNG, JPG y WebP de hasta
@@ -62,6 +59,7 @@ Dos puertas separadas, con dos mecanismos distintos:
 
 | Ruta | Quién | Cómo entra |
 |---|---|---|
+| `/platform` | Dueño de Nitro | Correo y contraseña; fila en `platform_admins`. |
 | `/admin` | Operación | Correo y contraseña. La cuenta la crea `npm run admin:create`. |
 | `/dashboard` | Comprador | Enlace mágico al correo con el que compró. |
 
@@ -138,7 +136,7 @@ de escritura al cerrar el acceso anónimo. Sin ellos:
 ## Crear un administrador
 
 ```bash
-# Administrador de plataforma: ve todos los sitios.
+# Administrador de plataforma: entra a /platform, sin acceso operativo.
 npm run admin:create -- correo@ejemplo.com 'ContraseñaSegura' 'Nombre'
 
 # Cliente: ve solo su sitio.
@@ -341,7 +339,7 @@ Para el portal del comprador todavía hay que confirmar en el dashboard remoto:
 4. **URLs de redirección.** El dominio de producción tiene que estar en la lista
    de *Redirect URLs* de Supabase, o el enlace del correo no funcionará.
 5. **Administradores de plataforma.** Se siguen creando por terminal; los
-   usuarios de clientes sí se crean desde `/admin/plataforma`.
+   usuarios de clientes sí se crean desde `/platform`.
 
 ### Por qué la plantilla no es opcional
 
@@ -418,7 +416,7 @@ clave de Supabase.
 
 ## Cómo se conecta una nueva landing
 
-1. Crear cliente, marca, producto y usuario en `/admin/plataforma`.
+1. Crear cliente, marca, producto y usuario en `/platform`.
 2. Emitir una llave de sitio.
 3. Copiar `templates/landing` o preparar un diseño externo con
    `npm run landing:prepare -- --target <ruta>`.

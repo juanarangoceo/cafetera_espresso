@@ -29,8 +29,20 @@ on conflict (email) do nothing;
 -- Segundo sitio de muestra. Existe para que la separación entre inquilinos sea
 -- comprobable en local: sin dos sitios no hay forma de ver si un cliente
 -- alcanza los pedidos del otro, que es justo lo que hay que impedir.
-insert into public.sites (id, slug, name, primary_domain)
+insert into public.clients (id, name, plan, monthly_fee, status, onboarding_status)
 values (
+  '00000000-0000-4000-8000-0000000000d0',
+  'Cliente de Demostración',
+  'basico',
+  150000,
+  'activo',
+  'activo'
+)
+on conflict (id) do nothing;
+
+insert into public.sites (id, client_id, slug, name, primary_domain)
+values (
+  '00000000-0000-4000-8000-0000000000d0',
   '00000000-0000-4000-8000-0000000000d0',
   'demo-cliente',
   'Demo Cliente',
@@ -52,16 +64,6 @@ values (
   250000
 )
 on conflict (id) do nothing;
-
-insert into public.site_accounts (site_id, client_name, plan, monthly_fee, status)
-values (
-  '00000000-0000-4000-8000-0000000000d0',
-  'Cliente de Demostración',
-  'basico',
-  150000,
-  'activo'
-)
-on conflict (site_id) do nothing;
 
 -- El cliente de demostración solo pertenece a su sitio. Su cuenta de
 -- `auth.users` se crea con `npm run admin:create -- --site demo-cliente`.

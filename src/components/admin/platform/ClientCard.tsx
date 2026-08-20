@@ -21,21 +21,30 @@ const label = 'mb-1 block text-xs font-bold text-ink-300';
 
 export type ClientSite = {
   id: string;
+  clientId: string;
   slug: string;
   name: string;
   logoUrl: string | null;
   primaryDomain: string | null;
+  repositoryUrl: string | null;
+  vercelProject: string | null;
+  productionUrl: string | null;
+  integrationNotes: string | null;
   isActive: boolean;
-  orders: number;
   product: { name: string; price: number } | null;
   members: { email: string; displayName: string | null }[];
   keys: { id: string; prefix: string; label: string | null; lastUsedAt: string | null; revokedAt: string | null }[];
   account: {
     clientName: string;
+    legalName: string | null;
+    contactName: string | null;
+    contactEmail: string | null;
+    contactPhone: string | null;
     plan: string;
     monthlyFee: number | null;
     billingDay: number | null;
     status: string;
+    onboardingStatus: string;
     nextInvoiceDate: string | null;
     notes: string | null;
   } | null;
@@ -142,7 +151,6 @@ export default function ClientCard({ site }: { site: ClientSite }) {
             </button>
           </form>
 
-          <p className="font-bold text-white">{site.orders} pedidos</p>
           <p className="text-ink-400">
             {site.product ? `${site.product.name} · ${formatCOP(site.product.price)}` : 'Sin producto'}
           </p>
@@ -183,6 +191,7 @@ export default function ClientCard({ site }: { site: ClientSite }) {
         {(['marca', 'acceso', 'llaves', 'cuenta'] as Tab[]).map((name) => (
           <button
             key={name}
+            type="button"
             onClick={() => setTab(tab === name ? null : name)}
             className={`rounded-xl px-3 py-1.5 text-sm font-bold capitalize transition-colors ${
               tab === name ? 'bg-ink-800 text-white' : 'text-ink-400 hover:text-white'
@@ -202,6 +211,22 @@ export default function ClientCard({ site }: { site: ClientSite }) {
               <input name="name" defaultValue={site.name} required className={field} />
             </div>
             <div>
+              <label className={label}>Dominio</label>
+              <input name="primaryDomain" defaultValue={site.primaryDomain ?? ''} className={field} placeholder="cliente.com" />
+            </div>
+            <div>
+              <label className={label}>Repositorio Git</label>
+              <input name="repositoryUrl" type="url" defaultValue={site.repositoryUrl ?? ''} className={field} placeholder="https://github.com/..." />
+            </div>
+            <div>
+              <label className={label}>Proyecto en Vercel</label>
+              <input name="vercelProject" defaultValue={site.vercelProject ?? ''} className={field} />
+            </div>
+            <div className="md:col-span-2">
+              <label className={label}>URL de producción</label>
+              <input name="productionUrl" type="url" defaultValue={site.productionUrl ?? ''} className={field} placeholder="https://..." />
+            </div>
+            <div>
               <label className={label}>Nuevo logo</label>
               <input
                 name="logo"
@@ -217,6 +242,10 @@ export default function ClientCard({ site }: { site: ClientSite }) {
                 Quitar el logo actual si no selecciono uno nuevo
               </label>
             )}
+            <div className="md:col-span-2">
+              <label className={label}>Instrucciones internas de integración</label>
+              <textarea name="integrationNotes" rows={3} defaultValue={site.integrationNotes ?? ''} className={field} />
+            </div>
             <div className="md:col-span-2">
               <Submit>Guardar marca</Submit>
             </div>
@@ -323,7 +352,27 @@ export default function ClientCard({ site }: { site: ClientSite }) {
       {tab === 'cuenta' && site.account && (
         <div className="mt-4 border-t border-ink-800 pt-4">
           <form action={accountAction} className="grid gap-3 md:grid-cols-3">
-            <input type="hidden" name="siteId" value={site.id} />
+            <input type="hidden" name="clientId" value={site.clientId} />
+            <div>
+              <label className={label}>Cliente / nombre comercial</label>
+              <input name="clientName" defaultValue={site.account.clientName} required className={field} />
+            </div>
+            <div>
+              <label className={label}>Razón social</label>
+              <input name="legalName" defaultValue={site.account.legalName ?? ''} className={field} />
+            </div>
+            <div>
+              <label className={label}>Contacto principal</label>
+              <input name="contactName" defaultValue={site.account.contactName ?? ''} className={field} />
+            </div>
+            <div>
+              <label className={label}>Correo corporativo</label>
+              <input name="contactEmail" type="email" defaultValue={site.account.contactEmail ?? ''} className={field} />
+            </div>
+            <div>
+              <label className={label}>Celular corporativo</label>
+              <input name="contactPhone" inputMode="numeric" defaultValue={site.account.contactPhone ?? ''} className={field} />
+            </div>
             <div>
               <label className={label}>Plan</label>
               <input name="plan" defaultValue={site.account.plan} required className={field} />
@@ -356,6 +405,15 @@ export default function ClientCard({ site }: { site: ClientSite }) {
                 <option value="pausado">Pausado</option>
                 <option value="moroso">Moroso</option>
                 <option value="cerrado">Cerrado</option>
+              </select>
+            </div>
+            <div>
+              <label className={label}>Onboarding</label>
+              <select name="onboardingStatus" defaultValue={site.account.onboardingStatus} className={field}>
+                <option value="pendiente">Pendiente</option>
+                <option value="configurando">Configurando</option>
+                <option value="activo">Activo</option>
+                <option value="pausado">Pausado</option>
               </select>
             </div>
             <div>

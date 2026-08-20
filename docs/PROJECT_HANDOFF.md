@@ -33,11 +33,16 @@ El proyecto está conectado a `juanarangoceo/cafetera_espresso`, rama de
 producción `main` y raíz `.`. El cambio completo se fusionó mediante el PR #4;
 los pushes futuros a `main` despliegan automáticamente `nitro-platform`.
 
+La interfaz tiene dos productos separados: `/platform` es la central
+corporativa de Nitro y `/admin` es la operación exclusiva de cada cliente. Un
+administrador de plataforma no puede leer pedidos, CRM, contactos, direcciones
+ni métricas operativas mediante su sesión; esa restricción vive en RLS.
+
 **Verificado ese día:**
 
 - `npx tsc --noEmit` correcto
 - `npm run build` correcto, con validación de tipos activa
-- 20 pruebas pgTAP y `supabase:verify` en verde
+- 131 pruebas pgTAP y `supabase:verify` en verde
 - Advisors de seguridad de Supabase sin hallazgos
 - Pedido real de extremo a extremo confirmado en Preview
 - `orders_cod` en cero pedidos reales
@@ -139,15 +144,21 @@ Proyecto `coffee-maker-pro`, ref `rsqcumtozynvzsctvmpk`, `us-east-1`.
 
 Tablas: `orders_cod`, `leads`, `chat_sessions`, `chat_messages`, `sites`,
 `site_channels`, `platform_admins`, `site_members`, `site_products`,
-`site_api_keys`, `site_accounts`. RLS en todas. Detalle en `DEPLOYMENT.md`,
+`site_api_keys`, `clients`. `sites.client_id` permite varias landings por
+cliente. RLS en todas. Detalle en `DEPLOYMENT.md`,
 `SECURITY.md` y `ADMIN_DASHBOARD.md`.
 
-Las siete migraciones locales están aplicadas en producción y el historial
+Las ocho migraciones locales están aplicadas en producción y el historial
 remoto quedó alineado con sus nombres por primera vez el 20 de agosto de 2026.
-`20260820120000_multitenant_boundary.sql` y
-`20260820140000_leads_per_site.sql` están activas. El administrador de plataforma,
+`20260820120000_multitenant_boundary.sql`,
+`20260820140000_leads_per_site.sql` y
+`20260820200341_separate_platform_clients_from_operations.sql` están activas. El administrador de plataforma,
 el pedido anterior y el precio de Coffee Maker sobrevivieron al corte. Ver
 `DEPLOYMENT.md` y `PLATFORM.md`.
+
+La migración `20260820200341_separate_platform_clients_from_operations.sql`
+reemplaza `site_accounts` por `clients`, añade los metadatos de repositorio y
+Vercel a `sites` y retira del superadmin el acceso operativo implícito.
 
 El alta de clientes ya admite nombre visible y logo. Los miembros de un sitio
 ven esa identidad en la cabecera de su dashboard; el superadmin conserva Nitro.

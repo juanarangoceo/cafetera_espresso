@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(129);
+select plan(131);
 
 select has_table('public', 'orders_cod', 'orders table exists');
 select has_table('public', 'leads', 'leads table exists');
@@ -100,13 +100,15 @@ select has_table('public', 'platform_admins', 'platform admin allowlist exists')
 select has_table('public', 'site_members', 'site membership table exists');
 select has_table('public', 'site_products', 'per-site products table exists');
 select has_table('public', 'site_api_keys', 'per-site ingest keys table exists');
-select has_table('public', 'site_accounts', 'client account table exists');
+select has_table('public', 'clients', 'corporate client table exists');
+select hasnt_table('public', 'site_accounts', 'the one-account-per-site model is gone');
 select hasnt_table('public', 'admin_users', 'the global admin allowlist is gone');
 
 select col_is_pk('public', 'sites', 'id', 'sites have a primary key');
 select col_is_pk('public', 'site_channels', 'site_id', 'site channels are keyed by site');
 select col_is_pk('public', 'platform_admins', 'email', 'platform admins are keyed by email');
-select col_is_pk('public', 'site_accounts', 'site_id', 'a client account belongs to one site');
+select col_is_pk('public', 'clients', 'id', 'clients have an identity independent from landings');
+select has_column('public', 'sites', 'client_id', 'landings belong to a corporate client');
 
 select ok((select relrowsecurity from pg_class where oid = 'public.sites'::regclass), 'RLS enabled on sites');
 select ok((select relrowsecurity from pg_class where oid = 'public.site_channels'::regclass), 'RLS enabled on site channels');
@@ -114,7 +116,7 @@ select ok((select relrowsecurity from pg_class where oid = 'public.platform_admi
 select ok((select relrowsecurity from pg_class where oid = 'public.site_members'::regclass), 'RLS enabled on site members');
 select ok((select relrowsecurity from pg_class where oid = 'public.site_products'::regclass), 'RLS enabled on site products');
 select ok((select relrowsecurity from pg_class where oid = 'public.site_api_keys'::regclass), 'RLS enabled on ingest keys');
-select ok((select relrowsecurity from pg_class where oid = 'public.site_accounts'::regclass), 'RLS enabled on client accounts');
+select ok((select relrowsecurity from pg_class where oid = 'public.clients'::regclass), 'RLS enabled on corporate clients');
 
 select policies_are(
   'public', 'sites',
@@ -203,7 +205,8 @@ select throws_ok(
 );
 
 select throws_ok(
-  $$ insert into public.sites (slug, name) values ('Landing Con Mayúsculas', 'Prueba') $$,
+  $$ insert into public.sites (client_id, slug, name)
+     values ('c0ffee00-0000-4000-8000-000000000001', 'Landing Con Mayúsculas', 'Prueba') $$,
   '23514',
   null,
   'site slugs are restricted to a url-safe shape'
@@ -460,9 +463,13 @@ select is(
 
 -- Dos sitios, dos precios distintos. Antes de este cambio el segundo era
 -- imposible: la base rechazaba cualquier importe que no fuera 490000.
-insert into public.sites (id, slug, name)
-values ('00000000-0000-4000-8000-00000000e001', 'inquilino-a', 'Inquilino A'),
-       ('00000000-0000-4000-8000-00000000e002', 'inquilino-b', 'Inquilino B');
+insert into public.clients (id, name)
+values ('00000000-0000-4000-8000-00000000e001', 'Cliente A'),
+       ('00000000-0000-4000-8000-00000000e002', 'Cliente B');
+
+insert into public.sites (id, client_id, slug, name)
+values ('00000000-0000-4000-8000-00000000e001', '00000000-0000-4000-8000-00000000e001', 'inquilino-a', 'Inquilino A'),
+       ('00000000-0000-4000-8000-00000000e002', '00000000-0000-4000-8000-00000000e002', 'inquilino-b', 'Inquilino B');
 
 insert into public.site_channels (site_id)
 values ('00000000-0000-4000-8000-00000000e001'),
@@ -600,10 +607,11 @@ select throws_ok(
   null,
   'ingest keys are unreachable: no grant, not just no policy'
 );
-select is(
-  (select count(*)::int from public.site_accounts),
-  0,
-  'a tenant cannot read its own billing record, let alone anyone else''s'
+select throws_ok(
+  $$ select 1 from public.clients $$,
+  '42501',
+  null,
+  'corporate client records have no browser-session grant'
 );
 
 -- El otro inquilino, para comprobar que la separación es simétrica y no un
@@ -621,24 +629,32 @@ select is(
   'and what it sees is its own order, not the neighbour one'
 );
 
--- La plataforma sí ve todo. Sin esto el panel de Juan no sirve para operar.
+-- La plataforma administra clientes desde acciones de servidor, pero su sesion
+-- no recibe acceso operativo. Esta es la frontera que impide ver PII aunque
+-- alguien intente abrir manualmente una ruta o consultar Supabase.
 set local request.jwt.claims = '{"sub":"00000000-0000-4000-8000-00000000aaaa","role":"authenticated"}';
 
-select ok(
-  (select count(*)::int from public.orders_cod) >= 2,
-  'the platform admin reaches every tenant'
+select is(
+  (select count(*)::int from public.orders_cod),
+  0,
+  'the platform session cannot read any client order'
 );
-select ok(
-  (select count(*)::int from public.sites) >= 3,
-  'the platform admin enumerates every site'
+select is(
+  (select count(*)::int from public.sites),
+  0,
+  'the platform session cannot enter a client operational site'
 );
-select ok(
-  (select count(*)::int from public.site_accounts) > 0,
-  'the platform admin is the only one who reads billing'
+select throws_ok(
+  $$ select 1 from public.clients $$,
+  '42501',
+  null,
+  'corporate data is only available to guarded server actions'
 );
 
 -- Lo que el inquilino no pudo comprobar por sí mismo: sus dos intentos de
 -- escritura cruzada no movieron nada.
+reset role;
+
 select is(
   (select status from public.orders_cod where email = 'compra.b@example.com'),
   'pending',
@@ -650,8 +666,6 @@ select is(
   true,
   'the cross-tenant channel update changed nothing either'
 );
-
-reset role;
 
 select * from finish();
 rollback;

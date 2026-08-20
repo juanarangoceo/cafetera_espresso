@@ -162,19 +162,23 @@ tras aplicar la migración del panel.
 
 | Tabla | Anónimo | Autenticado | Administrador | Servidor |
 |---|---|---|---|---|
-| `orders_cod` | — | Lee los de su correo verificado | Lee todos; cambia `status` | Inserta y lee |
+| `orders_cod` | — | Comprador: su correo; miembro: su sitio | Plataforma: — | Inserta y lee |
 | `leads` | Inserta | Inserta | — | — |
 | `chat_sessions` | Inserta | Inserta | — | — |
 | `chat_messages` | Inserta | Inserta | — | — |
-| `sites` | Lee | Lee | Lee | Lee y escribe |
-| `site_channels` | Lee | Lee | Lee y actualiza | Lee y escribe |
+| `sites` | Lee campos públicos | Miembro: sus sitios | Plataforma: — | Lee y escribe |
+| `site_channels` | Lee | Miembro: lee y actualiza los suyos | Plataforma: — | Lee y escribe |
 | `platform_admins` | — | — | Lee si es de plataforma | Lee y escribe |
 | `site_members` | — | — | Lee los de sus sitios | Lee y escribe |
 | `site_api_keys` | — | — | **Nada: sin grant ni política** | Lee y escribe |
-| `site_accounts` | — | — | Solo plataforma | Lee y escribe |
-| `order_status_events` | — | Lee los de sus pedidos | Lee todos | Lee y escribe |
-| `contacts` | — | — | Lee y escribe | Lee y escribe |
-| `contact_notes` | — | — | Lee y escribe | Lee y escribe |
+| `clients` | — | — | Sin grant de sesión | Lee y escribe tras guard de plataforma |
+| `order_status_events` | — | Miembro: los de su sitio | Plataforma: — | Lee y escribe |
+| `contacts` | — | Miembro: su sitio | Plataforma: — | Lee y escribe |
+| `contact_notes` | — | Miembro: su sitio | Plataforma: — | Lee y escribe |
+
+La identidad de plataforma autoriza las acciones corporativas del servidor,
+pero no aparece en `private.accessible_site_ids()`. Por tanto, abrir `/admin`
+manualmente o llamar PostgREST con esa sesión devuelve cero filas operativas.
 
 El CRM es interno: un comprador no ve su propia ficha ni las notas que la
 operación escribe sobre él. El historial de estados **no tiene permiso de

@@ -9,7 +9,7 @@ Hay un proyecto de plataforma y un proyecto por landing:
 
 ```text
 nitro-platform (este repositorio)
-  /admin/plataforma + /admin + /api/v1
+  /platform + /admin + /api/v1
              ▲
              │ NITRO_SITE_KEY distinta por sitio
              │
@@ -63,10 +63,9 @@ Después se abre el repositorio preparado y se le dice al agente:
 
 ## Alta del cliente en la plataforma
 
-En `/admin/plataforma`:
+En `/platform`:
 
-1. **Nuevo cliente:** crea `sites`, `site_channels`, `site_products` y
-   `site_accounts`.
+1. **Nuevo cliente:** crea `clients`, `sites`, `site_channels` y `site_products`.
 2. **Acceso:** crea el usuario confirmado y su fila en `site_members`.
 3. **Llaves:** emite la `NITRO_SITE_KEY`; se muestra una sola vez.
 4. **Cuenta:** registra plan, tarifa, corte y estado.

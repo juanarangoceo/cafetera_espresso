@@ -2,8 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Building2, ChartNoAxesCombined, Package, SlidersHorizontal, Users } from 'lucide-react';
-import type { AdminRole } from '@/lib/admin-auth';
+import { ChartNoAxesCombined, Package, SlidersHorizontal, Users } from 'lucide-react';
 
 const links = [
   { href: '/admin', label: 'Pedidos', icon: Package },
@@ -12,17 +11,12 @@ const links = [
   { href: '/admin/ajustes', label: 'Canales', icon: SlidersHorizontal },
 ];
 
-// Administrar clientes, llaves y facturación es cosa de la plataforma. Ocultar
-// el enlace es cortesía, no seguridad: la barrera real está en la página, que
-// llama a `requirePlatformAdmin()`, y en las políticas de `site_accounts`.
-const platformLink = { href: '/admin/plataforma', label: 'Clientes', icon: Building2 };
-
-export default function AdminNav({ role }: { role: AdminRole }) {
+export default function AdminNav() {
   const pathname = usePathname();
 
   return (
     <nav className="flex gap-1 overflow-x-auto md:flex-col md:overflow-visible">
-      {(role === 'platform' ? [...links, platformLink] : links).map(({ href, label, icon: Icon }) => {
+      {links.map(({ href, label, icon: Icon }) => {
         // `/admin` es prefijo de todo lo demás, así que la raíz se compara
         // exacta o marcaría todas las secciones como activas a la vez.
         const active = href === '/admin' ? pathname === href : pathname?.startsWith(href);

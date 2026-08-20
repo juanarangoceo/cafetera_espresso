@@ -47,7 +47,7 @@ export default function NewSiteForm() {
     <form action={action} className="rounded-2xl border border-ink-800 bg-ink-950 p-6">
       <h2 className="text-lg font-bold text-white">Nuevo cliente</h2>
       <p className="mt-1 text-sm text-ink-400">
-        Crea el sitio, su producto, sus canales y su cuenta de una sola vez. Un sitio sin producto
+        Crea la ficha corporativa, la primera landing, su producto y sus canales de una sola vez. Una landing sin producto
         no puede vender: la base rechaza cualquier pedido sin precio con el que compararlo.
       </p>
 
@@ -107,6 +107,21 @@ export default function NewSiteForm() {
         </div>
 
         <div>
+          <label className={label} htmlFor="legalName">Razón social</label>
+          <input id="legalName" name="legalName" className={field} />
+        </div>
+
+        <div>
+          <label className={label} htmlFor="contactName">Contacto principal</label>
+          <input id="contactName" name="contactName" className={field} />
+        </div>
+
+        <div>
+          <label className={label} htmlFor="contactPhone">Celular de contacto</label>
+          <input id="contactPhone" name="contactPhone" inputMode="numeric" className={field} placeholder="573001234567" />
+        </div>
+
+        <div>
           <label className={label} htmlFor="productName">
             Producto que vende
           </label>
@@ -137,6 +152,21 @@ export default function NewSiteForm() {
           </label>
           <input id="monthlyFee" name="monthlyFee" type="number" min="0" className={field} placeholder="150000" />
           <p className="mt-1 text-xs text-ink-500">Registro interno. No cobra nada por su cuenta.</p>
+        </div>
+
+        <div>
+          <label className={label} htmlFor="repositoryUrl">Repositorio de la landing</label>
+          <input id="repositoryUrl" name="repositoryUrl" type="url" className={field} placeholder="https://github.com/..." />
+        </div>
+
+        <div>
+          <label className={label} htmlFor="vercelProject">Proyecto en Vercel</label>
+          <input id="vercelProject" name="vercelProject" className={field} placeholder="landing-cliente" />
+        </div>
+
+        <div className="md:col-span-2">
+          <label className={label} htmlFor="productionUrl">URL de producción</label>
+          <input id="productionUrl" name="productionUrl" type="url" className={field} placeholder="https://landing-cliente.vercel.app" />
         </div>
       </div>
 

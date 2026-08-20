@@ -127,7 +127,10 @@ const siteSchema = z.object({
   slug: slugSchema,
   name: z.string().trim().min(2, 'El nombre del sitio es muy corto').max(120),
   clientName: z.string().trim().min(2, 'El nombre del cliente es muy corto').max(160),
+  legalName: z.string().trim().max(200).optional(),
+  contactName: z.string().trim().max(160).optional(),
   contactEmail: z.string().trim().email('Correo de contacto inválido').optional().or(z.literal('')),
+  contactPhone: z.string().trim().regex(/^\d{10,15}$/, 'Celular inválido').optional().or(z.literal('')),
   productName: z.string().trim().min(2, 'El nombre del producto es muy corto').max(160),
   price: z.coerce.number().int().positive('El precio debe ser mayor que cero'),
   monthlyFee: z.coerce.number().int().min(0).optional(),
@@ -137,6 +140,9 @@ const siteSchema = z.object({
     .regex(/^[a-z0-9]([a-z0-9.-]{0,251}[a-z0-9])?\.[a-z]{2,63}$/, 'Dominio inválido')
     .optional()
     .or(z.literal('')),
+  repositoryUrl: z.string().trim().url('URL del repositorio inválida').max(500).optional().or(z.literal('')),
+  vercelProject: z.string().trim().max(160).optional(),
+  productionUrl: z.string().trim().url('URL de producción inválida').max(500).optional().or(z.literal('')),
 });
 
 /**
@@ -170,17 +176,40 @@ export async function createClientSite(
   const logoError = validateLogo(logo);
   if (logoError) return logoError;
 
+  const { data: client, error: clientError } = await service
+    .from('clients')
+    .insert({
+      name: input.clientName,
+      legal_name: input.legalName || null,
+      contact_name: input.contactName || null,
+      contact_email: input.contactEmail || null,
+      contact_phone: input.contactPhone || null,
+      monthly_fee: input.monthlyFee ?? null,
+    })
+    .select('id')
+    .single();
+
+  if (clientError || !client) {
+    console.error('❌ No se pudo crear el cliente:', clientError);
+    return { ok: false, message: 'No se pudo crear la ficha del cliente.' };
+  }
+
   const { data: site, error: siteError } = await service
     .from('sites')
     .insert({
+      client_id: client.id,
       slug: input.slug,
       name: input.name,
       primary_domain: input.primaryDomain || null,
+      repository_url: input.repositoryUrl || null,
+      vercel_project: input.vercelProject || null,
+      production_url: input.productionUrl || null,
     })
     .select('id')
     .single();
 
   if (siteError) {
+    await service.from('clients').delete().eq('id', client.id);
     if (siteError.code === '23505') {
       return { ok: false, message: `Ya existe un sitio con el identificador "${input.slug}".` };
     }
@@ -196,6 +225,7 @@ export async function createClientSite(
       await service.storage.from(SITE_LOGO_BUCKET).remove([uploadedLogoPath]);
     }
     await service.from('sites').delete().eq('id', site.id);
+    await service.from('clients').delete().eq('id', client.id);
     console.error(`❌ Alta revertida (${reason}).`);
   };
 
@@ -235,24 +265,18 @@ export async function createClientSite(
     return { ok: false, message: 'No se pudo crear el producto del sitio.' };
   }
 
-  const { error: accountError } = await service.from('site_accounts').insert({
-    site_id: site.id,
-    client_name: input.clientName,
-    contact_email: input.contactEmail || null,
-    monthly_fee: input.monthlyFee ?? null,
-  });
-  if (accountError) {
-    await rollback('cuenta');
-    return { ok: false, message: 'No se pudo crear la cuenta del cliente.' };
-  }
-
-  revalidatePath('/admin/plataforma');
+  revalidatePath('/platform');
   return { ok: true, message: `"${input.name}" creado. Ya puedes crearle usuario y emitir su llave.` };
 }
 
 const brandingSchema = z.object({
   siteId: z.string().uuid('Sitio inválido'),
   name: z.string().trim().min(2, 'El nombre del sitio es muy corto').max(120),
+  primaryDomain: z.string().trim().max(253).optional(),
+  repositoryUrl: z.string().trim().url('URL del repositorio inválida').max(500).optional().or(z.literal('')),
+  vercelProject: z.string().trim().max(160).optional(),
+  productionUrl: z.string().trim().url('URL de producción inválida').max(500).optional().or(z.literal('')),
+  integrationNotes: z.string().trim().max(4000).optional(),
 });
 
 /** Actualiza la identidad que verá el cliente en su dashboard. */
@@ -275,7 +299,7 @@ export async function updateSiteBranding(
   const service = createServiceClient();
   if (!service) return { ok: false, message: 'Falta SUPABASE_SECRET_KEY en el servidor.' };
 
-  const { siteId, name } = parsed.data;
+  const { siteId, name, primaryDomain, repositoryUrl, vercelProject, productionUrl, integrationNotes } = parsed.data;
   const { data: current, error: currentError } = await service
     .from('sites')
     .select('logo_url')
@@ -296,7 +320,15 @@ export async function updateSiteBranding(
 
   const { data, error } = await service
     .from('sites')
-    .update({ name, logo_url: nextLogoUrl })
+    .update({
+      name,
+      logo_url: nextLogoUrl,
+      primary_domain: primaryDomain || null,
+      repository_url: repositoryUrl || null,
+      vercel_project: vercelProject || null,
+      production_url: productionUrl || null,
+      integration_notes: integrationNotes || null,
+    })
     .eq('id', siteId)
     .select('id');
 
@@ -312,8 +344,7 @@ export async function updateSiteBranding(
     if (removeError) console.error('⚠️ La marca se guardó, pero no se pudo retirar el logo anterior:', removeError);
   }
 
-  revalidatePath('/admin');
-  revalidatePath('/admin/plataforma');
+  revalidatePath('/platform');
   return { ok: true, message: 'Nombre y logo actualizados en el dashboard del cliente.' };
 }
 
@@ -377,7 +408,7 @@ export async function createSiteMember(
     return { ok: false, message: 'La cuenta existe pero no se pudo autorizar en el sitio.' };
   }
 
-  revalidatePath('/admin/plataforma');
+  revalidatePath('/platform');
   return {
     ok: true,
     message: createError
@@ -424,7 +455,7 @@ export async function issueSiteKey(
     return { ok: false, message: 'No se pudo emitir la llave.' };
   }
 
-  revalidatePath('/admin/plataforma');
+  revalidatePath('/platform');
   return {
     ok: true,
     message: 'Cópiala ahora: no se puede volver a mostrar.',
@@ -465,7 +496,7 @@ export async function revokeSiteKey(
     return { ok: false, message: 'Esa llave no existe o ya estaba revocada.' };
   }
 
-  revalidatePath('/admin/plataforma');
+  revalidatePath('/platform');
   return { ok: true, message: 'Llave revocada. La landing que la use deja de vender ahora mismo.' };
 }
 
@@ -514,7 +545,7 @@ export async function toggleSiteActive(
     return { ok: false, message: 'No encontramos ese sitio.' };
   }
 
-  revalidatePath('/admin/plataforma');
+  revalidatePath('/platform');
   return {
     ok: true,
     message: next
@@ -524,11 +555,17 @@ export async function toggleSiteActive(
 }
 
 const accountSchema = z.object({
-  siteId: z.string().uuid(),
+  clientId: z.string().uuid(),
+  clientName: z.string().trim().min(2).max(160),
+  legalName: z.string().trim().max(200).optional(),
+  contactName: z.string().trim().max(160).optional(),
+  contactEmail: z.string().trim().email('Correo inválido').optional().or(z.literal('')),
+  contactPhone: z.string().trim().regex(/^\d{10,15}$/, 'Celular inválido').optional().or(z.literal('')),
   plan: z.string().trim().min(2).max(60),
   monthlyFee: z.coerce.number().int().min(0).optional(),
   billingDay: z.coerce.number().int().min(1).max(28).optional(),
   status: z.enum(['activo', 'pausado', 'moroso', 'cerrado']),
+  onboardingStatus: z.enum(['pendiente', 'configurando', 'activo', 'pausado']),
   nextInvoiceDate: z.string().trim().optional().or(z.literal('')),
   notes: z.string().trim().max(2000).optional(),
 });
@@ -539,9 +576,8 @@ const accountSchema = z.object({
  * Es registro, no cobro: aquí no hay pasarela ni dato de tarjeta. El panel
  * recuerda cuánto y cuándo; el cobro ocurre fuera.
  *
- * La escritura va con la sesión del administrador y no con la clave de
- * servicio: `site_accounts` tiene política y grants por columna, así que es la
- * base la que decide, igual que en el resto del panel.
+ * La ficha corporativa no tiene grants para sesiones del navegador. Tras el
+ * guard de plataforma se escribe con la clave de servicio.
  */
 export async function updateSiteAccount(
   _previous: PlatformResult | null,
@@ -555,23 +591,29 @@ export async function updateSiteAccount(
     return { ok: false, message: parsed.error.issues[0]?.message ?? 'Revisa los datos.' };
   }
 
-  const { createClient } = await import('@/utils/supabase/server');
-  const supabase = await createClient();
+  const service = createServiceClient();
+  if (!service) return { ok: false, message: 'Falta SUPABASE_SECRET_KEY en el servidor.' };
 
-  const { siteId, ...input } = parsed.data;
+  const { clientId, ...input } = parsed.data;
 
-  const { data, error } = await supabase
-    .from('site_accounts')
+  const { data, error } = await service
+    .from('clients')
     .update({
+      name: input.clientName,
+      legal_name: input.legalName || null,
+      contact_name: input.contactName || null,
+      contact_email: input.contactEmail || null,
+      contact_phone: input.contactPhone || null,
       plan: input.plan,
       monthly_fee: input.monthlyFee ?? null,
       billing_day: input.billingDay ?? null,
       status: input.status,
+      onboarding_status: input.onboardingStatus,
       next_invoice_date: input.nextInvoiceDate || null,
       notes: input.notes || null,
     })
-    .eq('site_id', siteId)
-    .select('site_id');
+    .eq('id', clientId)
+    .select('id');
 
   if (error) {
     console.error('❌ No se pudo guardar la cuenta:', error);
@@ -582,6 +624,6 @@ export async function updateSiteAccount(
     return { ok: false, message: 'No encontramos esa cuenta.' };
   }
 
-  revalidatePath('/admin/plataforma');
+  revalidatePath('/platform');
   return { ok: true, message: 'Cuenta actualizada.' };
 }

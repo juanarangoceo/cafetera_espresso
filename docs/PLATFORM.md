@@ -11,7 +11,7 @@ sí, a `ADMIN_DASHBOARD.md`.
 ```
         ┌─────────────────────────────────────┐
         │  Plataforma (este repositorio)      │
-        │  Panel /admin  +  API /api/v1       │
+        │ /platform + /admin + API /api/v1    │
         │  ÚNICO lugar con SUPABASE_SECRET_KEY│
         └──────────────────┬──────────────────┘
                            │
@@ -39,7 +39,7 @@ llamada a la API ya es de servidor a servidor.
 
 | Tabla | Quién | Alcance |
 |---|---|---|
-| `platform_admins` | La operación de Nitro Landing | Todos los sitios. |
+| `platform_admins` | La central corporativa de Nitro | Fichas y configuración por acciones de servidor; sin pedidos ni CRM. |
 | `site_members` | El cliente y su equipo | Solo los sitios donde tiene fila. |
 
 `admin_users` **ya no existe**. Era una sola lista global: cualquier cuenta en
@@ -49,11 +49,23 @@ cliente no se notaba; con dos era una filtración.
 Toda política se apoya en el mismo par de funciones:
 
 - `private.is_platform_admin()` — ¿esta sesión es de la plataforma?
-- `private.accessible_site_ids()` — ¿qué sitios alcanza?
+- `private.accessible_site_ids()` — ¿en qué sitios es miembro el usuario?
 
 Ambas pasan por `private.verified_email()`, que lee `auth.users` y exige
 `email_confirmed_at`. **No** usan `auth.jwt() ->> 'email'`, que refleja el correo
 con el que se creó la sesión, verificado o no.
+
+`private.accessible_site_ids()` **no** incluye a `platform_admins`. La central
+consulta datos corporativos mediante acciones de servidor que primero ejecutan
+`requirePlatformAdmin()` y después usan `service_role`. La sesión del
+superadmin recibe cero filas de pedidos, CRM, contactos, métricas y canales
+operativos. No existe impersonación.
+
+`clients` es la entidad comercial y `sites` contiene sus landings. Una misma
+fila de `clients` puede agrupar varias filas de `sites` mediante
+`sites.client_id`. Nombre legal, contacto, onboarding, plan y facturación viven
+en `clients`; marca, dominio, repositorio, proyecto Vercel y URL de producción
+viven por landing en `sites`.
 
 El patrón se repite igual en todas las tablas:
 
@@ -104,7 +116,7 @@ npm run site:key -- listar demo-cliente
 npm run site:key -- revocar <id>
 ```
 
-También desde `/admin/plataforma`. La llave se muestra **una sola vez**: quien la
+También desde `/platform`. La llave se muestra **una sola vez**: quien la
 pierda, revoca y emite otra.
 
 El endpoint devuelve el mismo `401` para llave inexistente, revocada y sitio
@@ -112,10 +124,10 @@ inactivo. Distinguirlos lo convertiría en un oráculo de llaves válidas.
 
 ## Dar de alta un cliente
 
-Desde `/admin/plataforma`, o a mano:
+Desde `/platform`, o a mano:
 
-1. **Sitio.** Crea `sites` + `site_channels` + `site_products` + `site_accounts`
-   de una vez. Las cuatro filas van juntas: un sitio sin producto no puede
+1. **Cliente y primera landing.** Crea `clients` + `sites` + `site_channels` +
+   `site_products` de una vez. Las cuatro filas van juntas: un sitio sin producto no puede
    vender y uno sin canales no puede pintar la landing. El panel revierte el
    alta si alguna falla, para no dejar un cliente a medio crear. En el mismo
    formulario se define el nombre visible y se puede subir un logo opcional.
@@ -166,7 +178,7 @@ de `src/app/layout.tsx`.
 
 ## Desconectar la landing de un cliente
 
-Botón **Conectada / Desconectada** en su tarjeta de `/admin/plataforma`. Apaga
+Botón **Conectada / Desconectada** en su tarjeta de `/platform`. Apaga
 la venta sin desplegar nada y sin entrar al proyecto del cliente:
 
 - `resolveSiteFromKey` comprueba `is_active`, así que la API responde `401` a

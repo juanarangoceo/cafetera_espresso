@@ -121,12 +121,25 @@ Migraciones aplicadas:
 | `20260805180000` | igual | CRM, historial de estados y métricas |
 | `20260820120000` | igual | Frontera multi-inquilino, precio por sitio y llaves |
 | `20260820140000` | igual | `leads` por sitio |
+| `20260820200341` | igual | Separa central corporativa de operación; crea `clients` |
 
 **No reaplicar ni volver a alinear estas versiones.** El historial estuvo
 desalineado porque dos migraciones se aplicaron por API con timestamps remotos,
 pero quedó corregido el 20 de agosto de 2026. Las siete versiones remotas
 coinciden ahora con los nombres locales. Para una migración nueva se sigue el
-procedimiento de cinco pasos de esta sección.
+procedimiento de cinco pasos de esta sección. La octava migración se aplicó y
+alineó el 20 de agosto de 2026; dejó un cliente, un sitio y cero sitios
+huérfanos, y retiró `platform_admins` de `accessible_site_ids()`.
+
+## Separación entre `/platform` y `/admin`
+
+- `/platform` es la central corporativa: clientes, landings, marca, repositorio,
+  proyecto Vercel, usuarios, llaves, onboarding y facturación.
+- `/admin` es el panel operativo del cliente: pedidos, métricas, CRM y canales.
+- El login es común en `/admin/login` y redirige según el rol.
+- La sesión de plataforma no puede leer tablas operativas por RLS. La central
+  usa `SUPABASE_SECRET_KEY` únicamente después de `requirePlatformAdmin()` y
+  solo devuelve datos corporativos.
 
 ## Estado del corte multi-inquilino (20 de agosto de 2026)
 

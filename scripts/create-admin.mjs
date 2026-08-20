@@ -8,7 +8,7 @@
 //
 // Hay dos clases de cuenta y la diferencia está en la fila que se escribe:
 //
-//   `platform_admins`  la operación de Nitro Landing. Ve todos los sitios.
+//   `platform_admins`  la central corporativa. No ve pedidos ni CRM.
 //   `site_members`     el cliente dueño de una landing. Ve la suya y nada más.
 //
 // Uso en local:
@@ -44,7 +44,7 @@ const [emailArgument, passwordArgument, displayNameArgument] = rawArguments;
 if (!emailArgument || !passwordArgument) {
   console.error(
     'Uso: npm run admin:create -- [--site <slug>] <correo> <contraseña> [nombre]\n' +
-      'Sin --site se crea un administrador de plataforma, que ve todos los sitios.\n' +
+      'Sin --site se crea un administrador de la central /platform.\n' +
       'La contraseña debe tener al menos 8 caracteres.',
   );
   process.exit(1);
@@ -146,7 +146,7 @@ if (siteSlug) {
   if (siteError) throw siteError;
   if (!site) {
     throw new Error(
-      `No existe ningún sitio con el slug "${siteSlug}". Créalo antes desde /admin/plataforma.`,
+      `No existe ningún sitio con el slug "${siteSlug}". Créalo antes desde /platform.`,
     );
   }
 

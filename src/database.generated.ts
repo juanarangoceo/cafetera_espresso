@@ -59,6 +59,63 @@ export type Database = {
         }
         Relationships: []
       }
+      clients: {
+        Row: {
+          billing_day: number | null
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string
+          currency: string
+          id: string
+          legal_name: string | null
+          monthly_fee: number | null
+          name: string
+          next_invoice_date: string | null
+          notes: string | null
+          onboarding_status: string
+          plan: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          billing_day?: number | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          legal_name?: string | null
+          monthly_fee?: number | null
+          name: string
+          next_invoice_date?: string | null
+          notes?: string | null
+          onboarding_status?: string
+          plan?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          billing_day?: number | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          legal_name?: string | null
+          monthly_fee?: number | null
+          name?: string
+          next_invoice_date?: string | null
+          notes?: string | null
+          onboarding_status?: string
+          plan?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contact_notes: {
         Row: {
           author_email: string
@@ -146,21 +203,32 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          site_id: string
           source: string
         }
         Insert: {
           created_at?: string
           email: string
           id?: string
+          site_id?: string
           source?: string
         }
         Update: {
           created_at?: string
           email?: string
           id?: string
+          site_id?: string
           source?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "leads_site_id_fkey"
+            columns: ["site_id"]
+            isOneToOne: false
+            referencedRelation: "sites"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       order_status_events: {
         Row: {
@@ -284,62 +352,6 @@ export type Database = {
           email?: string
         }
         Relationships: []
-      }
-      site_accounts: {
-        Row: {
-          billing_day: number | null
-          client_name: string
-          contact_email: string | null
-          contact_phone: string | null
-          created_at: string
-          currency: string
-          monthly_fee: number | null
-          next_invoice_date: string | null
-          notes: string | null
-          plan: string
-          site_id: string
-          status: string
-          updated_at: string
-        }
-        Insert: {
-          billing_day?: number | null
-          client_name: string
-          contact_email?: string | null
-          contact_phone?: string | null
-          created_at?: string
-          currency?: string
-          monthly_fee?: number | null
-          next_invoice_date?: string | null
-          notes?: string | null
-          plan?: string
-          site_id: string
-          status?: string
-          updated_at?: string
-        }
-        Update: {
-          billing_day?: number | null
-          client_name?: string
-          contact_email?: string | null
-          contact_phone?: string | null
-          created_at?: string
-          currency?: string
-          monthly_fee?: number | null
-          next_invoice_date?: string | null
-          notes?: string | null
-          plan?: string
-          site_id?: string
-          status?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "site_accounts_site_id_fkey"
-            columns: ["site_id"]
-            isOneToOne: true
-            referencedRelation: "sites"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       site_api_keys: {
         Row: {
@@ -499,38 +511,61 @@ export type Database = {
       sites: {
         Row: {
           brand_color: string | null
+          client_id: string
           created_at: string
           id: string
+          integration_notes: string | null
           is_active: boolean
           logo_url: string | null
           name: string
           primary_domain: string | null
+          production_url: string | null
+          repository_url: string | null
           slug: string
           updated_at: string
+          vercel_project: string | null
         }
         Insert: {
           brand_color?: string | null
+          client_id: string
           created_at?: string
           id?: string
+          integration_notes?: string | null
           is_active?: boolean
           logo_url?: string | null
           name: string
           primary_domain?: string | null
+          production_url?: string | null
+          repository_url?: string | null
           slug: string
           updated_at?: string
+          vercel_project?: string | null
         }
         Update: {
           brand_color?: string | null
+          client_id?: string
           created_at?: string
           id?: string
+          integration_notes?: string | null
           is_active?: boolean
           logo_url?: string | null
           name?: string
           primary_domain?: string | null
+          production_url?: string | null
+          repository_url?: string | null
           slug?: string
           updated_at?: string
+          vercel_project?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "sites_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
