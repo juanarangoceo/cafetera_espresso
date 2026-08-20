@@ -29,6 +29,10 @@ Authentication. Producción estable:
 promover el 20 de agosto de 2026 sin el pedido real previo y probar directamente
 en producción; queda pendiente ejecutar esa prueba y cancelar el pedido.
 
+El proyecto está conectado a `juanarangoceo/cafetera_espresso`, rama de
+producción `main` y raíz `.`. El cambio completo se fusionó mediante el PR #4;
+los pushes futuros a `main` despliegan automáticamente `nitro-platform`.
+
 **Verificado ese día:**
 
 - `npx tsc --noEmit` correcto

@@ -178,10 +178,11 @@ Hecho:
    `nitro-platform-seller360grados-projects.vercel.app` (canónico documentado) y
    `nitro-platform-mauve.vercel.app`. Falta conectar un dominio propio.
 
-7. **Git.** El repositorio fuente de este workspace es
-   `juanarangoceo/cafetera_espresso`, Root Directory `.`. La producción actual se
-   subió por CLI desde cambios locales que todavía no están en Git; conectar el
-   proyecto antes de publicar esos cambios puede disparar un deployment viejo.
+7. **Git — conectado.** `nitro-platform` está enlazado a GitHub
+   `juanarangoceo/cafetera_espresso`, Production Branch `main`, Root Directory
+   `.` y despliegues automáticos habilitados. El salto multi-tenant entró a
+   `main` mediante el PR #4 (`edfc528`); no existe ya una divergencia entre el
+   código desplegado por CLI y el repositorio.
 
 ## Separar el panel a su propio proyecto
 
