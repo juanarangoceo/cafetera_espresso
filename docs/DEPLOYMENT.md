@@ -168,10 +168,11 @@ Hecho:
 
 5. **Promoción — completada con excepción autorizada.** El dueño pidió probar
    directamente en producción, así que el 20 de agosto de 2026 se promovió la
-   Preview anterior. Producción es `dpl_7JSbCGoeApK5jvKWq6rPJvr6uWab`, estado
-   `READY`; `/` responde 200, `/admin` redirige a login, el login responde 200 y
-   la API responde 401 con llave falsa. Falta hacer el pedido real en producción
-   y cancelarlo. No usar esta excepción como precedente para despliegues futuros.
+   Preview anterior. La producción quedó después bajo despliegue automático
+   desde `main` y está `READY`; `/` responde 200, `/admin` redirige a login, el
+   login responde 200 y la API responde 401 con llave falsa. Falta hacer el
+   pedido real en producción y cancelarlo. No usar esta excepción como
+   precedente para despliegues futuros.
 
 6. **Dominio.** `nitro-platform.vercel.app` pertenece a otra cuenta. Los dos
    aliases asignados a este proyecto responden 200:

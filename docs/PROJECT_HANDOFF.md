@@ -179,10 +179,10 @@ aislada y volver a ejecutar toda la verificación.
 **Importantes**
 
 2. **Probar `nitro-platform` en producción.** Resend quedó aplazado; sin clave el
-   envío se omite y el pedido sigue siendo válido. El deployment de producción
-   `dpl_7JSbCGoeApK5jvKWq6rPJvr6uWab` está `READY` y pasó las comprobaciones
-   HTTP. Por decisión explícita del dueño se promovió sin pedido real previo;
-   falta crear uno en producción, comprobarlo en el panel y cancelarlo.
+   envío se omite y el pedido sigue siendo válido. El deployment automático de
+   `main` está `READY` y pasó las comprobaciones HTTP. Por decisión explícita
+   del dueño se promovió sin pedido real previo; falta crear uno en producción,
+   comprobarlo en el panel y cancelarlo.
 3. **Separar la landing propia.** Mover Coffee Maker a un proyecto basado en
    `templates/landing` antes de retirar la landing y `/admin` del proyecto viejo.
 4. **Actualizar `next` al menos a 16.3.1** y resolver el resto del audit en una
