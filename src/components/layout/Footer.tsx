@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { Coffee, MapPin, Instagram, Mail, ChevronRight, Scale, ShieldCheck, FileText } from 'lucide-react';
-import Link from 'next/link';
 import { useLanding } from '@/context/LandingContext';
 import { POLICIES } from '@/lib/data';
 import { SectionId } from '@/types';
+import { PRODUCT } from '@/lib/product';
 
 export default function Footer() {
     const { openPolicy } = useLanding();
@@ -29,10 +29,10 @@ export default function Footer() {
                             <div className="bg-white/10 p-2.5 rounded-xl">
                                 <Coffee className="text-gold-500 w-6 h-6" />
                             </div>
-                            <span className="font-serif font-bold text-2xl tracking-tight">CoffeeMaker Pro</span>
+                            <span className="font-serif font-bold text-2xl tracking-tight">Coffee Maker Pro</span>
                         </div>
                         <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
-                            Elevando el estándar del café en casa. Ingeniería italiana, soporte local y pasión por cada taza servida en Colombia.
+                            Una forma sencilla de preparar espresso y bebidas con leche en casa, con soporte local en Colombia.
                         </p>
                         <div className="flex gap-4">
                             <a 
@@ -45,7 +45,7 @@ export default function Footer() {
                                 <Instagram size={20}/>
                             </a>
                             <a 
-                                href="mailto:hola@coffeemakerpro.com" 
+                                href={`mailto:${PRODUCT.supportEmail}`}
                                 className="bg-white/5 hover:bg-gold-500 hover:text-black p-3 rounded-full transition-all duration-300"
                                 aria-label="Email"
                             >
@@ -79,11 +79,6 @@ export default function Footer() {
                                 <button onClick={() => scrollTo(SectionId.BONUS)} className="hover:text-gold-500 flex items-center gap-2 transition-colors group">
                                     <ChevronRight size={14} className="text-gold-500/50 group-hover:text-gold-500 transition-colors" /> Regalos
                                 </button>
-                            </li>
-                             <li>
-                                <Link href="/blog" className="hover:text-gold-500 flex items-center gap-2 transition-colors group">
-                                    <ChevronRight size={14} className="text-gold-500/50 group-hover:text-gold-500 transition-colors" /> Blog
-                                </Link>
                             </li>
                         </ul>
                     </div>
@@ -128,8 +123,9 @@ export default function Footer() {
                                     <MapPin size={18} className="text-gold-500" />
                                 </div>
                                 <div>
-                                    <span className="block font-medium text-white">Oficina Central</span>
-                                    Bogotá D.C., Colombia
+                                    <span className="block font-medium text-white">{PRODUCT.merchant.legalName}</span>
+                                    {PRODUCT.merchant.idLabel} · {PRODUCT.merchant.taxRegime}
+                                    <span className="mt-0.5 block">{PRODUCT.merchant.location}</span>
                                 </div>
                             </li>
                             <li className="flex items-start gap-4 text-gray-300">
@@ -145,7 +141,7 @@ export default function Footer() {
                 </div>
 
                 <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
-                    <p>© {new Date().getFullYear()} Coffee Maker Pro. Todos los derechos reservados.</p>
+                    <p>© {new Date().getFullYear()} Coffee Maker Pro · {PRODUCT.merchant.legalName}, {PRODUCT.merchant.idLabel}. Todos los derechos reservados.</p>
                     <div className="flex gap-6">
                         <span>Hecho con ☕ en Colombia</span>
                     </div>

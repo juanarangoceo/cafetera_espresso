@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Send, User, CheckCheck, ShoppingBag, Gift } from 'lucide-react';
+import { MessageSquare, X, Send, CheckCheck, Gift, Phone } from 'lucide-react';
 import { Message, SectionId } from '../types';
 import { sendMessageToGemini } from '../app/actions/chat';
 
@@ -165,7 +165,13 @@ const ChatBot: React.FC = () => {
               onClick={handleBuyClick}
               className="w-full bg-gold-500 hover:bg-gold-600 active:bg-gold-700 text-white text-sm font-bold py-2 px-4 rounded-xl shadow-lg transition-colors flex items-center justify-center gap-2 animate-pulse-slow"
             >
-              <Gift size={16} /> 🎁 Aplicar Beneficio: Molino Gratis
+              <Gift size={16} /> Ver kit con molino incluido
+            </button>
+            <button
+              onClick={() => window.dispatchEvent(new Event('marco:open-voice'))}
+              className="w-full border border-white/25 bg-white/10 hover:bg-white/20 text-white text-sm font-bold py-2 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
+            >
+              <Phone size={16} /> Hablar por voz con Marco
             </button>
           </div>
 

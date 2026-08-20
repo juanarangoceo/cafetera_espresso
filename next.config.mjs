@@ -1,3 +1,5 @@
+import { withBotId } from 'botid/next/config';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -8,18 +10,11 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'cdn.shopify.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'cdn.sanity.io',
+        hostname: 'rsqcumtozynvzsctvmpk.supabase.co',
+        pathname: '/storage/v1/object/public/site-logos/**',
       },
     ],
   },
-
-  typescript: {
-    ignoreBuildErrors: true,
-  },
 };
 
-export default nextConfig;
+export default withBotId(nextConfig);

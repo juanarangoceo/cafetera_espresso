@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { useLanding } from '@/context/LandingContext';
+import { PRODUCT } from '@/lib/product';
 
 export default function StickyMobileCTA() {
     const { openCheckout } = useLanding();
@@ -33,9 +34,9 @@ export default function StickyMobileCTA() {
         >
             {/* Left: Text */}
             <div className="flex flex-col">
-                <span className="text-xs font-bold text-white leading-tight">Estación Barista Pro</span>
+                <span className="text-xs font-bold text-white leading-tight">{PRODUCT.name} · {PRODUCT.priceLabel}</span>
                 <span className="text-[10px] text-gold-400 flex items-center gap-1">
-                    <Sparkles size={10} /> Oferta + Regalos Incluidos
+                    <Sparkles size={10} /> Molino y envío incluidos
                 </span>
             </div>
 
@@ -44,7 +45,7 @@ export default function StickyMobileCTA() {
                 onClick={openCheckout}
                 className="bg-white text-coffee-900 px-4 py-2 rounded-xl text-xs font-bold shadow-lg active:scale-95 transition-transform flex items-center gap-1"
             >
-                OBTENER OFERTA <ArrowRight size={12} />
+                VER KIT <ArrowRight size={12} />
             </button>
         </div>
     );

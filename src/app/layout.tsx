@@ -27,25 +27,31 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-    title: "Coffee Maker Pro - La Máquina Definitiva",
-    description: "El café perfecto exige molienda fresca. Llévate hoy el Kit Barista Completo y deja de tomar café oxidado.",
+    title: "Coffee Maker Pro | Café con calidad de cafetería en casa",
+    description: "Prepara espresso, cappuccino y latte en casa con Coffee Maker Pro. Kit con molino incluido, envío gratis y pago contraentrega en Colombia.",
 };
 
 
 import ClientLayout from '@/components/layout/ClientLayout';
+import { activeSiteSlug, getSiteChannels } from '@/lib/site-config';
 
-export default function RootLayout({
+export default async function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    // Qué asistentes se muestran es configuración, no despliegue. La lectura va
+    // cacheada por etiqueta, así que el panel la invalida al guardar y la
+    // landing no paga una consulta por visita.
+    const channels = await getSiteChannels(activeSiteSlug());
+
     return (
         <html lang="es" className={`${inter.variable} ${fraunces.variable} ${jetbrains.variable}`} suppressHydrationWarning>
             <head>
                 <link rel="preconnect" href="https://www.transparenttextures.com" />
             </head>
             <body className="font-sans antialiased text-coffee-900 bg-coffee-50" suppressHydrationWarning>
-                <ClientLayout>
+                <ClientLayout channels={channels}>
                     {children}
                 </ClientLayout>
                 <SpeedInsights />

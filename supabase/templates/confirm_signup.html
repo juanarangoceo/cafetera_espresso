@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es">
+  <body style="margin:0;padding:24px;background:#fcf9f6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#58362e;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;margin:0 auto;background:#ffffff;border:1px solid #eadcd3;border-radius:16px;">
+      <tr>
+        <td style="padding:32px;">
+          <h1 style="margin:0 0 16px;font-size:22px;color:#2f1b17;">Tu pedido de Coffee Maker Pro</h1>
+
+          <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#6d4035;">
+            Toca el botón para entrar y ver el estado de tu envío. El enlace es de un solo uso
+            y caduca en una hora.
+          </p>
+
+          <!--
+            El enlace apunta a nuestra propia ruta con `TokenHash`, y no al
+            `ConfirmationURL` por defecto. Es obligatorio: la plantilla estándar
+            devuelve el token en el fragmento de la URL (después de `#`), que el
+            navegador nunca envía al servidor, de modo que una sesión gestionada
+            desde el servidor con @supabase/ssr jamás llegaría a crearse.
+          -->
+          <a
+            href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=signup&next=/dashboard"
+            style="display:inline-block;padding:14px 28px;background:#cc9710;color:#ffffff;font-weight:bold;font-size:15px;text-decoration:none;border-radius:12px;"
+          >
+            Ver mi pedido
+          </a>
+
+          <p style="margin:24px 0 0;font-size:13px;line-height:1.6;color:#9d634b;">
+            Si no pediste este enlace, puedes ignorar este correo.
+          </p>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

@@ -5,21 +5,34 @@ import { resend } from '@/lib/resend'
 import { OrderConfirmation } from '@/emails/OrderConfirmation'
 
 interface OrderDetails {
+  orderId: string
   fullName: string
   email: string
+  siteName: string
+  productName: string
   totalPrice: number
   paymentMethod: string
   city: string
 }
 
 export async function sendOrderConfirmationEmail(order: OrderDetails) {
+  if (!resend) {
+    console.info('ℹ️ Confirmación por correo omitida: Resend no está habilitado.');
+    return { success: true, skipped: true };
+  }
+
   try {
     const { data, error } = await resend.emails.send({
-      from: 'CoffeeMaker Pro <onboarding@resend.dev>', // Change this if you have a verified domain
-      to: [order.email], 
-      subject: 'Confirmación de Pedido - Cafetera Espresso Pro',
-      react: <OrderConfirmation 
+      // Remitente neutral mientras cada sitio no tenga un dominio verificado
+      // propio. El contenido y el asunto sí se resuelven por cliente.
+      from: 'Nitro Landing <onboarding@resend.dev>',
+      to: [order.email],
+      subject: `Confirmación de pedido - ${order.siteName}`,
+      react: <OrderConfirmation
+        orderId={order.orderId}
         fullName={order.fullName}
+        siteName={order.siteName}
+        productName={order.productName}
         totalPrice={order.totalPrice}
         paymentMethod={order.paymentMethod}
         city={order.city}

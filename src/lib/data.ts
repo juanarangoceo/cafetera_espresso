@@ -2,11 +2,11 @@
 import { Recipe, Policy, SectionId } from '../types';
 import { Coffee, Droplets, Shield, Wind } from 'lucide-react';
 import React from 'react';
+import { PRODUCT } from './product';
 
 // --- CONSTANTS ---
 export const CHECKOUT_URL = "#checkout-form";
-export const PRICE = "$490.000";
-export const OLD_PRICE = "$1.190.000";
+export const PRICE = PRODUCT.priceLabel;
 
 // --- DATA: Testimonials ---
 export const TESTIMONIALS = [
@@ -15,7 +15,7 @@ export const TESTIMONIALS = [
         name: "Carlos M.",
         location: "Bogotá, DC",
         role: "Ahorrador Inteligente",
-        text: "Hice cuentas y gastaba $300mil al mes en tintos de la calle. Con esta máquina me preparo algo mil veces mejor y me sale a $500 pesos la taza. El molino gratis es un detallazo.",
+        text: "Hice cuentas y gastaba cerca de $300 mil al mes comprando café. Ahora preparo mis bebidas en casa, elijo mis propios granos y el molino incluido me resulta muy práctico.",
         stars: 5,
         image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop", 
         highlight: "Ahorro Real"
@@ -25,7 +25,7 @@ export const TESTIMONIALS = [
         name: "Andrea R.",
         location: "Medellín, ANT",
         role: "Principiante",
-        text: "Tenía miedo de no saber usarla porque nunca he sido barista. El E-book que regalan explica todo súper fácil. Ya hago corazones en la leche (bueno, intentos jaja).",
+        text: "Tenía miedo de no saber usarla porque nunca he sido barista. La guía digital explica todo de forma sencilla. Ya hago corazones en la leche —bueno, intentos—.",
         stars: 5,
         image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200&auto=format&fit=crop", 
         highlight: "Fácil de Usar"
@@ -35,7 +35,7 @@ export const TESTIMONIALS = [
         name: "Felipe G.",
         location: "Cali, VAL",
         role: "Exigente",
-        text: "He tenido máquinas de marcas italianas caras. Esta Coffee Maker Pro no tiene nada que envidiarles. Los 20 bares son reales, la crema es espesa y consistente. Recomendada.",
+        text: "He tenido otras máquinas de espresso y me gustó la consistencia de esta. Con una molienda bien ajustada logro una crema densa y un café con muy buen cuerpo.",
         stars: 5,
         image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop", 
         highlight: "Calidad Pro"
@@ -55,25 +55,25 @@ export const UGC_IMAGES = [
 // --- DATA: Product Gallery ---
 export const PRODUCT_IMAGES = [
     {
-        src: "https://cdn.shopify.com/s/files/1/0608/6433/1831/files/imagen-2.webp?v=1757995172",
+        src: "/product/imagen-2.jpg",
         title: "Acero Inoxidable Premium",
-        desc: "Cuerpo robusto de grado quirúrgico. No se oxida, no se mancha.",
+        desc: "Acabado metálico fácil de limpiar y pensado para integrarse a tu cocina.",
         span: "md:col-span-2 md:row-span-2" 
     },
     {
-        src: "https://cdn.shopify.com/s/files/1/0608/6433/1831/files/imagen-3.webp?v=1757995172",
+        src: "/product/imagen-3.jpg",
         title: "Vaporizador Pro",
         desc: "Varilla de acero con rotación 360° para texturizar leche.",
         span: "md:col-span-1 md:row-span-1"
     },
     {
-        src: "https://cdn.shopify.com/s/files/1/0608/6433/1831/files/imagen-4.webp?v=1757995172",
+        src: "/product/imagen-4.jpg",
         title: "Portafiltro Sólido",
         desc: "Peso balanceado y doble salida para extracción uniforme.",
         span: "md:col-span-1 md:row-span-1"
     },
     {
-        src: "https://cdn.shopify.com/s/files/1/0608/6433/1831/files/imagen-6.webp?v=1757995173",
+        src: "/product/imagen-6.jpg",
         title: "Pantalla Táctil",
         desc: "Control intuitivo y preciso para cada preparación.",
         span: "md:col-span-2 md:row-span-1"
@@ -90,7 +90,7 @@ export const RECIPES: Recipe[] = [
         image: '/images/tinto.png',
         ingredients: ['18g de café en grano (Molienda Fina)', '60ml de agua (92°C)', 'Sin azúcar'],
         steps: ['Muele tus granos frescos con el molino de regalo.', 'Compacta con fuerza media usando el tamper.', 'Extrae por 25 segundos para obtener la crema perfecta.'],
-        proSecret: 'El secreto no es el azúcar, es la molienda fresca. El café pre-molido pierde el 60% de sus aromas en 15 minutos.'
+        proSecret: 'El secreto no es el azúcar, es la molienda fresca. El café pierde aroma rápidamente una vez molido, por eso conviene moler justo antes de preparar.'
     },
     {
         id: 'cappuccino',
@@ -134,7 +134,7 @@ export const GALLERY_ITEMS = [
         id: 1,
         title: "La Crema Perfecta",
         desc: "Densa, color avellana y capaz de sostener el azúcar. El sello de calidad de un espresso real.",
-        image: "https://cdn.shopify.com/s/files/1/0608/6433/1831/files/imagen-2.webp?v=1757995172",
+        image: "/product/imagen-2.jpg",
         // Storing icon name or key if we want to avoid importing React here, 
         // but for simplicity let's keep it if we rename to .tsx or handled in component.
         // Better: Instantiate icons in the component mapping.
@@ -144,21 +144,21 @@ export const GALLERY_ITEMS = [
         id: 2,
         title: "Micro-espuma de Seda",
         desc: "Potencia de vapor seco para texturizar leche brillante y elástica. Tu Latte Art empieza aquí.",
-        image: "https://cdn.shopify.com/s/files/1/0608/6433/1831/files/imagen-3.webp?v=1757995172",
+        image: "/product/imagen-3.jpg",
         iconType: 'Wind'
     },
     {
         id: 3,
         title: "Frescura Instantánea",
         desc: "Rompe el grano segundos antes. Los aceites esenciales van a tu taza, no al aire.",
-        image: "https://cdn.shopify.com/s/files/1/0608/6433/1831/files/molino_cafe_electrico_raf.webp?v=1758255802",
+        image: "/product/molino_cafe_electrico_raf.jpg",
         iconType: 'Coffee'
     },
     {
         id: 4,
         title: "Acero Inoxidable Premium",
         desc: "Robusta, pesada y elegante. No es plástico, es maquinaria comercial para tu cocina.",
-        image: "https://cdn.shopify.com/s/files/1/0608/6433/1831/files/scuare.jpg?v=1757995325",
+        image: "/product/scuare.jpg",
         iconType: 'Shield'
     }
 ];
@@ -168,36 +168,48 @@ export const POLICIES: Record<string, Policy> = {
         id: 'privacy',
         title: 'Política de Privacidad',
         content: [
-            'Tus datos están protegidos con encriptación SSL de 256 bits.',
-            'Solo usamos tu información para procesar el envío y la garantía.',
-            'Nunca vendemos tus datos a terceros.'
+            `Responsable del tratamiento: ${PRODUCT.merchant.legalName}, ${PRODUCT.merchant.idLabel}, ${PRODUCT.merchant.location}. Canal de contacto: ${PRODUCT.supportEmail}.`,
+            'Finalidades: gestionar tu pedido, coordinar la entrega, enviarte la confirmación de compra y brindar soporte posventa.',
+            'Datos que recogemos: nombre, correo, celular, ciudad y dirección. Si usas el asistente de voz, procesamos el audio de la llamada únicamente durante la conversación para atenderte.',
+            'Encargados: usamos proveedores externos para base de datos, envío de correos y asistentes conversacionales. Algunos operan fuera de Colombia, por lo que tus datos pueden ser tratados en el exterior bajo acuerdos de confidencialidad.',
+            'Nunca vendemos tus datos a terceros ni los usamos para fines distintos a los aquí descritos.',
+            'Analítica: el sitio usa herramientas de medición de tráfico que registran tu navegación de forma agregada para entender el uso de la página.',
+            'Tus derechos: puedes conocer, actualizar, rectificar y solicitar la supresión de tus datos, así como revocar la autorización, escribiendo a ' + PRODUCT.supportEmail + '. Responderemos tu solicitud dentro de los plazos previstos por la Ley 1581 de 2012.',
+            'Conservación: mantenemos los datos del pedido mientras dure la relación comercial y el periodo de garantía.'
         ]
     },
     terms: {
         id: 'terms',
         title: 'Términos y Condiciones',
         content: [
-            'Oferta del Molino Gratis válida hasta agotar inventario (50 unidades).',
+            `Vendedor: ${PRODUCT.merchant.legalName}, ${PRODUCT.merchant.idLabel}, ${PRODUCT.merchant.taxRegime}, ${PRODUCT.merchant.location}. Contacto: ${PRODUCT.supportEmail}.`,
+            `El molino y la guía digital forman parte del kit publicado por ${PRODUCT.priceLabel}.`,
             'Precios en COP con IVA incluido.',
-            'El despacho se realiza al día siguiente hábil de la compra.'
+            'El despacho se realiza al día siguiente hábil de la compra; el tiempo de entrega depende de la ciudad y la transportadora.',
+            `El único medio de pago es ${PRODUCT.paymentMethod.toLowerCase()}: pagas al recibir el producto.`,
+            'El pedido queda confirmado cuando recibes el correo de confirmación. Puedes cancelarlo sin costo escribiendo antes del despacho.',
+            'Si no te encuentras en la dirección al momento de la entrega, la transportadora intentará contactarte para reprogramar.',
+            'Estos términos se rigen por la legislación colombiana y por el Estatuto del Consumidor (Ley 1480 de 2011).'
         ]
     },
     shipping: {
         id: 'shipping',
         title: 'Información de Envíos',
         content: [
-            'Envío GRATIS asegurado a todo el país.',
+            'Envío gratis a todo el país, sujeto a la cobertura de nuestras transportadoras.',
             'Aliados logísticos: Servientrega, Interrapidisimo, Envía.',
-            'Tiempo de entrega: 2-4 días hábiles en ciudades principales.'
+            `Tiempo de entrega: ${PRODUCT.deliveryEstimate}.`
         ]
     },
     returns: {
         id: 'returns',
-        title: 'Garantía Todopolis',
+        title: 'Garantía y devoluciones',
         content: [
-            '1 Año de Garantía Directa por defectos de fábrica.',
-            '30 Días de Garantía de Satisfacción Total.',
-            'Soporte técnico prioritario para clientes.'
+            `La compra cuenta con ${PRODUCT.warranty}.`,
+            'La garantía cubre fallas de funcionamiento atribuibles al producto durante ese periodo.',
+            `${PRODUCT.withdrawalRight}.`,
+            'Para ejercer el retracto, el producto debe devolverse en las mismas condiciones en que se recibió. El reembolso se realiza dentro de los plazos previstos por la ley.',
+            `Nuestro equipo brinda orientación posventa en ${PRODUCT.supportEmail}.`
         ]
     }
 };
@@ -205,7 +217,6 @@ export const POLICIES: Record<string, Policy> = {
 export const NAV_LINKS = [
     { name: 'Experiencia', id: SectionId.FEATURES },
     { name: 'Resultados', id: 'recipes' },
-    { name: 'Blog', href: '/blog' },
     { name: 'Kit Regalo', id: SectionId.BONUS },
     { name: 'Ahorro', id: 'roi' },
 

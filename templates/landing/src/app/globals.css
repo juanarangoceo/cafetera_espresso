@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+}
+
+.bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.content-relative {
+  content-visibility: auto;
+}
+
+.safe-area-pb {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* --- CLS Safe Animations --- */
+.reveal {
+  opacity: 1; /* Default to visible to prevent CLS if JS fails */
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+/* Base state for JS observation */
+.reveal:not(.active) {
+  opacity: 0;
+  transform: none; /* DISABLED MOVEMENT */
+}
+
+/* Active state */
+.reveal.active {
+  opacity: 1;
+  transform: none; /* DISABLED MOVEMENT */
+}
+
+/* Variations - All neutralized */
+.fade-bottom:not(.active) {
+  transform: none;
+}
+.fade-left:not(.active) {
+  transform: none;
+}
+.fade-right:not(.active) {
+  transform: none;
+}
+.zoom-in:not(.active) {
+  transform: none;
+}
+
+/* Ensure no layout shift for hidden elements */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}

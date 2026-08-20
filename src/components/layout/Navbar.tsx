@@ -20,7 +20,6 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const isHomePage = pathname === "/";
-  const isBlogPage = pathname?.startsWith("/blog") || false;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -60,47 +59,33 @@ export default function Navbar() {
         });
       }
     } else {
-      // Si estamos en blog, ir al home
+      // Desde cualquier otra ruta, volver al home y ubicar la sección.
       router.push(`/#${id}`);
     }
   };
 
-  // Forzar fondo blanco si NO estamos en home - asegurar visibilidad siempre
-  // En páginas de blog, siempre mostrar fondo blanco desde el inicio
-  const navBackground =
-    isScrolled || !isHomePage || isBlogPage
-      ? "bg-white/95 backdrop-blur-xl shadow-sm py-3"
-      : "bg-transparent py-4 md:py-8";
-
-  const textColor =
-    isScrolled || !isHomePage || isBlogPage
-      ? "text-coffee-900"
-      : "text-coffee-900 lg:text-coffee-900";
-  const logoBg =
-    isScrolled || !isHomePage || isBlogPage
-      ? "bg-coffee-900 text-gold-500"
-      : "bg-white text-coffee-900 shadow-lg";
+  const navPosition = isScrolled ? "pt-2" : "pt-3 lg:pt-5";
 
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out ${navBackground}`}
+        className={`fixed left-0 top-0 z-50 w-full px-3 transition-all duration-300 ease-in-out lg:px-6 ${navPosition}`}
       >
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center min-h-[64px]">
+        <div className={`mx-auto flex min-h-[64px] max-w-7xl items-center justify-between rounded-2xl border border-white/70 bg-white/95 px-4 backdrop-blur-xl transition-shadow duration-300 lg:rounded-full lg:px-6 ${isScrolled ? "shadow-[0_14px_40px_rgba(47,27,23,0.16)]" : "shadow-[0_10px_30px_rgba(47,27,23,0.10)]"}`}>
           <Link
             href="/"
             className="flex items-center gap-2 cursor-pointer group"
           >
             <div
-              className={`w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center transition-colors duration-300 ${logoBg}`}
+              className="flex h-9 w-9 items-center justify-center rounded-xl bg-coffee-950 text-gold-400 transition-colors duration-300 md:h-10 md:w-10"
             >
               <Coffee size={20} strokeWidth={2.5} className="md:w-6 md:h-6" />
             </div>
             <div className="flex flex-col justify-center">
               <div
-                className={`text-xl md:text-2xl font-serif font-black tracking-tight leading-none transition-colors duration-300 ${textColor}`}
+                className="font-serif text-xl font-black leading-none tracking-tight text-coffee-950 transition-colors duration-300 md:text-2xl"
               >
-                CoffeeMaker<span className="text-gold-500">Pro</span>
+                Coffee Maker <span className="text-gold-500">Pro</span>
               </div>
               <span
                 className={`text-[9px] md:text-[10px] tracking-widest uppercase font-bold text-coffee-600 hidden sm:block`}
@@ -110,13 +95,13 @@ export default function Navbar() {
             </div>
           </Link>
 
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden items-center gap-5 lg:flex xl:gap-7">
             {NAV_LINKS.map((link: any) =>
               link.href ? (
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="text-base font-bold uppercase tracking-wide hover:text-gold-600 transition-colors text-coffee-800"
+                  className="text-xs font-bold uppercase tracking-[0.08em] text-coffee-700 transition-colors hover:text-gold-700"
                 >
                   {link.name}
                 </Link>
@@ -124,56 +109,40 @@ export default function Navbar() {
                 <button
                   key={link.name}
                   onClick={() => handleNavigation(link.id)}
-                  className="text-base font-bold uppercase tracking-wide hover:text-gold-600 transition-colors text-coffee-800"
+                  className="text-xs font-bold uppercase tracking-[0.08em] text-coffee-700 transition-colors hover:text-gold-700"
                 >
                   {link.name}
                 </button>
               )
             )}
 
-            {user ? (
-              <Link
-                href="/dashboard"
-                className="p-2 rounded-full hover:bg-coffee-50 transition-colors text-coffee-900"
-                title="Mi Cuenta"
-              >
-                <User size={24} />
-              </Link>
-            ) : (
-              <Link
-                href="/login"
-                className="text-sm font-bold uppercase tracking-wide hover:text-gold-600 transition-colors text-coffee-900"
-              >
-                LOGIN
-              </Link>
-            )}
+            <Link
+              href={user ? "/dashboard" : "/login"}
+              className="rounded-full p-2 text-coffee-600 transition-colors hover:bg-coffee-50 hover:text-coffee-950"
+              title={user ? "Mi pedido" : "Consultar mi pedido"}
+              aria-label={user ? "Ver el estado de mi pedido" : "Consultar mi pedido"}
+            >
+              <User size={20} />
+            </Link>
 
             <button
               onClick={() => handleNavigation(SectionId.PRICING)}
-              className="bg-gold-500 hover:bg-gold-600 text-white px-6 py-2.5 rounded-full font-bold text-sm transition-all transform hover:scale-105 shadow-lg shadow-gold-500/20 flex items-center gap-2 border border-gold-400"
+              className="flex items-center gap-2 rounded-full bg-coffee-950 px-5 py-3 text-xs font-bold text-white shadow-md transition-colors hover:bg-coffee-800"
             >
               COMPRAR AHORA
             </button>
           </div>
 
-          <div className="flex items-center gap-4 md:hidden">
-            {user ? (
-                <Link
-                  href="/dashboard"
-                  className="p-2 rounded-full hover:bg-coffee-50 transition-colors text-coffee-900"
-                >
-                  <User size={24} />
-                </Link>
-              ) : (
-                <Link
-                  href="/login"
-                  className={`text-sm font-bold uppercase ${textColor}`}
-                >
-                  LOGIN
-                </Link>
-              )}
+          <div className="flex items-center gap-3 lg:hidden">
+            <Link
+              href={user ? "/dashboard" : "/login"}
+              className="rounded-full p-2 text-coffee-700 transition-colors hover:bg-coffee-50"
+              aria-label={user ? "Ver el estado de mi pedido" : "Consultar mi pedido"}
+            >
+              <User size={20} />
+            </Link>
             <button
-              className="text-coffee-900 bg-white/90 p-2 rounded-lg backdrop-blur-sm border border-coffee-100 shadow-sm active:bg-coffee-50 z-50"
+              className="z-50 rounded-xl bg-coffee-950 p-2 text-white shadow-sm transition-colors active:bg-coffee-800"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -183,7 +152,7 @@ export default function Navbar() {
       </nav>
 
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-40 bg-white/98 backdrop-blur-xl flex flex-col pt-28 px-8 gap-8 animate-fade-in-up overflow-y-auto">
+        <div className="fixed inset-0 z-40 flex flex-col gap-8 overflow-y-auto bg-white/98 px-8 pt-28 backdrop-blur-xl animate-fade-in-up lg:hidden">
           {NAV_LINKS.map((link: any) =>
             link.href ? (
               <Link
@@ -217,13 +186,13 @@ export default function Navbar() {
 
           <div className="mt-auto mb-12 space-y-4">
             <p className="text-coffee-400 text-base text-center">
-              Incluye Molino Gratis por tiempo limitado.
+              Máquina, molino y guía incluidos.
             </p>
             <button
               onClick={openCheckout}
               className="w-full bg-gold-500 text-white py-4 rounded-xl font-bold text-xl shadow-xl flex justify-center items-center gap-2"
             >
-              ¡Quiero mi Kit! <ArrowRight size={24} />
+              Quiero mi Coffee Maker Pro <ArrowRight size={24} />
             </button>
           </div>
         </div>
