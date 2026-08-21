@@ -172,6 +172,8 @@ tras aplicar la migración del panel.
 | `site_members` | — | — | Lee los de sus sitios | Lee y escribe |
 | `site_api_keys` | — | — | **Nada: sin grant ni política** | Lee y escribe |
 | `clients` | — | — | Sin grant de sesión | Lee y escribe tras guard de plataforma |
+| `intake_requests` | — | — | Sin grant de sesión | Lee y escribe tras guard o token privado |
+| `intake_files` | — | — | Sin grant de sesión | Lee y escribe tras guard o token privado |
 | `order_status_events` | — | Miembro: los de su sitio | Plataforma: — | Lee y escribe |
 | `contacts` | — | Miembro: su sitio | Plataforma: — | Lee y escribe |
 | `contact_notes` | — | Miembro: su sitio | Plataforma: — | Lee y escribe |
@@ -188,6 +190,36 @@ administrador: es un registro, no un campo editable.
 Los grants a `service_role` sobre las tablas nuevas son **explícitos y
 obligatorios**: los defaults de Supabase de 2026 no otorgan nada sobre una tabla
 nueva. Es la misma trampa documentada en la capa 4.
+
+### Nitro Intake
+
+El enlace de intake es una capacidad privada de 256 bits. La base guarda solo
+su SHA-256; un volcado no permite reconstruir enlaces activos. La misma
+respuesta se usa para token inválido, vencido o revocado.
+
+`intake_requests` e `intake_files` tienen RLS sin políticas y ningún grant para
+`anon` o `authenticated`. Las rutas públicas usan `service_role` únicamente
+después de validar el token. Los archivos entran al bucket privado
+`nitro-intake` mediante una URL firmada para un solo path, con máximo 30 MB por
+archivo, 60 archivos y 300 MB por solicitud, y permanecen allí como fuente de
+verdad. Tipos activos como HTML, SVG o JavaScript no se aceptan.
+
+La central `/platform` usa `service_role` solo después de validar una sesión de
+plataforma. Para abrir o descargar un archivo emite una URL firmada de 60
+segundos; el navegador recibe únicamente el path de ese objeto y un token
+temporal, nunca una credencial general. Los miembros de clientes no pueden usar
+esas rutas ni enumerar el bucket.
+
+Una solicitud puede existir sin `client` ni `site`: conserva solo nombre e
+identificador provisionales. La conversión exige sesión de plataforma y un
+brief entregado y válido; crea el sitio desactivado, de modo que recibir datos
+del prospecto nunca habilita ventas ni acceso administrativo por sí solo.
+
+Las rutas `/intake/*` no cargan Google Analytics, Meta Pixel ni Speed Insights,
+y declaran `Referrer-Policy: no-referrer`: enviar el token en una URL a
+terceros convertiría la analítica o una carga externa en una filtración de
+acceso. El cliente no recibe credenciales de Storage ni acceso para enumerar
+otros objetos.
 
 ### Logos de clientes
 

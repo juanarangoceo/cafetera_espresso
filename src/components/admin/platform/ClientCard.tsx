@@ -1,9 +1,10 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { useActionState, useState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { Check, Globe, ImageIcon, KeyRound, Loader2, Power, TriangleAlert, UserPlus } from 'lucide-react';
+import { Check, ClipboardList, Globe, ImageIcon, KeyRound, Loader2, Power, TriangleAlert, UserPlus } from 'lucide-react';
 import {
   createSiteMember,
   issueSiteKey,
@@ -14,6 +15,8 @@ import {
   type PlatformResult,
 } from '@/app/admin/platform-actions';
 import { formatCOP } from '@/lib/orders';
+import { formatColombiaDate, formatColombiaDateTime } from '@/lib/colombia-date';
+import { issueIntakeLink, revokeIntakeLink } from '@/app/platform/intake-actions';
 
 const field =
   'w-full rounded-xl border border-ink-700 bg-ink-900 px-3 py-2 text-sm text-white outline-none transition-all placeholder:text-ink-500 focus:border-nitro-500 focus:ring-2 focus:ring-nitro-500/20';
@@ -34,6 +37,17 @@ export type ClientSite = {
   product: { name: string; price: number } | null;
   members: { email: string; displayName: string | null }[];
   keys: { id: string; prefix: string; label: string | null; lastUsedAt: string | null; revokedAt: string | null }[];
+  intake: {
+    id: string;
+    status: string;
+    expiresAt: string;
+    submittedAt: string | null;
+    createdAt: string;
+    fileCount: number;
+    storedFileCount: number;
+    lastActivityAt: string;
+    hasProgress: boolean;
+  } | null;
   account: {
     clientName: string;
     legalName: string | null;
@@ -82,15 +96,24 @@ function Feedback({ state }: { state: PlatformResult | null }) {
       {/* La llave se muestra una sola vez. De la base solo sale su hash, así que
           si se pierde aquí, se revoca y se emite otra. */}
       {state.secret && (
-        <pre className="mt-2 overflow-x-auto rounded-xl border border-nitro-700 bg-ink-900 p-3 text-xs text-nitro-300">
-          {state.secret}
-        </pre>
+        <div className="mt-2">
+          <pre className="overflow-x-auto rounded-xl border border-nitro-700 bg-ink-900 p-3 text-xs text-nitro-300">{state.secret}</pre>
+          {state.secret.startsWith('/intake/') && (
+            <button
+              type="button"
+              onClick={() => void navigator.clipboard.writeText(`${window.location.origin}${state.secret}`)}
+              className="mt-2 text-xs font-bold text-nitro-400 hover:text-nitro-300"
+            >
+              Copiar enlace completo
+            </button>
+          )}
+        </div>
       )}
     </div>
   );
 }
 
-type Tab = 'marca' | 'acceso' | 'llaves' | 'cuenta';
+type Tab = 'marca' | 'brief' | 'acceso' | 'llaves' | 'cuenta';
 
 export default function ClientCard({ site }: { site: ClientSite }) {
   const [tab, setTab] = useState<Tab | null>(null);
@@ -101,6 +124,8 @@ export default function ClientCard({ site }: { site: ClientSite }) {
   const [accountState, accountAction] = useActionState<PlatformResult | null, FormData>(updateSiteAccount, null);
   const [brandingState, brandingAction] = useActionState<PlatformResult | null, FormData>(updateSiteBranding, null);
   const [activeState, activeAction] = useActionState<PlatformResult | null, FormData>(toggleSiteActive, null);
+  const [intakeState, intakeAction] = useActionState<PlatformResult | null, FormData>(issueIntakeLink, null);
+  const [revokeIntakeState, revokeIntakeAction] = useActionState<PlatformResult | null, FormData>(revokeIntakeLink, null);
 
   const activeKeys = site.keys.filter((key) => !key.revokedAt);
 
@@ -188,7 +213,7 @@ export default function ClientCard({ site }: { site: ClientSite }) {
       )}
 
       <nav className="mt-5 flex gap-2">
-        {(['marca', 'acceso', 'llaves', 'cuenta'] as Tab[]).map((name) => (
+        {(['marca', 'brief', 'acceso', 'llaves', 'cuenta'] as Tab[]).map((name) => (
           <button
             key={name}
             type="button"
@@ -201,6 +226,59 @@ export default function ClientCard({ site }: { site: ClientSite }) {
           </button>
         ))}
       </nav>
+
+      {tab === 'brief' && (
+        <div className="mt-4 border-t border-ink-800 pt-4">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h4 className="flex items-center gap-2 font-bold text-white">
+                <ClipboardList size={17} className="text-nitro-400" /> Nitro Intake
+              </h4>
+              <p className="mt-1 max-w-2xl text-sm text-ink-400">
+                Genera un enlace privado para que el cliente complete el brief y suba material. Un enlace nuevo cierra el anterior.
+              </p>
+              {site.intake && (
+                <div className="mt-2 text-xs text-ink-500">
+                  <p>
+                    Estado: <span className="font-bold text-ink-300">
+                      {site.intake.status === 'submitted'
+                        ? 'información recibida'
+                        : site.intake.hasProgress || site.intake.fileCount > 0
+                          ? 'cliente completando'
+                          : 'esperando al cliente'}
+                    </span>
+                    {site.intake.submittedAt
+                      ? ` · recibida ${formatColombiaDate(site.intake.submittedAt)}`
+                      : ` · vence ${formatColombiaDate(site.intake.expiresAt)}`}
+                  </p>
+                  <p className="mt-1">{site.intake.storedFileCount}/{site.intake.fileCount} archivos listos · última actividad {formatColombiaDateTime(site.intake.lastActivityAt)}</p>
+                  <Link href={`/platform/intakes/${site.intake.id}`} className="mt-2 inline-block font-bold text-nitro-400 hover:text-nitro-300">Revisar información</Link>
+                </div>
+              )}
+            </div>
+
+            <form action={intakeAction}>
+              <input type="hidden" name="siteId" value={site.id} />
+              <Submit>
+                <ClipboardList size={14} />
+                {site.intake?.status === 'draft' ? 'Crear enlace nuevo' : 'Crear enlace'}
+              </Submit>
+            </form>
+          </div>
+
+          {site.intake?.status === 'draft' && (
+            <form action={revokeIntakeAction} className="mt-3">
+              <input type="hidden" name="requestId" value={site.intake.id} />
+              <button type="submit" className="text-xs font-bold text-rose-400 transition-colors hover:text-rose-300">
+                Cerrar enlace activo
+              </button>
+            </form>
+          )}
+
+          <Feedback state={intakeState} />
+          <Feedback state={revokeIntakeState} />
+        </div>
+      )}
 
       {tab === 'marca' && (
         <div className="mt-4 border-t border-ink-800 pt-4">

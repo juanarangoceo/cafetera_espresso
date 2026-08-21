@@ -122,9 +122,24 @@ pierda, revoca y emite otra.
 El endpoint devuelve el mismo `401` para llave inexistente, revocada y sitio
 inactivo. Distinguirlos lo convertiría en un oráculo de llaves válidas.
 
-## Dar de alta un cliente
+## Recibir el brief y dar de alta un cliente
 
-Desde `/platform`, o a mano:
+El alta ya no tiene que ocurrir antes de hablar con el prospecto:
+
+1. **Intake independiente.** En `/platform`, pulsa **Nuevo intake** y escribe
+   únicamente un nombre provisional y un identificador. No hacen falta cliente,
+   producto ni precio. Comparte el enlace privado que aparece una sola vez.
+2. **Brief recibido.** Cuando el cliente entrega los seis pasos, la solicitud
+   aparece como lista en **Solicitudes antes del alta**. El botón **Crear cliente
+   desde el brief** crea `clients` + `sites` + `site_channels` + `site_products`
+   con la información confirmada. La landing queda desconectada hasta terminar
+   su configuración. La conversión automática admite por ahora precios en COP.
+3. **Usuario.** `npm run admin:create -- --site <slug> correo 'Clave' 'Nombre'`.
+4. **Llave.** `npm run site:key -- emitir <slug>`.
+5. **Landing.** Usa el material de `openclaw/clientes/<slug>` con
+   `npm run landing:new -- --client <slug> --target <ruta>`.
+
+También sigue disponible el alta manual desde `/platform`:
 
 1. **Cliente y primera landing.** Crea `clients` + `sites` + `site_channels` +
    `site_products` de una vez. Las cuatro filas van juntas: un sitio sin producto no puede
@@ -136,15 +151,37 @@ Desde `/platform`, o a mano:
 2. **Usuario.** `npm run admin:create -- --site <slug> correo 'Clave' 'Nombre'`.
    El correo queda confirmado; sin eso la cuenta entra al panel y no ve nada.
 3. **Llave.** `npm run site:key -- emitir <slug>`.
-4. **Landing.** Copia `templates/landing/` a un repositorio nuevo y despliégalo
-   con `NITRO_SITE_KEY` y `NITRO_API_URL`. Sin ninguna variable de Supabase.
-   Instrucciones completas en `templates/landing/README.md`.
+4. **Landing.** Sube el material a `openclaw/clientes/<slug>` y crea el proyecto
+   neutro con `npm run landing:new -- --client <slug> --target <ruta>`. El
+   agente diseña desde la evidencia del cliente y conserva el núcleo Nitro.
+   Instrucciones completas en `docs/LANDING_FACTORY.md`.
+
+### Nitro Intake: recibir y revisar el material en Supabase
+
+Se puede crear un intake global antes del alta o emitirlo desde la pestaña
+**Brief** de un cliente existente. Al crear un enlace:
+
+- se genera un token aleatorio y solo se guarda su hash;
+- un enlace nuevo revoca el borrador anterior del mismo sitio; los intakes
+  independientes pueden renovarse y el enlace anterior deja de funcionar;
+- el cliente completa seis pasos con guardado automático desde el celular;
+- cada carga recibe una firma para un único path y queda permanentemente en el
+  bucket privado `nitro-intake`, organizada por solicitud y categoría;
+- `/platform` muestra si el cliente no empezó, está completando o ya entregó,
+  junto con actividad, cantidad de archivos y el detalle completo;
+- la revisión permite abrir o descargar cada archivo mediante una URL firmada
+  de 60 segundos y exportar `BRIEF.md` e `intake.json` bajo demanda.
+
+El enlace dura 30 días y puede cerrarse manualmente. El cliente no puede
+enumerar Storage ni leer archivos de otra solicitud. Si una carga se interrumpe,
+puede reintentar o quitar ese archivo; un pendiente no obliga a empezar el
+formulario de nuevo. Nitro Intake ya no requiere Google Drive ni OAuth.
 
 Si el diseño ya existe en otro repositorio, no se copia la interfaz de la
 plantilla. Se prepara ese repositorio desde aquí:
 
 ```bash
-npm run landing:prepare -- --target /ruta/al/repositorio
+npm run landing:prepare -- --target /ruta/al/repositorio --client <slug>
 ```
 
 Esto instala instrucciones para Codex/Claude, el contrato de integración, el
@@ -156,11 +193,16 @@ cliente. PNG, JPG y WebP tienen límite de 750 KB. Se almacenan públicamente en
 Supabase Storage porque son identidad visual pública, pero solo el superadmin
 puede cargarlos o borrarlos mediante una acción de servidor.
 
-## La plantilla de landing
+## Los starters de landing
+
+`templates/nitro-starter/` es el punto de partida recomendado: un proyecto
+mínimo y visualmente neutro con checkout Nitro, documentos creativos y gates.
+`scripts/create-landing-workspace.mjs` agrega el material y el skill portable.
 
 `templates/landing/` es un proyecto Next completo e independiente, derivado de
-la landing de Coffee Maker Pro. Compila por su cuenta y **no depende de este
-repositorio en tiempo de ejecución**.
+la landing de Coffee Maker Pro. Se conserva como referencia funcional y para
+migraciones, no como estilo predeterminado. Compila por su cuenta y **no depende
+de este repositorio en tiempo de ejecución**.
 
 Lo que se le quitó respecto de la landing original:
 

@@ -1,6 +1,6 @@
 # Despliegue
 
-**Última actualización: 20 de agosto de 2026.**
+**Última actualización: 21 de agosto de 2026.**
 
 ## Infraestructura
 
@@ -23,12 +23,16 @@ escribir variables de entorno de Preview en modo no interactivo: devuelven
 |---|:--:|:--:|:--:|
 | `NEXT_PUBLIC_SUPABASE_URL` | ✓ | ✓ | ✓ |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | ✓ | ✓ | ✓ |
-| `SUPABASE_SECRET_KEY` | ✓ | ✓ | — |
+| `SUPABASE_SECRET_KEY` | ✓ | ✓ | ✓ |
 | `OPENAI_API_KEY` | ✓ | ✓ | — |
 | `GEMINI_API_KEY` | ✓ | ✓ | — |
 | `RESEND_API_KEY` | ✓ | ✓ | ✓ |
 
-Ninguna otra variable es necesaria. Las de Sanity y Shopify se eliminaron.
+Nitro Intake conserva el material en el bucket privado `nitro-intake`; no
+requiere variables ni credenciales de Google Drive. Tras verificar el flujo
+completo en Preview, las tres variables antiguas de Drive se retiraron de
+Preview y Production en `nitro-platform`. Las variables de Sanity y Shopify
+siguen eliminadas.
 
 **Agregar una variable:**
 
@@ -122,14 +126,17 @@ Migraciones aplicadas:
 | `20260820120000` | igual | Frontera multi-inquilino, precio por sitio y llaves |
 | `20260820140000` | igual | `leads` por sitio |
 | `20260820200341` | igual | Separa central corporativa de operación; crea `clients` |
+| `20260820224848` | igual | Nitro Intake: solicitudes privadas, borradores e inventario de archivos |
+| `20260821020920` | igual | Intake antes del alta y enlace posterior con cliente y sitio |
+| `20260821135005` | igual | Conserva los archivos de Intake en Supabase Storage y retira Google Drive |
 
 **No reaplicar ni volver a alinear estas versiones.** El historial estuvo
-desalineado porque dos migraciones se aplicaron por API con timestamps remotos,
-pero quedó corregido el 20 de agosto de 2026. Las siete versiones remotas
-coinciden ahora con los nombres locales. Para una migración nueva se sigue el
-procedimiento de cinco pasos de esta sección. La octava migración se aplicó y
-alineó el 20 de agosto de 2026; dejó un cliente, un sitio y cero sitios
-huérfanos, y retiró `platform_admins` de `accessible_site_ids()`.
+desalineado porque varias migraciones se aplicaron por API con timestamps
+remotos. Las once versiones remotas coinciden ahora con los nombres locales;
+las tres de Nitro Intake se aplicaron y alinearon el 21 de agosto de 2026. Para
+una migración nueva se sigue el procedimiento de cinco pasos de esta sección.
+La octava migración dejó un cliente, un sitio y cero sitios huérfanos, y retiró
+`platform_admins` de `accessible_site_ids()`.
 
 ## Separación entre `/platform` y `/admin`
 

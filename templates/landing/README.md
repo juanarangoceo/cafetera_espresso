@@ -36,7 +36,7 @@ verificador. Codex y Claude sabrán conservar el diseño e integrar el flujo.
 
 ## Poner en marcha un cliente
 
-1. **Alta en el panel.** En `/admin/plataforma`, «Nuevo cliente»: crea el sitio,
+1. **Alta en el panel.** En `/platform`, «Nuevo cliente»: crea el sitio,
    su producto con su precio, sus canales y su cuenta.
 2. **Usuario.** En la pestaña *acceso* de su tarjeta, o
    `npm run admin:create -- --site <slug> correo 'Clave' 'Nombre'`.

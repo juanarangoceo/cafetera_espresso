@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(131);
+select plan(158);
 
 select has_table('public', 'orders_cod', 'orders table exists');
 select has_table('public', 'leads', 'leads table exists');
@@ -667,5 +667,123 @@ select is(
   'the cross-tenant channel update changed nothing either'
 );
 
+-- ---------------------------------------------------------------------------
+-- Nitro Intake: enlaces privados y archivos editoriales.
+-- ---------------------------------------------------------------------------
+
+select has_table('public', 'intake_requests', 'intake requests table exists');
+select has_table('public', 'intake_files', 'intake files table exists');
+select col_is_pk('public', 'intake_requests', 'id', 'intake requests have a primary key');
+select col_is_pk('public', 'intake_files', 'id', 'intake files have a primary key');
+select has_column('public', 'intake_requests', 'token_hash', 'only the intake token hash is persisted');
+select has_column('public', 'intake_requests', 'answers', 'the verified brief draft is persisted');
+select has_column('public', 'intake_requests', 'provisional_name', 'an intake can carry a name before client creation');
+select has_column('public', 'intake_requests', 'slug', 'an intake reserves its future landing slug');
+select col_is_null('public', 'intake_requests', 'site_id', 'an intake can exist before a site');
+select hasnt_column('public', 'intake_requests', 'drive_folder_id', 'intakes no longer depend on a Drive folder');
+select hasnt_column('public', 'intake_files', 'drive_file_id', 'files no longer depend on a Drive identity');
+select has_column('public', 'intake_files', 'stored_at', 'permanent files record when Storage accepted them');
+select ok(
+  (select relrowsecurity from pg_class where oid = 'public.intake_requests'::regclass),
+  'RLS enabled on intake requests'
+);
+select ok(
+  (select relrowsecurity from pg_class where oid = 'public.intake_files'::regclass),
+  'RLS enabled on intake files'
+);
+select policies_are(
+  'public', 'intake_requests', array[]::text[],
+  'intake requests expose no browser policy'
+);
+select policies_are(
+  'public', 'intake_files', array[]::text[],
+  'intake files expose no browser policy'
+);
+select table_privs_are(
+  'public', 'intake_requests', 'anon', array[]::text[],
+  'anonymous visitors cannot query intake requests directly'
+);
+select table_privs_are(
+  'public', 'intake_requests', 'authenticated', array[]::text[],
+  'signed-in clients cannot enumerate intake requests'
+);
+select table_privs_are(
+  'public', 'intake_files', 'anon', array[]::text[],
+  'anonymous visitors cannot query intake files directly'
+);
+select table_privs_are(
+  'public', 'intake_files', 'authenticated', array[]::text[],
+  'signed-in clients cannot enumerate intake files'
+);
+select throws_ok(
+  $$ insert into public.intake_requests
+       (site_id, provisional_name, slug, token_hash, created_by)
+     values (
+       'c0ffee00-0000-4000-8000-000000000001',
+       'Hash inválido',
+       'hash-invalido',
+       'not-a-sha256',
+       'platform@example.com'
+     ) $$,
+  '23514', null,
+  'an intake token must be stored as a SHA-256 hash'
+);
+select lives_ok(
+  $$ insert into public.intake_requests
+       (site_id, provisional_name, slug, token_hash, created_by)
+     values (
+       null,
+       'Marca antes del alta',
+       'marca-antes-del-alta',
+       repeat('a', 64),
+       'platform@example.com'
+     ) $$,
+  'a standalone intake can be created without client, site, product or price'
+);
+select is(
+  (select site_id from public.intake_requests where slug = 'marca-antes-del-alta'),
+  null::uuid,
+  'the standalone intake stays unlinked until platform conversion'
+);
+select throws_ok(
+  $$ insert into public.intake_requests
+       (site_id, provisional_name, slug, token_hash, created_by)
+     values (
+       null,
+       'Marca repetida',
+       'marca-antes-del-alta',
+       repeat('b', 64),
+       'platform@example.com'
+     ) $$,
+  '23505', null,
+  'two active standalone intakes cannot reserve the same slug'
+);
+select lives_ok(
+  $$ update public.intake_requests
+       set status = 'revoked', revoked_at = now()
+     where slug = 'marca-antes-del-alta' $$,
+  'revoking a standalone intake releases its reserved slug'
+);
+select throws_ok(
+  $$ insert into public.intake_files
+       (request_id, category, original_name, mime_type, size_bytes, storage_path, status)
+     values (
+       (select id from public.intake_requests where slug = 'marca-antes-del-alta'),
+       'marca', 'logo.png', 'image/png', 1200,
+       '00000000-0000-4000-8000-00000000f001/marca/logo.png', 'stored'
+     ) $$,
+  '23514', null,
+  'a stored file must record when Storage accepted it'
+);
+select lives_ok(
+  $$ insert into public.intake_files
+       (request_id, category, original_name, mime_type, size_bytes, storage_path, status, stored_at)
+     values (
+       (select id from public.intake_requests where slug = 'marca-antes-del-alta'),
+       'marca', 'logo.png', 'image/png', 1200,
+       '00000000-0000-4000-8000-00000000f001/marca/logo-stored.png', 'stored', now()
+     ) $$,
+  'a verified Storage object can be marked as permanently stored'
+);
 select * from finish();
 rollback;

@@ -3,6 +3,9 @@ import { createServiceClient } from '@/utils/supabase/service';
 import { formatCOP } from '@/lib/orders';
 import NewSiteForm from '@/components/admin/platform/NewSiteForm';
 import ClientCard, { type ClientSite } from '@/components/admin/platform/ClientCard';
+import NewIntakeForm from '@/components/admin/platform/NewIntakeForm';
+import StandaloneIntakeList, { type StandaloneIntake } from '@/components/admin/platform/StandaloneIntakeList';
+import { intakeAnswersSchema } from '@/lib/intake';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,13 +17,31 @@ export default async function PlatformPage() {
     return <p className="rounded-2xl border border-rose-500/30 bg-rose-500/10 p-6 text-rose-300">Falta <code>SUPABASE_SECRET_KEY</code> en el servidor.</p>;
   }
 
-  const [sitesResult, productsResult, membersResult, keysResult, clientsResult] = await Promise.all([
+  const [sitesResult, productsResult, membersResult, keysResult, clientsResult, intakesResult, intakeFilesResult] = await Promise.all([
     service.from('sites').select('id, client_id, slug, name, logo_url, primary_domain, repository_url, vercel_project, production_url, integration_notes, is_active').order('name'),
     service.from('site_products').select('site_id, name, price').eq('is_active', true),
     service.from('site_members').select('site_id, email, display_name').order('email'),
     service.from('site_api_keys').select('id, site_id, prefix, label, last_used_at, revoked_at').order('created_at', { ascending: false }),
     service.from('clients').select('id, name, legal_name, contact_name, contact_email, contact_phone, plan, monthly_fee, billing_day, status, onboarding_status, next_invoice_date, notes').order('name'),
+    service.from('intake_requests').select('id, site_id, provisional_name, slug, status, answers, expires_at, submitted_at, created_at, updated_at').order('created_at', { ascending: false }),
+    service.from('intake_files').select('request_id, status, size_bytes, created_at, stored_at'),
   ]);
+
+  const intakeStats = new Map((intakesResult.data ?? []).map((intake) => {
+    const files = (intakeFilesResult.data ?? []).filter((file) => file.request_id === intake.id);
+    const lastFileActivity = files.reduce<string | null>((latest, file) => {
+      const candidate = file.stored_at ?? file.created_at;
+      return !latest || candidate > latest ? candidate : latest;
+    }, null);
+    const answers = intakeAnswersSchema.parse(intake.answers ?? {});
+    return [intake.id, {
+      fileCount: files.length,
+      storedFileCount: files.filter((file) => file.status === 'stored').length,
+      totalBytes: files.reduce((total, file) => total + file.size_bytes, 0),
+      lastActivityAt: lastFileActivity && lastFileActivity > intake.updated_at ? lastFileActivity : intake.updated_at,
+      hasProgress: Object.entries(answers).some(([key, value]) => key !== 'consent' && String(value).trim().length > 0),
+    }];
+  }));
 
   const clientById = new Map((clientsResult.data ?? []).map((client) => [client.id, client]));
   const sites: ClientSite[] = (sitesResult.data ?? []).map((site) => {
@@ -41,6 +62,21 @@ export default async function PlatformPage() {
       product: product ? { name: product.name, price: product.price } : null,
       members: (membersResult.data ?? []).filter((row) => row.site_id === site.id).map((row) => ({ email: row.email, displayName: row.display_name })),
       keys: (keysResult.data ?? []).filter((row) => row.site_id === site.id).map((row) => ({ id: row.id, prefix: row.prefix, label: row.label, lastUsedAt: row.last_used_at, revokedAt: row.revoked_at })),
+      intake: (() => {
+        const row = (intakesResult.data ?? []).find((item) => item.site_id === site.id);
+        const stats = row ? intakeStats.get(row.id) : null;
+        return row ? {
+          id: row.id,
+          status: row.status,
+          expiresAt: row.expires_at,
+          submittedAt: row.submitted_at,
+          createdAt: row.created_at,
+          fileCount: stats?.fileCount ?? 0,
+          storedFileCount: stats?.storedFileCount ?? 0,
+          lastActivityAt: stats?.lastActivityAt ?? row.updated_at,
+          hasProgress: stats?.hasProgress ?? false,
+        } : null;
+      })(),
       account: client ? {
         clientName: client.name,
         legalName: client.legal_name,
@@ -59,6 +95,25 @@ export default async function PlatformPage() {
   });
 
   const clients = clientsResult.data ?? [];
+  const standaloneIntakes: StandaloneIntake[] = (intakesResult.data ?? [])
+    .filter((intake) => !intake.site_id && intake.status !== 'revoked')
+    .map((intake) => ({
+      id: intake.id,
+      provisionalName: intake.provisional_name,
+      slug: intake.slug,
+      status: intake.status as 'draft' | 'submitted',
+      expiresAt: intake.expires_at,
+      submittedAt: intake.submitted_at,
+      createdAt: intake.created_at,
+      answers: intakeAnswersSchema.parse(intake.answers ?? {}),
+      ...(intakeStats.get(intake.id) ?? {
+        fileCount: 0,
+        storedFileCount: 0,
+        totalBytes: 0,
+        lastActivityAt: intake.updated_at,
+        hasProgress: false,
+      }),
+    }));
   const billed = clients.reduce((total, client) => total + (client.monthly_fee ?? 0), 0);
   const incomplete = clients.filter((client) => client.onboarding_status !== 'activo').length;
 
@@ -69,7 +124,10 @@ export default async function PlatformPage() {
           <h1 className="text-3xl font-bold tracking-tight text-white md:text-4xl">Clientes y landings</h1>
           <p className="mt-1 max-w-3xl text-ink-400">Central corporativa para altas, marca, accesos, integración y facturación. No expone pedidos, contactos, direcciones ni CRM.</p>
         </div>
-        <NewSiteForm />
+        <div className="flex flex-wrap gap-3">
+          <NewIntakeForm />
+          <NewSiteForm />
+        </div>
       </header>
 
       <div className="mb-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -78,6 +136,8 @@ export default async function PlatformPage() {
         <Summary value={formatCOP(billed)} label="Ingreso mensual registrado" note="No cobrado automáticamente" />
         <Summary value={String(incomplete)} label="Onboarding por cerrar" />
       </div>
+
+      <StandaloneIntakeList intakes={standaloneIntakes} />
 
       <div className="space-y-4">{sites.map((site) => <ClientCard key={site.id} site={site} />)}</div>
     </div>

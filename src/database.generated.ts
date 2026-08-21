@@ -198,6 +198,115 @@ export type Database = {
           },
         ]
       }
+      intake_files: {
+        Row: {
+          category: string
+          created_at: string
+          error_message: string | null
+          id: string
+          mime_type: string
+          original_name: string
+          request_id: string
+          size_bytes: number
+          status: string
+          storage_path: string
+          stored_at: string | null
+          uploaded_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          mime_type: string
+          original_name: string
+          request_id: string
+          size_bytes: number
+          status?: string
+          storage_path: string
+          stored_at?: string | null
+          uploaded_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          mime_type?: string
+          original_name?: string
+          request_id?: string
+          size_bytes?: number
+          status?: string
+          storage_path?: string
+          stored_at?: string | null
+          uploaded_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intake_files_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "intake_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      intake_requests: {
+        Row: {
+          answers: Json
+          created_at: string
+          created_by: string
+          expires_at: string
+          id: string
+          provisional_name: string
+          revoked_at: string | null
+          site_id: string | null
+          slug: string
+          status: string
+          submitted_at: string | null
+          token_hash: string
+          updated_at: string
+        }
+        Insert: {
+          answers?: Json
+          created_at?: string
+          created_by: string
+          expires_at?: string
+          id?: string
+          provisional_name: string
+          revoked_at?: string | null
+          site_id?: string | null
+          slug: string
+          status?: string
+          submitted_at?: string | null
+          token_hash: string
+          updated_at?: string
+        }
+        Update: {
+          answers?: Json
+          created_at?: string
+          created_by?: string
+          expires_at?: string
+          id?: string
+          provisional_name?: string
+          revoked_at?: string | null
+          site_id?: string | null
+          slug?: string
+          status?: string
+          submitted_at?: string | null
+          token_hash?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intake_requests_site_id_fkey"
+            columns: ["site_id"]
+            isOneToOne: false
+            referencedRelation: "sites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           created_at: string

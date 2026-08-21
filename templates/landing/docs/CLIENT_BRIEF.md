@@ -49,7 +49,7 @@ marca como **PENDIENTE**; el agente no inventa el dato.
 
 No escribas secretos aquí.
 
-- Cliente creado en `/admin/plataforma`: NO
+- Cliente creado en `/platform`: NO
 - Usuario del cliente creado: NO
 - Producto y precio coinciden con Nitro: NO
 - `NITRO_SITE_KEY` emitida: NO

@@ -20,11 +20,11 @@ export default function ClientLayout({
 }) {
   const pathname = usePathname();
 
-  // El panel no es la landing: no lleva navegación comercial, ni pie de página,
-  // ni asistentes de venta. Se decide por ruta en vez de mover las rutas
-  // existentes a un grupo, porque el worktree ya arrastra muchos cambios sin
-  // confirmar y renombrar rutas de un sitio en producción no vale el riesgo.
-  if (pathname?.startsWith('/admin')) {
+  // La interfaz comercial solo pertenece a la landing. La comprobación es
+  // deliberadamente cerrada: una ruta interna nueva, o un pathname todavía no
+  // resuelto durante la hidratación, nunca debe heredar la invitación de voz,
+  // WhatsApp, navegación, footer ni modales de venta.
+  if (pathname !== '/') {
     return <>{children}</>;
   }
 

@@ -19,7 +19,11 @@
     "demo:seed": "node scripts/seed-demo.mjs",
     "supabase:types": "supabase gen types --lang typescript --local --schema public > src/database.generated.ts",
     "site:key": "node scripts/site-key.mjs",
-    "landing:prepare": "node scripts/prepare-landing-repo.mjs"
+    "landing:new": "node scripts/create-landing-workspace.mjs",
+    "landing:prepare": "node scripts/prepare-landing-repo.mjs",
+    "landing:list": "node scripts/landing-registry.mjs list",
+    "landing:show": "node scripts/landing-registry.mjs show",
+    "landing:track": "node scripts/landing-registry.mjs upsert"
   },
   "dependencies": {
     "@google/genai": "^1.33.0",

@@ -1,6 +1,6 @@
 # Coffee Maker Pro — estado del proyecto
 
-**Última actualización: 20 de agosto de 2026.**
+**Última actualización: 21 de agosto de 2026.**
 
 Permite retomar el trabajo en una sesión nueva con Codex o Claude Code sin
 depender del historial de conversación.
@@ -16,6 +16,7 @@ depender del historial de conversación.
 | `ADMIN_DASHBOARD.md` | Panel de operación, acceso y canales conmutables. |
 | `PLATFORM.md` | Frontera multi-tenant, sitios, usuarios y llaves. |
 | `LANDING_FACTORY.md` | Crear o adaptar landings independientes. |
+| `LANDINGS_IN_PROGRESS.md` | Landings activas, modo, ruta, puerto, bloqueos y próxima acción. |
 
 ## 1. Estado
 
@@ -189,40 +190,77 @@ aislada y volver a ejecutar toda la verificación.
 
 **Importantes**
 
-2. **Probar `nitro-platform` en producción.** Resend quedó aplazado; sin clave el
+2. **Desplegar Nitro Intake.** El código está en la rama `feat/nitro-intake` y
+   en el PR #5. Google Drive fue retirado del flujo: el material queda
+   permanentemente en Supabase Storage y se revisa desde `/platform`. La
+   migración y el flujo completo pasaron en Preview; falta fusionar y confirmar
+   producción. El corte detallado está en la sección 10.
+3. **Probar `nitro-platform` en producción.** Resend quedó aplazado; sin clave el
    envío se omite y el pedido sigue siendo válido. El deployment automático de
    `main` está `READY` y pasó las comprobaciones HTTP. Por decisión explícita
    del dueño se promovió sin pedido real previo; falta crear uno en producción,
    comprobarlo en el panel y cancelarlo.
-3. **Separar la landing propia.** Mover Coffee Maker a un proyecto basado en
+4. **Separar la landing propia.** Mover Coffee Maker a un proyecto basado en
    `templates/landing` antes de retirar la landing y `/admin` del proyecto viejo.
-4. **Actualizar `next` al menos a 16.3.1** y resolver el resto del audit en una
+5. **Actualizar `next` al menos a 16.3.1** y resolver el resto del audit en una
    tarea aislada.
-5. **Publicar las reglas de firewall** solo tras autorización del dueño.
+6. **Publicar las reglas de firewall** solo tras autorización del dueño.
 
 **Menores**
 
-6. **Verificación visual en móvil.** Se corrigieron cinco desbordes calculando anchos, pero nunca se revisó renderizado. Sin verificar: si el hero deja el titular bajo el fold, cómo se apila la sección de ahorro y si los targets táctiles llegan a 44px.
-7. **Video en Cloudinary.** Única atadura externa que queda para un recurso de la landing.
+7. **Verificación visual en móvil.** Se corrigieron cinco desbordes calculando anchos, pero nunca se revisó renderizado. Sin verificar: si el hero deja el titular bajo el fold, cómo se apila la sección de ahorro y si los targets táctiles llegan a 44px.
+8. **Video en Cloudinary.** Única atadura externa que queda para un recurso de la landing.
 
 ## 8. Fábrica de landings
 
-`templates/landing/` es la referencia funcional para una landing independiente.
-Cada copia lleva instrucciones para Codex/Claude, brief, contrato HTTP y
-`npm run nitro:check`. Para diseños creados aparte existe:
+`templates/nitro-starter/` es el inicio recomendado para una landing nueva: no
+copia el estilo de Coffee Maker y ya contiene el núcleo seguro de Nitro. El
+material se organiza en `/home/juan/nitro-drive/openclaw/clientes/<slug>` y se
+convierte en un workspace local con:
 
 ```bash
-npm run landing:prepare -- --target /ruta/al/repositorio
+npm run landing:new -- --client <slug> --target /ruta/al/repositorio
 ```
 
-El comando conserva la UI del diseño e instala únicamente el paquete de
-integración y verificación. Ver `LANDING_FACTORY.md`.
+Cada proyecto recibe el skill `nitro-landing-studio`, brief, matriz de evidencia,
+dirección creativa, contexto persistente, contrato HTTP y gates separados.
+`landings/registry.json` recuerda proyectos entre sesiones; consúltalo con
+`npm run landing:list`. Para diseños creados
+aparte existe:
+
+```bash
+npm run landing:prepare -- --target /ruta/al/repositorio --client <slug>
+```
+
+El comando conserva la UI e instala el estudio, el material y la integración.
+`templates/landing/` queda como referencia funcional heredada, no como estilo
+predeterminado. Ver `LANDING_FACTORY.md`.
+
+`/platform` ya permite crear **Nitro Intake** antes de dar de alta un cliente:
+**Nuevo intake** solo pide nombre provisional e identificador. El prospecto
+recibe un enlace privado, completa seis pasos y carga material desde el celular.
+Al recibirlo, **Crear cliente desde el brief** crea la ficha, el sitio
+desconectado, los canales y el producto sin volver a copiar la información. La
+pestaña Brief de clientes ya creados sigue disponible. El sistema guarda
+borradores y archivos permanentemente en el bucket privado `nitro-intake`.
+`/platform` muestra avance, última actividad, archivos y todas las respuestas;
+también exporta `BRIEF.md` e `intake.json`. Las tres migraciones están aplicadas
+en producción y alineadas con el historial local desde el 21 de agosto. El
+código publicado todavía no incluye este cierre. No se deben
+enviar enlaces reales hasta completar la prueba en Preview y el pedido real.
+
+La primera landing registrada es `maquina_para_ejercicio`, proyecto local
+`/home/juan/maquina_para_ejercicio_landing`, modo `demo`, estado
+`local_review`, puerto SSH 3100. Su oferta y vendedor son ficticios; el resumen
+del checkout funciona y la confirmación está bloqueada. No existe Preview ni
+autorización de producción.
 
 ## 9. Estado del repositorio
 
-El worktree tiene muchos cambios legítimos sin commit: rediseño, eliminación de
-Sanity/blog/Shopify, Supabase local, Marco por voz, ficha central, capas de
-seguridad y esta documentación.
+El desarrollo de Nitro Intake está consolidado en el commit `cd9f3e4` de la
+rama `feat/nitro-intake`, publicada en GitHub. El PR #5 permanece en borrador:
+`https://github.com/juanarangoceo/cafetera_espresso/pull/5`. Al iniciar el corte
+de documentación, el worktree estaba limpio.
 
 No asumir que los cambios no relacionados pertenecen al agente actual. No usar
 comandos destructivos ni revertir archivos en masa.
@@ -235,3 +273,52 @@ npx tsc --noEmit
 npm run supabase:status
 npm run supabase:start   # si Docker/Supabase no está activo
 ```
+
+## 10. Corte de Nitro Intake — 21 de agosto de 2026
+
+### Completado en local
+
+- Google Drive y `google-auth-library` fueron retirados del flujo y de las
+  dependencias directas.
+- La migración `20260821135005_persist_intake_in_supabase.sql` cambia los
+  archivos a estados `pending`, `stored` y `failed`, elimina las identidades de
+  Drive y conserva RLS sin políticas ni grants de navegador.
+- `/platform` distingue esperando, completando y recibido; muestra última
+  actividad, archivos, respuestas y descargas privadas. `BRIEF.md` e
+  `intake.json` se generan bajo demanda.
+- El layout comercial ahora usa una lista positiva: navbar, invitación de voz,
+  WhatsApp, footer y modales solo renderizan en `/`. Se verificó con una cuenta
+  real local que `/admin` no muestra ninguno de esos elementos y la landing los
+  conserva.
+- `npx tsc --noEmit`, `npm run build`, las 158 pruebas pgTAP y
+  `supabase:verify` pasaron después de recrear Supabase local.
+- Las tres migraciones de Intake están aplicadas en Supabase remoto, con el
+  historial alineado hasta `20260821135005`. Las tablas están vacías y
+  protegidas por RLS.
+- Rama `feat/nitro-intake`, commit funcional `4743180`, PR #5 y comprobaciones
+  de Vercel en verde.
+- Preview verificada de `nitro-platform`:
+  `https://nitro-platform-p4j6j8c7f-seller360grados-projects.vercel.app`
+  (deployment `dpl_67bQtd979RRAHwqj5HwB9vQqFCq3`). Pasaron los seis pasos del
+  Intake en móvil, guardado automático, carga y persistencia de una imagen,
+  entrega y confirmación en base y Storage.
+- `/admin` redirige al login sin navbar, banner de voz, WhatsApp ni footer
+  comercial. La landing conserva su interfaz comercial.
+- Se creó un pedido real en Preview por $490.000, atribuido al sitio y producto
+  correctos; se canceló inmediatamente y se comprobó el evento de cancelación.
+- La solicitud, archivo, objeto de Storage, pedido, contacto y eventos usados en
+  la prueba fueron eliminados de forma exacta. No quedó información temporal.
+- Las variables antiguas `GOOGLE_DRIVE_PRIVATE_KEY`,
+  `GOOGLE_DRIVE_SERVICE_ACCOUNT_EMAIL` y `OPENCLAW_CLIENTS_FOLDER_ID` se
+  retiraron de Preview y Production en `nitro-platform` después de validar el
+  flujo nuevo.
+
+### Secuencia siguiente
+
+1. Subir este cierre, marcar listo y fusionar el PR #5.
+2. Confirmar el despliegue automático de `main` en `nitro-platform`, repetir en
+   producción la prueba mínima de Intake y hacer/cancelar un pedido real.
+
+No promover a producción mientras fallen Intake o el pedido real de Preview. La
+autorización para terminar y desplegar fue dada en esta conversación, pero no
+elimina esos gates.
