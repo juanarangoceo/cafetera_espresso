@@ -26,13 +26,14 @@ pedidos reales habilitados.
 La plataforma multi-tenant ya está aplicada y desplegada también en el proyecto
 Vercel separado `nitro-platform`, configurado como Next.js y sin Vercel
 Authentication. Producción estable:
-`https://nitro-platform-seller360grados-projects.vercel.app`. El dueño pidió
-promover el 20 de agosto de 2026 sin el pedido real previo y probar directamente
-en producción; queda pendiente ejecutar esa prueba y cancelar el pedido.
+`https://nitro-platform-seller360grados-projects.vercel.app`. Nitro Intake se
+fusionó mediante el PR #5 y quedó desplegado en producción el 21 de agosto de
+2026; las pruebas reales de Intake y pedido fueron completadas y limpiadas.
 
 El proyecto está conectado a `juanarangoceo/cafetera_espresso`, rama de
-producción `main` y raíz `.`. El cambio completo se fusionó mediante el PR #4;
-los pushes futuros a `main` despliegan automáticamente `nitro-platform`.
+producción `main` y raíz `.`. El corte multi-tenant se fusionó mediante el PR #4
+y Nitro Intake mediante el PR #5; los pushes futuros a `main` despliegan
+automáticamente `nitro-platform`.
 
 La interfaz tiene dos productos separados: `/platform` es la central
 corporativa de Nitro y `/admin` es la operación exclusiva de cada cliente. Un
@@ -43,7 +44,7 @@ ni métricas operativas mediante su sesión; esa restricción vive en RLS.
 
 - `npx tsc --noEmit` correcto
 - `npm run build` correcto, con validación de tipos activa
-- 131 pruebas pgTAP y `supabase:verify` en verde
+- 158 pruebas pgTAP y `supabase:verify` en verde
 - Advisors de seguridad de Supabase sin hallazgos
 - Pedido real de extremo a extremo confirmado en Preview
 - `orders_cod` en cero pedidos reales
@@ -190,26 +191,16 @@ aislada y volver a ejecutar toda la verificación.
 
 **Importantes**
 
-2. **Desplegar Nitro Intake.** El código está en la rama `feat/nitro-intake` y
-   en el PR #5. Google Drive fue retirado del flujo: el material queda
-   permanentemente en Supabase Storage y se revisa desde `/platform`. La
-   migración y el flujo completo pasaron en Preview; falta fusionar y confirmar
-   producción. El corte detallado está en la sección 10.
-3. **Probar `nitro-platform` en producción.** Resend quedó aplazado; sin clave el
-   envío se omite y el pedido sigue siendo válido. El deployment automático de
-   `main` está `READY` y pasó las comprobaciones HTTP. Por decisión explícita
-   del dueño se promovió sin pedido real previo; falta crear uno en producción,
-   comprobarlo en el panel y cancelarlo.
-4. **Separar la landing propia.** Mover Coffee Maker a un proyecto basado en
+2. **Separar la landing propia.** Mover Coffee Maker a un proyecto basado en
    `templates/landing` antes de retirar la landing y `/admin` del proyecto viejo.
-5. **Actualizar `next` al menos a 16.3.1** y resolver el resto del audit en una
+3. **Actualizar `next` al menos a 16.3.1** y resolver el resto del audit en una
    tarea aislada.
-6. **Publicar las reglas de firewall** solo tras autorización del dueño.
+4. **Publicar las reglas de firewall** solo tras autorización del dueño.
 
 **Menores**
 
-7. **Verificación visual en móvil.** Se corrigieron cinco desbordes calculando anchos, pero nunca se revisó renderizado. Sin verificar: si el hero deja el titular bajo el fold, cómo se apila la sección de ahorro y si los targets táctiles llegan a 44px.
-8. **Video en Cloudinary.** Única atadura externa que queda para un recurso de la landing.
+5. **Verificación visual en móvil.** Se corrigieron cinco desbordes calculando anchos, pero nunca se revisó renderizado. Sin verificar: si el hero deja el titular bajo el fold, cómo se apila la sección de ahorro y si los targets táctiles llegan a 44px.
+6. **Video en Cloudinary.** Única atadura externa que queda para un recurso de la landing.
 
 ## 8. Fábrica de landings
 
@@ -257,10 +248,8 @@ autorización de producción.
 
 ## 9. Estado del repositorio
 
-El desarrollo de Nitro Intake está consolidado en el commit `cd9f3e4` de la
-rama `feat/nitro-intake`, publicada en GitHub. El PR #5 permanece en borrador:
-`https://github.com/juanarangoceo/cafetera_espresso/pull/5`. Al iniciar el corte
-de documentación, el worktree estaba limpio.
+Nitro Intake está fusionado en `main` mediante el PR #5, merge `f72d901`. El
+commit funcional es `4743180` y el cierre de Preview `104631c`.
 
 No asumir que los cambios no relacionados pertenecen al agente actual. No usar
 comandos destructivos ni revertir archivos en masa.
@@ -313,12 +302,15 @@ npm run supabase:start   # si Docker/Supabase no está activo
   retiraron de Preview y Production en `nitro-platform` después de validar el
   flujo nuevo.
 
-### Secuencia siguiente
+### Producción verificada
 
-1. Subir este cierre, marcar listo y fusionar el PR #5.
-2. Confirmar el despliegue automático de `main` en `nitro-platform`, repetir en
-   producción la prueba mínima de Intake y hacer/cancelar un pedido real.
-
-No promover a producción mientras fallen Intake o el pedido real de Preview. La
-autorización para terminar y desplegar fue dada en esta conversación, pero no
-elimina esos gates.
+- PR #5 fusionado en `main` con merge `f72d901`.
+- `nitro-platform`: deployment `dpl_HuVUL4vJ7RX2j3oByL1QGB7pNtBz`, `READY`.
+- `coffee-maker-pro`: deployment `dpl_BQkzsNgM9MtJTsZuWkMQ2FZcNG23`, `READY`.
+- En producción, Intake guardó un borrador y una imagen en Storage; se confirmó
+  la fila `stored` y el objeto físico. Después se eliminaron ambos por la API.
+- El pedido real de producción se creó por $490.000 para el sitio y producto
+  correctos, se canceló, se comprobó su evento y se limpió junto con contacto y
+  eventos. Las consultas finales dieron cero residuos de prueba.
+- `/admin` redirige al login sin interfaz comercial; ambos proyectos responden
+  200 en la raíz y Vercel no registró errores de runtime tras el despliegue.
