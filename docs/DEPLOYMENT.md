@@ -29,11 +29,10 @@ escribir variables de entorno de Preview en modo no interactivo: devuelven
 | `RESEND_API_KEY` | ✓ | ✓ | ✓ |
 
 Nitro Intake conserva el material en el bucket privado `nitro-intake`; no
-requiere variables ni credenciales de Google Drive. Las variables antiguas de
-Drive pueden retirarse de Preview y Production después de desplegar la versión
-que incluye la migración `20260821135005_persist_intake_in_supabase.sql`.
-Verifica primero el flujo completo en Preview. Las variables de Sanity y
-Shopify siguen eliminadas.
+requiere variables ni credenciales de Google Drive. Tras verificar el flujo
+completo en Preview, las tres variables antiguas de Drive se retiraron de
+Preview y Production en `nitro-platform`. Las variables de Sanity y Shopify
+siguen eliminadas.
 
 **Agregar una variable:**
 

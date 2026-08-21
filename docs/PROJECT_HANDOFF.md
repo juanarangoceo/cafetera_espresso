@@ -190,11 +190,11 @@ aislada y volver a ejecutar toda la verificación.
 
 **Importantes**
 
-2. **Terminar y desplegar Nitro Intake.** El código está en la rama
-   `feat/nitro-intake` y en el PR borrador #5. Google Drive fue retirado del
-   flujo: el material queda permanentemente en Supabase Storage y se revisa
-   desde `/platform`. La migración nueva y el flujo completo todavía deben
-   probarse en Preview antes de promover. El corte detallado está en la sección 10.
+2. **Desplegar Nitro Intake.** El código está en la rama `feat/nitro-intake` y
+   en el PR #5. Google Drive fue retirado del flujo: el material queda
+   permanentemente en Supabase Storage y se revisa desde `/platform`. La
+   migración y el flujo completo pasaron en Preview; falta fusionar y confirmar
+   producción. El corte detallado está en la sección 10.
 3. **Probar `nitro-platform` en producción.** Resend quedó aplazado; sin clave el
    envío se omite y el pedido sigue siendo válido. El deployment automático de
    `main` está `READY` y pasó las comprobaciones HTTP. Por decisión explícita
@@ -295,30 +295,28 @@ npm run supabase:start   # si Docker/Supabase no está activo
 - Las tres migraciones de Intake están aplicadas en Supabase remoto, con el
   historial alineado hasta `20260821135005`. Las tablas están vacías y
   protegidas por RLS.
-- Rama `feat/nitro-intake`, commit `cd9f3e4`, PR borrador #5 y comprobaciones de
-  Vercel en verde.
-- Preview vigente de `nitro-platform`:
-  `https://nitro-platform-1dnpu8or8-seller360grados-projects.vercel.app`
-  (deployment `dpl_3xtahNvUMCi1kTof5JuFbkQgbJuH`). La raíz, el login, el enlace
-  privado de Intake y el guardado automático del borrador respondieron bien.
-- El intento automatizado de pedido fue rechazado por BotID y no dejó pedidos,
-  que es el comportamiento de seguridad esperado. La prueba real debe hacerse
-  desde un navegador humano.
-- Los registros y archivos temporales usados en las pruebas anteriores fueron
-  eliminados.
+- Rama `feat/nitro-intake`, commit funcional `4743180`, PR #5 y comprobaciones
+  de Vercel en verde.
+- Preview verificada de `nitro-platform`:
+  `https://nitro-platform-p4j6j8c7f-seller360grados-projects.vercel.app`
+  (deployment `dpl_67bQtd979RRAHwqj5HwB9vQqFCq3`). Pasaron los seis pasos del
+  Intake en móvil, guardado automático, carga y persistencia de una imagen,
+  entrega y confirmación en base y Storage.
+- `/admin` redirige al login sin navbar, banner de voz, WhatsApp ni footer
+  comercial. La landing conserva su interfaz comercial.
+- Se creó un pedido real en Preview por $490.000, atribuido al sitio y producto
+  correctos; se canceló inmediatamente y se comprobó el evento de cancelación.
+- La solicitud, archivo, objeto de Storage, pedido, contacto y eventos usados en
+  la prueba fueron eliminados de forma exacta. No quedó información temporal.
+- Las variables antiguas `GOOGLE_DRIVE_PRIVATE_KEY`,
+  `GOOGLE_DRIVE_SERVICE_ACCOUNT_EMAIL` y `OPENCLAW_CLIENTS_FOLDER_ID` se
+  retiraron de Preview y Production en `nitro-platform` después de validar el
+  flujo nuevo.
 
 ### Secuencia siguiente
 
-1. Redesplegar la Preview y completar un Intake temporal: borrador, archivo,
-   envío, revisión, descarga, `BRIEF.md`, `intake.json` y creación del cliente.
-2. Eliminar de forma exacta los registros y objetos temporales.
-3. Retirar de Vercel las variables antiguas de Google Drive después de confirmar
-   que la nueva Preview no las usa.
-4. Hacer un pedido real desde un navegador humano en Preview con datos marcados
-   claramente como prueba interna; comprobarlo y cancelarlo inmediatamente.
-5. Actualizar este handoff, subir
-   el cierre, marcar listo y fusionar el PR #5.
-6. Confirmar el despliegue automático de `main` en `nitro-platform`, repetir en
+1. Subir este cierre, marcar listo y fusionar el PR #5.
+2. Confirmar el despliegue automático de `main` en `nitro-platform`, repetir en
    producción la prueba mínima de Intake y hacer/cancelar un pedido real.
 
 No promover a producción mientras fallen Intake o el pedido real de Preview. La
