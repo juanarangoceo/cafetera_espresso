@@ -27,15 +27,21 @@ escribir variables de entorno de Preview en modo no interactivo: devuelven
 | `OPENAI_API_KEY` | ✓ | ✓ | — |
 | `GEMINI_API_KEY` | ✓ | ✓ | — |
 | `RESEND_API_KEY` | ✓ | ✓ | ✓ |
-| `OPENCLAW_CLIENTS_FOLDER_ID` | ✓ | ✓ | ✓ |
-| `GOOGLE_DRIVE_CLIENT_ID` | ✓ | ✓ | ✓ |
-| `GOOGLE_DRIVE_CLIENT_SECRET` | ✓ | ✓ | ✓ |
-| `GOOGLE_DRIVE_REFRESH_TOKEN` | ✓ | ✓ | ✓ |
+| `OPENCLAW_CLIENTS_FOLDER_ID` | ✓ | ✓ | — |
+| `GOOGLE_DRIVE_CLIENT_ID` | confirmar | confirmar | — |
+| `GOOGLE_DRIVE_CLIENT_SECRET` | confirmar | confirmar | — |
+| `GOOGLE_DRIVE_REFRESH_TOKEN` | confirmar | confirmar | — |
 
 Las tres variables OAuth de Google Drive son el método recomendado para una
 carpeta `openclaw/clientes` que vive en **Mi unidad**. Como alternativa para una
 unidad compartida se usan `GOOGLE_DRIVE_SERVICE_ACCOUNT_EMAIL` y
 `GOOGLE_DRIVE_PRIVATE_KEY` en lugar del bloque OAuth. No configures ambos.
+
+El 21 de agosto de 2026 se comprobó que la alternativa de cuenta de servicio no
+sirve para la carpeta actual: Google Drive respondió 403 por falta de cuota de
+almacenamiento de la cuenta de servicio y no existe una unidad compartida
+disponible. El bloque OAuth quedó pendiente de confirmar. Una vez validado en
+Preview, retirar las variables de cuenta de servicio de `nitro-platform`.
 
 El ID es el identificador de la carpeta `openclaw/clientes`, no una URL ni la
 ruta local. La credencial solo necesita acceso a esa carpeta. Verifica en

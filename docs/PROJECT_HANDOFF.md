@@ -190,21 +190,27 @@ aislada y volver a ejecutar toda la verificación.
 
 **Importantes**
 
-2. **Probar `nitro-platform` en producción.** Resend quedó aplazado; sin clave el
+2. **Terminar y desplegar Nitro Intake.** El código está en la rama
+   `feat/nitro-intake` y en el PR borrador #5. La Preview está operativa, pero la
+   carga a Google Drive está bloqueada: la cuenta de servicio no puede escribir
+   en una carpeta de **Mi unidad** porque Google no le asigna cuota. Hay que
+   configurar OAuth de un usuario dedicado, redesplegar la Preview y repetir el
+   flujo completo antes de promover. El corte detallado está en la sección 10.
+3. **Probar `nitro-platform` en producción.** Resend quedó aplazado; sin clave el
    envío se omite y el pedido sigue siendo válido. El deployment automático de
    `main` está `READY` y pasó las comprobaciones HTTP. Por decisión explícita
    del dueño se promovió sin pedido real previo; falta crear uno en producción,
    comprobarlo en el panel y cancelarlo.
-3. **Separar la landing propia.** Mover Coffee Maker a un proyecto basado en
+4. **Separar la landing propia.** Mover Coffee Maker a un proyecto basado en
    `templates/landing` antes de retirar la landing y `/admin` del proyecto viejo.
-4. **Actualizar `next` al menos a 16.3.1** y resolver el resto del audit en una
+5. **Actualizar `next` al menos a 16.3.1** y resolver el resto del audit en una
    tarea aislada.
-5. **Publicar las reglas de firewall** solo tras autorización del dueño.
+6. **Publicar las reglas de firewall** solo tras autorización del dueño.
 
 **Menores**
 
-6. **Verificación visual en móvil.** Se corrigieron cinco desbordes calculando anchos, pero nunca se revisó renderizado. Sin verificar: si el hero deja el titular bajo el fold, cómo se apila la sección de ahorro y si los targets táctiles llegan a 44px.
-7. **Video en Cloudinary.** Única atadura externa que queda para un recurso de la landing.
+7. **Verificación visual en móvil.** Se corrigieron cinco desbordes calculando anchos, pero nunca se revisó renderizado. Sin verificar: si el hero deja el titular bajo el fold, cómo se apila la sección de ahorro y si los targets táctiles llegan a 44px.
+8. **Video en Cloudinary.** Única atadura externa que queda para un recurso de la landing.
 
 ## 8. Fábrica de landings
 
@@ -241,9 +247,9 @@ borradores, copia los archivos a
 `openclaw/clientes/<slug>/01_marca`…`05_legal` y genera `BRIEF.md` e
 `intake.json`. Las migraciones `20260820224848_nitro_intake.sql` y
 `20260821020920_standalone_intakes.sql` se aplicaron y alinearon en producción
-el 21 de agosto de 2026. Todavía faltan las variables de Google Drive y el
-despliegue del código; por eso el panel publicado aún no ofrece el flujo y no se
-deben enviar enlaces reales.
+el 21 de agosto de 2026. El código está desplegado solo en Preview; la producción
+publicada todavía no incluye el flujo. No se deben enviar enlaces reales hasta
+completar la prueba de Drive, el pedido real y la promoción descritos abajo.
 
 La primera landing registrada es `maquina_para_ejercicio`, proyecto local
 `/home/juan/maquina_para_ejercicio_landing`, modo `demo`, estado
@@ -253,9 +259,10 @@ autorización de producción.
 
 ## 9. Estado del repositorio
 
-El worktree tiene muchos cambios legítimos sin commit: rediseño, eliminación de
-Sanity/blog/Shopify, Supabase local, Marco por voz, ficha central, capas de
-seguridad y esta documentación.
+El desarrollo de Nitro Intake está consolidado en el commit `cd9f3e4` de la
+rama `feat/nitro-intake`, publicada en GitHub. El PR #5 permanece en borrador:
+`https://github.com/juanarangoceo/cafetera_espresso/pull/5`. Al iniciar el corte
+de documentación, el worktree estaba limpio.
 
 No asumir que los cambios no relacionados pertenecen al agente actual. No usar
 comandos destructivos ni revertir archivos en masa.
@@ -268,3 +275,60 @@ npx tsc --noEmit
 npm run supabase:status
 npm run supabase:start   # si Docker/Supabase no está activo
 ```
+
+## 10. Corte de Nitro Intake — 21 de agosto de 2026
+
+### Completado
+
+- TypeScript y build general pasaron; las 154 pruebas pgTAP y
+  `supabase:verify` pasaron después de recrear Supabase local.
+- Las dos migraciones de Intake están aplicadas en Supabase remoto, con el
+  historial alineado exactamente con los archivos locales. Las tablas están
+  vacías y protegidas por RLS.
+- Rama `feat/nitro-intake`, commit `cd9f3e4`, PR borrador #5 y comprobaciones de
+  Vercel en verde.
+- Preview vigente de `nitro-platform`:
+  `https://nitro-platform-1dnpu8or8-seller360grados-projects.vercel.app`
+  (deployment `dpl_3xtahNvUMCi1kTof5JuFbkQgbJuH`). La raíz, el login, el enlace
+  privado de Intake y el guardado automático del borrador respondieron bien.
+- El intento automatizado de pedido fue rechazado por BotID y no dejó pedidos,
+  que es el comportamiento de seguridad esperado. La prueba real debe hacerse
+  desde un navegador humano.
+- Los registros y archivos temporales usados en las pruebas fueron eliminados.
+  Supabase local quedó detenido.
+
+### Bloqueo confirmado
+
+La carpeta `openclaw/clientes` está en **Mi unidad**. La cuenta de servicio
+configurada llega a Google Drive, pero la API responde 403 porque las cuentas de
+servicio no tienen cuota de almacenamiento propia. Tampoco hay una unidad
+compartida disponible. No desactivar BotID ni reutilizar el token amplio de
+`rclone` como atajo.
+
+La solución elegida es OAuth con un usuario normal dedicado que solo tenga
+acceso a la carpeta necesaria. En `nitro-platform`, para Preview y Production,
+deben existir `GOOGLE_DRIVE_CLIENT_ID`, `GOOGLE_DRIVE_CLIENT_SECRET` y
+`GOOGLE_DRIVE_REFRESH_TOKEN`. No registrar sus valores en documentación ni en
+la conversación. El código prefiere el bloque OAuth cuando está completo.
+
+### Secuencia para mañana
+
+1. Comprobar solo la presencia y los destinos de las tres variables OAuth en
+   `nitro-platform`; no imprimir valores.
+2. Redesplegar la Preview, porque los cambios de entorno no modifican un
+   deployment ya construido.
+3. Crear un Intake temporal y completar el flujo: borrador, carga de un archivo,
+   envío final, carpeta de Drive, `BRIEF.md`, `intake.json` y estados en base.
+4. Eliminar de forma exacta la carpeta y los registros temporales. Si OAuth
+   funciona, retirar de `nitro-platform` las dos variables de cuenta de servicio
+   para no mantener dos métodos configurados.
+5. Hacer un pedido real desde un navegador humano en Preview con datos marcados
+   claramente como prueba interna; comprobarlo y cancelarlo inmediatamente.
+6. Actualizar este handoff, ejecutar `npx tsc --noEmit` y `npm run build`, subir
+   el cierre, marcar listo y fusionar el PR #5.
+7. Confirmar el despliegue automático de `main` en `nitro-platform`, repetir en
+   producción la prueba mínima de Intake y hacer/cancelar un pedido real.
+
+No promover a producción mientras fallen Drive o el pedido real de Preview. La
+autorización para terminar y desplegar fue dada en esta conversación, pero no
+elimina esos gates.
