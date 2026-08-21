@@ -29,6 +29,8 @@ Lee, en este orden y según la tarea:
 | `docs/ADMIN_DASHBOARD.md` | Si tocas el panel `/admin`, el acceso, los estados de pedido o los canales. |
 | `docs/PLATFORM.md` | Si tocas la separación entre clientes, las llaves de ingesta o el precio por sitio. |
 | `docs/LANDING_FACTORY.md` | Si creas o adaptas una landing independiente para un cliente. |
+| `docs/LANDINGS_IN_PROGRESS.md` | Para saber qué landings están activas, su estado, ruta y siguiente acción. |
+| `agent-skills/nitro-landing-studio/SKILL.md` | Si conviertes material de un cliente en una landing o elevas su diseño. |
 
 ## Reglas duras
 
@@ -89,6 +91,11 @@ npm run admin:create -- --site <slug> correo@ejemplo.com 'Clave'   # usuario de 
 npm run site:key -- emitir <slug> 'Etiqueta'                       # llave de ingesta de una landing
 npm run access:link -- cliente@ejemplo.com    # enlace del portal, sin correo
 npm run demo:seed         # datos de demostración para capturas. Solo local.
+npm run landing:new -- --client <carpeta> --target <ruta>  # crea desde openclaw/clientes
+npm run landing:prepare -- --target <ruta> --client <carpeta> # adapta una landing
+npm run landing:list       # memoria de landings activas
+npm run landing:show -- <cliente>
+npm run landing:track -- --client <cliente> --status <estado> --next '<acción>'
 ```
 
 **`supabase db reset` no recarga `supabase/config.toml`.** Cualquier cambio de

@@ -1,0 +1,29 @@
+:root { color-scheme: light; font-family: Arial, sans-serif; background: #f3f1eb; color: #171714; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: 56px 0 96px; }
+section { padding: clamp(32px, 7vw, 88px); border: 1px solid #cbc7bc; background: #fff; }
+.hero { min-height: 72vh; display: grid; align-content: center; gap: 20px; background: #e7ff4f; }
+.hero h1 { max-width: 12ch; margin: 0; font-size: clamp(3rem, 10vw, 8rem); line-height: .88; }
+.hero p, .brief p, .checkout p { max-width: 58ch; line-height: 1.6; }
+.hero strong { font-size: 1.5rem; }
+.eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: .75rem; }
+.checkout { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 8vw, 96px); }
+form, .review { display: grid; gap: 16px; }
+label { display: grid; gap: 7px; font-weight: 700; }
+input { width: 100%; padding: 13px; border: 1px solid #777; border-radius: 0; font: inherit; }
+.consent { grid-template-columns: auto 1fr; align-items: start; font-weight: 400; }
+.consent input { width: auto; margin-top: 4px; }
+button { padding: 14px 20px; border: 1px solid #171714; background: #171714; color: white; font: inherit; font-weight: 700; cursor: pointer; }
+button:focus-visible, input:focus-visible { outline: 3px solid #3157ff; outline-offset: 3px; }
+button:disabled { opacity: .6; cursor: wait; }
+.secondary { background: transparent; color: #171714; }
+.actions { display: flex; gap: 12px; }
+dl div { padding: 10px 0; border-bottom: 1px solid #ddd; }
+dt { font-size: .8rem; font-weight: 700; }
+dd { margin: 4px 0 0; }
+.notice, .error { padding: 16px; background: #fff2c8; }
+.success { padding: 24px; background: #dcffe2; }
+.demo-banner { padding: 12px; border: 1px solid currentColor; background: #e7ff4f; font-weight: 700; }
+@media (max-width: 720px) { main { width: 100%; padding: 0; } .checkout { grid-template-columns: 1fr; } section { border-left: 0; border-right: 0; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }

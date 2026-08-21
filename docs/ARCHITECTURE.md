@@ -59,6 +59,14 @@ Eliminados del proyecto: Sanity, blog y Shopify. No reintroducir sin solicitud.
 - `src/lib/site-config.ts` — canales por sitio, cacheados por etiqueta.
 - `src/app/login/` + `src/app/auth/confirm/` — acceso del comprador por enlace de un solo uso.
 - `src/app/dashboard/page.tsx` — estado del pedido para el comprador.
+- `src/app/intake/[token]/` + `src/components/intake/IntakeWizard.tsx` — brief
+  privado y carga móvil del material del cliente.
+- `src/app/platform/intake-actions.ts` — emite intakes con o sin cliente previo
+  y convierte un brief recibido en cliente, sitio desconectado, canales y producto.
+- `src/app/api/intake/[token]/` — guardado, carga firmada, copia a Drive y
+  entrega final; el token se valida por hash en el servidor.
+- `src/lib/intake.ts`, `intake-server.ts`, `google-drive.ts` — contrato del
+  brief, límites, documentos generados y salida a `openclaw/clientes/<slug>`.
 
 **Datos**
 
@@ -69,7 +77,13 @@ Eliminados del proyecto: Sanity, blog y Shopify. No reintroducir sin solicitud.
 
 **Fábrica de landings**
 
-- `templates/landing/` — referencia funcional que se copia a un repositorio por cliente.
+- `templates/nitro-starter/` — starter neutro para landings nuevas; contiene el núcleo Nitro, no una dirección visual final.
+- `agent-skills/nitro-landing-studio/` — método portable de estrategia, diseño y revisión para Codex/Claude.
+- `scripts/create-landing-workspace.mjs` — crea un proyecto desde material de `openclaw/clientes` o cualquier carpeta.
+- `landings/registry.json` — memoria estructurada de proyectos, estados, rutas, URLs y bloqueos.
+- `docs/LANDINGS_IN_PROGRESS.md` — vista humana generada del registro.
+- `scripts/landing-registry.mjs` — consulta y actualiza la memoria sin editar JSON a mano.
+- `templates/landing/` — referencia funcional heredada de Coffee Maker; no es el starter visual por defecto.
 - `templates/landing/AGENTS.md` — reglas portables que Codex y Claude reciben con la copia.
 - `templates/landing/docs/NITRO_INTEGRATION.md` — contrato HTTP y criterios de aceptación.
 - `templates/landing/docs/CLIENT_BRIEF.md` — datos confirmados del cliente; prohíbe inventarlos.
@@ -120,6 +134,8 @@ Orden interno de la función:
 | `site_products` | Producto y precio por sitio | Sí. Lectura pública del activo; escritura solo desde el servidor. |
 | `site_api_keys` | Llaves de ingesta por sitio | Sí, y **sin ninguna política**: solo `service_role` las lee. |
 | `clients` | Ficha corporativa, contacto, onboarding y facturación | Sí, sin políticas ni grants de navegador; solo acciones de plataforma con `service_role`. |
+| `intake_requests` | Enlaces privados, identidad provisional, borrador y entrega; `site_id` puede quedar vacío hasta convertir el brief | Sí, sin políticas ni grants de navegador; acceso por token validado en servidor. |
+| `intake_files` | Inventario y estado de sincronización de los archivos | Sí, sin políticas ni grants de navegador; temporales privados hasta copiar a Drive. |
 | `order_status_events` | Historial de cambios de estado | Sí. Lo escribe un trigger; nadie lo edita ni lo borra desde la app. |
 | `contacts` | Una ficha por persona, incluidos prospectos sin pedido | Sí. Solo administradores. |
 | `contact_notes` | Notas de seguimiento con autor | Sí. Solo administradores. |

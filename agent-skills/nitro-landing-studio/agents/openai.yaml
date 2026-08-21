@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nitro Landing Studio"
+  short_description: "Crea landings únicas, profesionales y conectables"
+  default_prompt: "Usa $nitro-landing-studio para convertir la carpeta de este cliente en una landing profesional y lista para Nitro."

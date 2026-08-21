@@ -1,0 +1,25 @@
+{
+  "name": "nitro-landing-pendiente",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "nitro:check": "node scripts/check-nitro-adaptation.mjs",
+    "landing:check": "npm run nitro:check && node scripts/check-landing-quality.mjs",
+    "release:check": "node scripts/check-release.mjs && npm run landing:check && npx tsc --noEmit && npm run build"
+  },
+  "dependencies": {
+    "botid": "^1.5.11",
+    "next": "16.3.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5"
+  }
+}

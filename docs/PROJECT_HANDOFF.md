@@ -1,6 +1,6 @@
 # Coffee Maker Pro — estado del proyecto
 
-**Última actualización: 20 de agosto de 2026.**
+**Última actualización: 21 de agosto de 2026.**
 
 Permite retomar el trabajo en una sesión nueva con Codex o Claude Code sin
 depender del historial de conversación.
@@ -16,6 +16,7 @@ depender del historial de conversación.
 | `ADMIN_DASHBOARD.md` | Panel de operación, acceso y canales conmutables. |
 | `PLATFORM.md` | Frontera multi-tenant, sitios, usuarios y llaves. |
 | `LANDING_FACTORY.md` | Crear o adaptar landings independientes. |
+| `LANDINGS_IN_PROGRESS.md` | Landings activas, modo, ruta, puerto, bloqueos y próxima acción. |
 
 ## 1. Estado
 
@@ -207,16 +208,48 @@ aislada y volver a ejecutar toda la verificación.
 
 ## 8. Fábrica de landings
 
-`templates/landing/` es la referencia funcional para una landing independiente.
-Cada copia lleva instrucciones para Codex/Claude, brief, contrato HTTP y
-`npm run nitro:check`. Para diseños creados aparte existe:
+`templates/nitro-starter/` es el inicio recomendado para una landing nueva: no
+copia el estilo de Coffee Maker y ya contiene el núcleo seguro de Nitro. El
+material se organiza en `/home/juan/nitro-drive/openclaw/clientes/<slug>` y se
+convierte en un workspace local con:
 
 ```bash
-npm run landing:prepare -- --target /ruta/al/repositorio
+npm run landing:new -- --client <slug> --target /ruta/al/repositorio
 ```
 
-El comando conserva la UI del diseño e instala únicamente el paquete de
-integración y verificación. Ver `LANDING_FACTORY.md`.
+Cada proyecto recibe el skill `nitro-landing-studio`, brief, matriz de evidencia,
+dirección creativa, contexto persistente, contrato HTTP y gates separados.
+`landings/registry.json` recuerda proyectos entre sesiones; consúltalo con
+`npm run landing:list`. Para diseños creados
+aparte existe:
+
+```bash
+npm run landing:prepare -- --target /ruta/al/repositorio --client <slug>
+```
+
+El comando conserva la UI e instala el estudio, el material y la integración.
+`templates/landing/` queda como referencia funcional heredada, no como estilo
+predeterminado. Ver `LANDING_FACTORY.md`.
+
+`/platform` ya permite crear **Nitro Intake** antes de dar de alta un cliente:
+**Nuevo intake** solo pide nombre provisional e identificador. El prospecto
+recibe un enlace privado, completa seis pasos y carga material desde el celular.
+Al recibirlo, **Crear cliente desde el brief** crea la ficha, el sitio
+desconectado, los canales y el producto sin volver a copiar la información. La
+pestaña Brief de clientes ya creados sigue disponible. El sistema guarda
+borradores, copia los archivos a
+`openclaw/clientes/<slug>/01_marca`…`05_legal` y genera `BRIEF.md` e
+`intake.json`. Las migraciones `20260820224848_nitro_intake.sql` y
+`20260821020920_standalone_intakes.sql` se aplicaron y alinearon en producción
+el 21 de agosto de 2026. Todavía faltan las variables de Google Drive y el
+despliegue del código; por eso el panel publicado aún no ofrece el flujo y no se
+deben enviar enlaces reales.
+
+La primera landing registrada es `maquina_para_ejercicio`, proyecto local
+`/home/juan/maquina_para_ejercicio_landing`, modo `demo`, estado
+`local_review`, puerto SSH 3100. Su oferta y vendedor son ficticios; el resumen
+del checkout funciona y la confirmación está bloqueada. No existe Preview ni
+autorización de producción.
 
 ## 9. Estado del repositorio
 

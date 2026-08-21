@@ -1,6 +1,6 @@
 # Despliegue
 
-**Última actualización: 20 de agosto de 2026.**
+**Última actualización: 21 de agosto de 2026.**
 
 ## Infraestructura
 
@@ -23,12 +23,24 @@ escribir variables de entorno de Preview en modo no interactivo: devuelven
 |---|:--:|:--:|:--:|
 | `NEXT_PUBLIC_SUPABASE_URL` | ✓ | ✓ | ✓ |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | ✓ | ✓ | ✓ |
-| `SUPABASE_SECRET_KEY` | ✓ | ✓ | — |
+| `SUPABASE_SECRET_KEY` | ✓ | ✓ | ✓ |
 | `OPENAI_API_KEY` | ✓ | ✓ | — |
 | `GEMINI_API_KEY` | ✓ | ✓ | — |
 | `RESEND_API_KEY` | ✓ | ✓ | ✓ |
+| `OPENCLAW_CLIENTS_FOLDER_ID` | ✓ | ✓ | ✓ |
+| `GOOGLE_DRIVE_CLIENT_ID` | ✓ | ✓ | ✓ |
+| `GOOGLE_DRIVE_CLIENT_SECRET` | ✓ | ✓ | ✓ |
+| `GOOGLE_DRIVE_REFRESH_TOKEN` | ✓ | ✓ | ✓ |
 
-Ninguna otra variable es necesaria. Las de Sanity y Shopify se eliminaron.
+Las tres variables OAuth de Google Drive son el método recomendado para una
+carpeta `openclaw/clientes` que vive en **Mi unidad**. Como alternativa para una
+unidad compartida se usan `GOOGLE_DRIVE_SERVICE_ACCOUNT_EMAIL` y
+`GOOGLE_DRIVE_PRIVATE_KEY` en lugar del bloque OAuth. No configures ambos.
+
+El ID es el identificador de la carpeta `openclaw/clientes`, no una URL ni la
+ruta local. La credencial solo necesita acceso a esa carpeta. Verifica en
+Preview con un intake de prueba antes de entregar enlaces reales. Las de Sanity
+y Shopify siguen eliminadas.
 
 **Agregar una variable:**
 
@@ -122,14 +134,16 @@ Migraciones aplicadas:
 | `20260820120000` | igual | Frontera multi-inquilino, precio por sitio y llaves |
 | `20260820140000` | igual | `leads` por sitio |
 | `20260820200341` | igual | Separa central corporativa de operación; crea `clients` |
+| `20260820224848` | igual | Nitro Intake: solicitudes privadas, borradores e inventario de archivos |
+| `20260821020920` | igual | Intake antes del alta y enlace posterior con cliente y sitio |
 
 **No reaplicar ni volver a alinear estas versiones.** El historial estuvo
-desalineado porque dos migraciones se aplicaron por API con timestamps remotos,
-pero quedó corregido el 20 de agosto de 2026. Las siete versiones remotas
-coinciden ahora con los nombres locales. Para una migración nueva se sigue el
-procedimiento de cinco pasos de esta sección. La octava migración se aplicó y
-alineó el 20 de agosto de 2026; dejó un cliente, un sitio y cero sitios
-huérfanos, y retiró `platform_admins` de `accessible_site_ids()`.
+desalineado porque varias migraciones se aplicaron por API con timestamps
+remotos. Las diez versiones remotas coinciden ahora con los nombres locales;
+las dos de Nitro Intake se aplicaron y alinearon el 21 de agosto de 2026. Para
+una migración nueva se sigue el procedimiento de cinco pasos de esta sección.
+La octava migración dejó un cliente, un sitio y cero sitios huérfanos, y retiró
+`platform_admins` de `accessible_site_ids()`.
 
 ## Separación entre `/platform` y `/admin`
 

@@ -24,7 +24,7 @@ y sustituye únicamente el camino de pedidos, leads, configuración y portal.
 | `GEMINI_API_KEY` | Servidor/opcional | Chat. |
 | `OPENAI_API_KEY` | Servidor/opcional | Voz. |
 
-La llave se emite en `/admin/plataforma`, pestaña **Llaves**, y se muestra una
+La llave se emite en `/platform`, pestaña **Llaves**, y se muestra una
 sola vez. El precio configurado en Nitro debe coincidir con la oferta visible.
 
 ## Contrato HTTP

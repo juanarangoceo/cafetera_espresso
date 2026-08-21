@@ -24,7 +24,11 @@ export default function ClientLayout({
   // ni asistentes de venta. Se decide por ruta en vez de mover las rutas
   // existentes a un grupo, porque el worktree ya arrastra muchos cambios sin
   // confirmar y renombrar rutas de un sitio en producción no vale el riesgo.
-  if (pathname?.startsWith('/admin')) {
+  if (
+    pathname?.startsWith('/admin')
+    || pathname?.startsWith('/platform')
+    || pathname?.startsWith('/intake')
+  ) {
     return <>{children}</>;
   }
 

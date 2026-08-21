@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "updatedAt": "2026-08-20",
+  "projects": [
+    {
+      "client": "maquina_para_ejercicio",
+      "name": "Máquina AB — demostración",
+      "projectPath": "/home/juan/maquina_para_ejercicio_landing",
+      "source": "gdrive:openclaw/clientes/maquina_para_ejercicio",
+      "mode": "demo",
+      "status": "production",
+      "nextAction": "El dueño revisa la demostración pública y solicita ajustes; para vender hay que reemplazar la oferta ficticia y conectar Nitro.",
+      "localPort": 3100,
+      "previewUrl": null,
+      "productionUrl": "https://maquina-ab-home.vercel.app",
+      "blockers": [
+        "La oferta y el vendedor son ficticios.",
+        "No existe cliente, producto ni llave Nitro para esta demostración.",
+        "El checkout real permanece deshabilitado."
+      ],
+      "updatedAt": "2026-08-20"
+    }
+  ]
+}
