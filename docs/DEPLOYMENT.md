@@ -27,26 +27,13 @@ escribir variables de entorno de Preview en modo no interactivo: devuelven
 | `OPENAI_API_KEY` | ✓ | ✓ | — |
 | `GEMINI_API_KEY` | ✓ | ✓ | — |
 | `RESEND_API_KEY` | ✓ | ✓ | ✓ |
-| `OPENCLAW_CLIENTS_FOLDER_ID` | ✓ | ✓ | — |
-| `GOOGLE_DRIVE_CLIENT_ID` | confirmar | confirmar | — |
-| `GOOGLE_DRIVE_CLIENT_SECRET` | confirmar | confirmar | — |
-| `GOOGLE_DRIVE_REFRESH_TOKEN` | confirmar | confirmar | — |
 
-Las tres variables OAuth de Google Drive son el método recomendado para una
-carpeta `openclaw/clientes` que vive en **Mi unidad**. Como alternativa para una
-unidad compartida se usan `GOOGLE_DRIVE_SERVICE_ACCOUNT_EMAIL` y
-`GOOGLE_DRIVE_PRIVATE_KEY` en lugar del bloque OAuth. No configures ambos.
-
-El 21 de agosto de 2026 se comprobó que la alternativa de cuenta de servicio no
-sirve para la carpeta actual: Google Drive respondió 403 por falta de cuota de
-almacenamiento de la cuenta de servicio y no existe una unidad compartida
-disponible. El bloque OAuth quedó pendiente de confirmar. Una vez validado en
-Preview, retirar las variables de cuenta de servicio de `nitro-platform`.
-
-El ID es el identificador de la carpeta `openclaw/clientes`, no una URL ni la
-ruta local. La credencial solo necesita acceso a esa carpeta. Verifica en
-Preview con un intake de prueba antes de entregar enlaces reales. Las de Sanity
-y Shopify siguen eliminadas.
+Nitro Intake conserva el material en el bucket privado `nitro-intake`; no
+requiere variables ni credenciales de Google Drive. Las variables antiguas de
+Drive pueden retirarse de Preview y Production después de desplegar la versión
+que incluye la migración `20260821135005_persist_intake_in_supabase.sql`.
+Verifica primero el flujo completo en Preview. Las variables de Sanity y
+Shopify siguen eliminadas.
 
 **Agregar una variable:**
 
@@ -142,11 +129,12 @@ Migraciones aplicadas:
 | `20260820200341` | igual | Separa central corporativa de operación; crea `clients` |
 | `20260820224848` | igual | Nitro Intake: solicitudes privadas, borradores e inventario de archivos |
 | `20260821020920` | igual | Intake antes del alta y enlace posterior con cliente y sitio |
+| `20260821135005` | igual | Conserva los archivos de Intake en Supabase Storage y retira Google Drive |
 
 **No reaplicar ni volver a alinear estas versiones.** El historial estuvo
 desalineado porque varias migraciones se aplicaron por API con timestamps
-remotos. Las diez versiones remotas coinciden ahora con los nombres locales;
-las dos de Nitro Intake se aplicaron y alinearon el 21 de agosto de 2026. Para
+remotos. Las once versiones remotas coinciden ahora con los nombres locales;
+las tres de Nitro Intake se aplicaron y alinearon el 21 de agosto de 2026. Para
 una migración nueva se sigue el procedimiento de cinco pasos de esta sección.
 La octava migración dejó un cliente, un sitio y cero sitios huérfanos, y retiró
 `platform_admins` de `accessible_site_ids()`.

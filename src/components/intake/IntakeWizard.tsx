@@ -131,14 +131,14 @@ export default function IntakeWizard({
   const firstRender = useRef(true);
 
   const progress = Math.round(((step + 1) / steps.length) * 100);
-  const syncedFiles = files.filter((file) => file.status === 'synced');
-  const incompleteFiles = files.filter((file) => file.status !== 'synced');
+  const storedFiles = files.filter((file) => file.status === 'stored');
+  const incompleteFiles = files.filter((file) => file.status !== 'stored');
   const summary = [
     ['Marca', answers.businessName || 'Pendiente'],
     ['Producto', answers.productName || 'Pendiente'],
     ['Oferta', answers.price ? `${answers.price} ${answers.currency}` : 'Pendiente'],
     ['Mercado', answers.market || 'Pendiente'],
-    ['Archivos', `${syncedFiles.length} recibidos`],
+    ['Archivos', `${storedFiles.length} recibidos`],
   ];
 
   useEffect(() => {
@@ -194,7 +194,7 @@ export default function IntakeWizard({
       throw new Error(`No se pudo subir ${file.name}.`);
     }
 
-    setFiles((current) => [...current, { id: prepared.fileId, name: file.name, category, size: file.size, status: 'staged', error: null }]);
+    setFiles((current) => [...current, { id: prepared.fileId, name: file.name, category, size: file.size, status: 'pending', error: null }]);
     const commit = await fetch(`/api/intake/${token}/upload/commit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -203,14 +203,14 @@ export default function IntakeWizard({
     const committed = await commit.json();
     if (!commit.ok) {
       setFiles((current) => current.map((item) => item.id === prepared.fileId ? { ...item, status: 'failed', error: committed.error } : item));
-      throw new Error(committed.error || `No se pudo copiar ${file.name} a Drive.`);
+      throw new Error(committed.error || `No se pudo confirmar ${file.name}.`);
     }
-    setFiles((current) => current.map((item) => item.id === prepared.fileId ? { ...item, status: 'synced', error: null } : item));
+    setFiles((current) => current.map((item) => item.id === prepared.fileId ? { ...item, status: 'stored', error: null } : item));
   }
 
   async function retryFile(fileId: string) {
     setMessage(null);
-    setFiles((current) => current.map((item) => item.id === fileId ? { ...item, status: 'staged', error: null } : item));
+    setFiles((current) => current.map((item) => item.id === fileId ? { ...item, status: 'pending', error: null } : item));
     const response = await fetch(`/api/intake/${token}/upload/commit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -218,11 +218,11 @@ export default function IntakeWizard({
     });
     const result = await response.json();
     if (response.ok) {
-      setFiles((current) => current.map((item) => item.id === fileId ? { ...item, status: 'synced', error: null } : item));
+      setFiles((current) => current.map((item) => item.id === fileId ? { ...item, status: 'stored', error: null } : item));
       setMessage('Archivo recibido y organizado correctamente.');
     } else {
       setFiles((current) => current.map((item) => item.id === fileId ? { ...item, status: 'failed', error: result.error } : item));
-      setMessage(result.error || 'No pudimos reintentar la copia.');
+      setMessage(result.error || 'No pudimos reintentar la confirmación.');
     }
   }
 
@@ -360,7 +360,7 @@ export default function IntakeWizard({
                   <ul className="mt-5 divide-y divide-slate-100 rounded-2xl border border-slate-200">
                     {files.map((file) => (
                       <li key={file.id} className="flex items-center gap-3 px-4 py-3">
-                        {file.status === 'synced' ? <FileCheck2 size={18} className="shrink-0 text-emerald-600" /> : file.status === 'failed' ? <ImagePlus size={18} className="shrink-0 text-rose-500" /> : <Loader2 size={18} className="shrink-0 animate-spin text-amber-500" />}
+                        {file.status === 'stored' ? <FileCheck2 size={18} className="shrink-0 text-emerald-600" /> : file.status === 'failed' ? <ImagePlus size={18} className="shrink-0 text-rose-500" /> : <Loader2 size={18} className="shrink-0 animate-spin text-amber-500" />}
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-semibold text-slate-800">{file.name}</p>
                           <p className="text-xs text-slate-500">{INTAKE_CATEGORIES[file.category as IntakeCategory]} · {formatBytes(file.size)}</p>
@@ -370,8 +370,8 @@ export default function IntakeWizard({
                             <button type="button" onClick={() => void retryFile(file.id)} className="text-xs font-bold text-amber-700 hover:text-amber-800">Reintentar</button>
                           )}
                           <button type="button" onClick={() => void removeFile(file.id)} className="text-xs font-bold text-rose-500 hover:text-rose-700">Quitar</button>
-                          <span className={`text-xs font-bold ${file.status === 'synced' ? 'text-emerald-600' : file.status === 'failed' ? 'text-rose-500' : 'text-amber-600'}`}>
-                            {file.status === 'synced' ? 'Listo' : file.status === 'failed' ? 'Revisar' : 'Subiendo'}
+                          <span className={`text-xs font-bold ${file.status === 'stored' ? 'text-emerald-600' : file.status === 'failed' ? 'text-rose-500' : 'text-amber-600'}`}>
+                            {file.status === 'stored' ? 'Listo' : file.status === 'failed' ? 'Revisar' : 'Subiendo'}
                           </span>
                         </div>
                       </li>
@@ -395,7 +395,7 @@ export default function IntakeWizard({
                   <input type="checkbox" checked={answers.consent} onChange={(event) => update('consent', event.target.checked)} className="mt-1 h-5 w-5 shrink-0 accent-emerald-600" />
                   <span className="text-sm leading-6 text-slate-700">Confirmo que la información es verdadera y que tengo autorización para entregar estos textos, imágenes, videos y testimonios para crear la landing.</span>
                 </label>
-                {incompleteFiles.length > 0 && <p className="mt-3 text-sm font-semibold text-amber-700">Hay {incompleteFiles.length} archivo(s) que aún no terminaron de copiarse a Drive.</p>}
+                {incompleteFiles.length > 0 && <p className="mt-3 text-sm font-semibold text-amber-700">Hay {incompleteFiles.length} archivo(s) que aún no terminaron de subir.</p>}
               </div>
             )}
 

@@ -202,7 +202,6 @@ export type Database = {
         Row: {
           category: string
           created_at: string
-          drive_file_id: string | null
           error_message: string | null
           id: string
           mime_type: string
@@ -211,13 +210,12 @@ export type Database = {
           size_bytes: number
           status: string
           storage_path: string
-          synced_at: string | null
+          stored_at: string | null
           uploaded_at: string | null
         }
         Insert: {
           category: string
           created_at?: string
-          drive_file_id?: string | null
           error_message?: string | null
           id?: string
           mime_type: string
@@ -226,13 +224,12 @@ export type Database = {
           size_bytes: number
           status?: string
           storage_path: string
-          synced_at?: string | null
+          stored_at?: string | null
           uploaded_at?: string | null
         }
         Update: {
           category?: string
           created_at?: string
-          drive_file_id?: string | null
           error_message?: string | null
           id?: string
           mime_type?: string
@@ -241,7 +238,7 @@ export type Database = {
           size_bytes?: number
           status?: string
           storage_path?: string
-          synced_at?: string | null
+          stored_at?: string | null
           uploaded_at?: string | null
         }
         Relationships: [
@@ -259,7 +256,6 @@ export type Database = {
           answers: Json
           created_at: string
           created_by: string
-          drive_folder_id: string | null
           expires_at: string
           id: string
           provisional_name: string
@@ -275,7 +271,6 @@ export type Database = {
           answers?: Json
           created_at?: string
           created_by: string
-          drive_folder_id?: string | null
           expires_at?: string
           id?: string
           provisional_name: string
@@ -291,7 +286,6 @@ export type Database = {
           answers?: Json
           created_at?: string
           created_by?: string
-          drive_folder_id?: string | null
           expires_at?: string
           id?: string
           provisional_name?: string

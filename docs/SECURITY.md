@@ -201,8 +201,14 @@ respuesta se usa para token inválido, vencido o revocado.
 `anon` o `authenticated`. Las rutas públicas usan `service_role` únicamente
 después de validar el token. Los archivos entran al bucket privado
 `nitro-intake` mediante una URL firmada para un solo path, con máximo 30 MB por
-archivo, 60 archivos y 300 MB por solicitud. Después se copian a Drive y se
-borra el temporal. Tipos activos como HTML, SVG o JavaScript no se aceptan.
+archivo, 60 archivos y 300 MB por solicitud, y permanecen allí como fuente de
+verdad. Tipos activos como HTML, SVG o JavaScript no se aceptan.
+
+La central `/platform` usa `service_role` solo después de validar una sesión de
+plataforma. Para abrir o descargar un archivo emite una URL firmada de 60
+segundos; el navegador recibe únicamente el path de ese objeto y un token
+temporal, nunca una credencial general. Los miembros de clientes no pueden usar
+esas rutas ni enumerar el bucket.
 
 Una solicitud puede existir sin `client` ni `site`: conserva solo nombre e
 identificador provisionales. La conversión exige sesión de plataforma y un
@@ -212,8 +218,8 @@ del prospecto nunca habilita ventas ni acceso administrativo por sí solo.
 Las rutas `/intake/*` no cargan Google Analytics, Meta Pixel ni Speed Insights,
 y declaran `Referrer-Policy: no-referrer`: enviar el token en una URL a
 terceros convertiría la analítica o una carga externa en una filtración de
-acceso. El cliente no recibe credenciales de Drive ni acceso a la carpeta
-compartida.
+acceso. El cliente no recibe credenciales de Storage ni acceso para enumerar
+otros objetos.
 
 ### Logos de clientes
 

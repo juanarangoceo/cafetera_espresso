@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { useActionState, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Check, ClipboardList, Globe, ImageIcon, KeyRound, Loader2, Power, TriangleAlert, UserPlus } from 'lucide-react';
@@ -14,6 +15,7 @@ import {
   type PlatformResult,
 } from '@/app/admin/platform-actions';
 import { formatCOP } from '@/lib/orders';
+import { formatColombiaDate, formatColombiaDateTime } from '@/lib/colombia-date';
 import { issueIntakeLink, revokeIntakeLink } from '@/app/platform/intake-actions';
 
 const field =
@@ -41,6 +43,10 @@ export type ClientSite = {
     expiresAt: string;
     submittedAt: string | null;
     createdAt: string;
+    fileCount: number;
+    storedFileCount: number;
+    lastActivityAt: string;
+    hasProgress: boolean;
   } | null;
   account: {
     clientName: string;
@@ -232,12 +238,22 @@ export default function ClientCard({ site }: { site: ClientSite }) {
                 Genera un enlace privado para que el cliente complete el brief y suba material. Un enlace nuevo cierra el anterior.
               </p>
               {site.intake && (
-                <p className="mt-2 text-xs text-ink-500">
-                  Última solicitud: <span className="font-bold text-ink-300">{site.intake.status}</span>
-                  {site.intake.submittedAt
-                    ? ` · recibida ${new Date(site.intake.submittedAt).toLocaleDateString('es-CO')}`
-                    : ` · vence ${new Date(site.intake.expiresAt).toLocaleDateString('es-CO')}`}
-                </p>
+                <div className="mt-2 text-xs text-ink-500">
+                  <p>
+                    Estado: <span className="font-bold text-ink-300">
+                      {site.intake.status === 'submitted'
+                        ? 'información recibida'
+                        : site.intake.hasProgress || site.intake.fileCount > 0
+                          ? 'cliente completando'
+                          : 'esperando al cliente'}
+                    </span>
+                    {site.intake.submittedAt
+                      ? ` · recibida ${formatColombiaDate(site.intake.submittedAt)}`
+                      : ` · vence ${formatColombiaDate(site.intake.expiresAt)}`}
+                  </p>
+                  <p className="mt-1">{site.intake.storedFileCount}/{site.intake.fileCount} archivos listos · última actividad {formatColombiaDateTime(site.intake.lastActivityAt)}</p>
+                  <Link href={`/platform/intakes/${site.intake.id}`} className="mt-2 inline-block font-bold text-nitro-400 hover:text-nitro-300">Revisar información</Link>
+                </div>
               )}
             </div>
 

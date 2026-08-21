@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(154);
+select plan(158);
 
 select has_table('public', 'orders_cod', 'orders table exists');
 select has_table('public', 'leads', 'leads table exists');
@@ -680,7 +680,9 @@ select has_column('public', 'intake_requests', 'answers', 'the verified brief dr
 select has_column('public', 'intake_requests', 'provisional_name', 'an intake can carry a name before client creation');
 select has_column('public', 'intake_requests', 'slug', 'an intake reserves its future landing slug');
 select col_is_null('public', 'intake_requests', 'site_id', 'an intake can exist before a site');
-select has_column('public', 'intake_files', 'drive_file_id', 'synced files retain their Drive identity');
+select hasnt_column('public', 'intake_requests', 'drive_folder_id', 'intakes no longer depend on a Drive folder');
+select hasnt_column('public', 'intake_files', 'drive_file_id', 'files no longer depend on a Drive identity');
+select has_column('public', 'intake_files', 'stored_at', 'permanent files record when Storage accepted them');
 select ok(
   (select relrowsecurity from pg_class where oid = 'public.intake_requests'::regclass),
   'RLS enabled on intake requests'
@@ -761,6 +763,27 @@ select lives_ok(
        set status = 'revoked', revoked_at = now()
      where slug = 'marca-antes-del-alta' $$,
   'revoking a standalone intake releases its reserved slug'
+);
+select throws_ok(
+  $$ insert into public.intake_files
+       (request_id, category, original_name, mime_type, size_bytes, storage_path, status)
+     values (
+       (select id from public.intake_requests where slug = 'marca-antes-del-alta'),
+       'marca', 'logo.png', 'image/png', 1200,
+       '00000000-0000-4000-8000-00000000f001/marca/logo.png', 'stored'
+     ) $$,
+  '23514', null,
+  'a stored file must record when Storage accepted it'
+);
+select lives_ok(
+  $$ insert into public.intake_files
+       (request_id, category, original_name, mime_type, size_bytes, storage_path, status, stored_at)
+     values (
+       (select id from public.intake_requests where slug = 'marca-antes-del-alta'),
+       'marca', 'logo.png', 'image/png', 1200,
+       '00000000-0000-4000-8000-00000000f001/marca/logo-stored.png', 'stored', now()
+     ) $$,
+  'a verified Storage object can be marked as permanently stored'
 );
 select * from finish();
 rollback;

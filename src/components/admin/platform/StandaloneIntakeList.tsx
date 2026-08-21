@@ -2,13 +2,15 @@
 
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { Check, ClipboardCheck, Clock3, Copy, Loader2, RotateCw, TriangleAlert, UserRoundPlus, XCircle } from 'lucide-react';
+import Link from 'next/link';
+import { Check, ClipboardCheck, Clock3, Copy, Eye, Loader2, RotateCw, TriangleAlert, UserRoundPlus, XCircle } from 'lucide-react';
 import {
   convertIntakeToClient,
   reissueStandaloneIntakeLink,
   revokeIntakeLink,
 } from '@/app/platform/intake-actions';
 import type { PlatformResult } from '@/app/admin/platform-actions';
+import { formatColombiaDate, formatColombiaDateTime } from '@/lib/colombia-date';
 import type { IntakeAnswers } from '@/lib/intake';
 
 export type StandaloneIntake = {
@@ -20,7 +22,17 @@ export type StandaloneIntake = {
   submittedAt: string | null;
   createdAt: string;
   answers: IntakeAnswers;
+  fileCount: number;
+  storedFileCount: number;
+  totalBytes: number;
+  lastActivityAt: string;
+  hasProgress: boolean;
 };
+
+function formatBytes(value: number) {
+  if (value < 1024 * 1024) return `${Math.ceil(value / 1024)} KB`;
+  return `${(value / 1024 / 1024).toFixed(1)} MB`;
+}
 
 function SubmitButton({ children, tone = 'primary' }: { children: React.ReactNode; tone?: 'primary' | 'quiet' | 'danger' }) {
   const { pending } = useFormStatus();
@@ -53,6 +65,8 @@ function IntakeCard({ intake }: { intake: StandaloneIntake }) {
   const [revokeState, revokeAction] = useActionState<PlatformResult | null, FormData>(revokeIntakeLink, null);
   const [convertState, convertAction] = useActionState<PlatformResult | null, FormData>(convertIntakeToClient, null);
   const received = intake.status === 'submitted';
+  const inProgress = !received && (intake.hasProgress || intake.fileCount > 0);
+  const stateLabel = received ? 'Información recibida' : inProgress ? 'Cliente completando' : 'Esperando al cliente';
 
   return (
     <article className="rounded-2xl border border-ink-800 bg-ink-950 p-5">
@@ -62,9 +76,17 @@ function IntakeCard({ intake }: { intake: StandaloneIntake }) {
             {received ? <ClipboardCheck size={18} className="text-nitro-400" /> : <Clock3 size={18} className="text-amber-400" />}
             <h3 className="font-bold text-white">{intake.provisionalName}</h3>
           </div>
-          <p className="mt-1 text-xs text-ink-500"><code>{intake.slug}</code> · {received ? `recibido ${new Date(intake.submittedAt!).toLocaleDateString('es-CO')}` : `vence ${new Date(intake.expiresAt).toLocaleDateString('es-CO')}`}</p>
+          <p className="mt-1 text-xs text-ink-500"><code>{intake.slug}</code> · {received ? `recibido ${formatColombiaDate(intake.submittedAt!)}` : `vence ${formatColombiaDate(intake.expiresAt)}`}</p>
         </div>
-        <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${received ? 'bg-nitro-500/10 text-nitro-400' : 'bg-amber-500/10 text-amber-300'}`}>{received ? 'Listo para crear cliente' : 'Esperando al cliente'}</span>
+        <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${received ? 'bg-nitro-500/10 text-nitro-400' : inProgress ? 'bg-sky-500/10 text-sky-300' : 'bg-amber-500/10 text-amber-300'}`}>{stateLabel}</span>
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-ink-400">
+        <span>{intake.storedFileCount}/{intake.fileCount} archivos listos{intake.totalBytes > 0 ? ` · ${formatBytes(intake.totalBytes)}` : ''}</span>
+        <span>Última actividad {formatColombiaDateTime(intake.lastActivityAt)}</span>
+        <Link href={`/platform/intakes/${intake.id}`} className="flex items-center gap-1.5 font-bold text-nitro-400 hover:text-nitro-300">
+          <Eye size={13} /> Revisar información
+        </Link>
       </div>
 
       {received ? (

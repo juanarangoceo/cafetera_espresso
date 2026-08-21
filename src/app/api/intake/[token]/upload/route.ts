@@ -51,7 +51,7 @@ export async function POST(request: Request, context: { params: Promise<{ token:
 
   const id = crypto.randomUUID();
   const fileName = safeFileName(parsed.data.name);
-  const storagePath = `${intake.id}/${id}-${fileName}`;
+  const storagePath = `${intake.id}/${parsed.data.category}/${id}-${fileName}`;
   const { error: insertError } = await service.from('intake_files').insert({
     id,
     request_id: intake.id,
@@ -93,22 +93,17 @@ export async function DELETE(request: Request, context: { params: Promise<{ toke
   if (!service) return NextResponse.json({ error: 'El servicio no está disponible.' }, { status: 503 });
   const { data: file } = await service
     .from('intake_files')
-    .select('id, storage_path, drive_file_id')
+    .select('id, storage_path')
     .eq('id', parsed.data.fileId)
     .eq('request_id', intake.id)
     .maybeSingle();
   if (!file) return NextResponse.json({ error: 'Archivo inválido.' }, { status: 404 });
 
-  if (file.drive_file_id) {
-    const { deleteDriveFile } = await import('@/lib/google-drive');
-    try {
-      await deleteDriveFile(file.drive_file_id);
-    } catch (error) {
-      console.error('❌ No se pudo retirar el archivo de Drive:', error);
-      return NextResponse.json({ error: 'No pudimos quitar el archivo de Drive.' }, { status: 502 });
-    }
+  const { error: removeError } = await service.storage.from(INTAKE_BUCKET).remove([file.storage_path]);
+  if (removeError) {
+    console.error('❌ No se pudo retirar el archivo de Storage:', removeError);
+    return NextResponse.json({ error: 'No pudimos quitar el archivo.' }, { status: 502 });
   }
-  await service.storage.from(INTAKE_BUCKET).remove([file.storage_path]);
   const { error } = await service.from('intake_files').delete().eq('id', file.id);
   if (error) return NextResponse.json({ error: 'No pudimos quitar el archivo.' }, { status: 500 });
   return NextResponse.json({ ok: true });

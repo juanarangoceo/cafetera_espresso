@@ -19,7 +19,6 @@ export type IntakeRequest = {
   status: 'draft' | 'submitted' | 'revoked';
   expiresAt: string;
   submittedAt: string | null;
-  driveFolderId: string | null;
   answers: IntakeAnswers;
 };
 
@@ -31,7 +30,7 @@ export async function resolveIntakeToken(token: string): Promise<IntakeRequest |
 
   const { data, error } = await service
     .from('intake_requests')
-    .select('id, site_id, provisional_name, slug, status, answers, expires_at, submitted_at, drive_folder_id, sites(slug, name, logo_url)')
+    .select('id, site_id, provisional_name, slug, status, answers, expires_at, submitted_at, sites(slug, name, logo_url)')
     .eq('token_hash', hashIntakeToken(token))
     .maybeSingle();
 
@@ -47,7 +46,6 @@ export async function resolveIntakeToken(token: string): Promise<IntakeRequest |
     status: data.status,
     expiresAt: data.expires_at,
     submittedAt: data.submitted_at,
-    driveFolderId: data.drive_folder_id,
     answers: intakeAnswersSchema.parse(data.answers ?? {}),
   };
 }

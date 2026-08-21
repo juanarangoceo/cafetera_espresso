@@ -3,7 +3,6 @@ import { createServiceClient } from '@/utils/supabase/service';
 import { formatCOP } from '@/lib/orders';
 import NewSiteForm from '@/components/admin/platform/NewSiteForm';
 import ClientCard, { type ClientSite } from '@/components/admin/platform/ClientCard';
-import { driveIsConfigured } from '@/lib/google-drive';
 import NewIntakeForm from '@/components/admin/platform/NewIntakeForm';
 import StandaloneIntakeList, { type StandaloneIntake } from '@/components/admin/platform/StandaloneIntakeList';
 import { intakeAnswersSchema } from '@/lib/intake';
@@ -18,14 +17,31 @@ export default async function PlatformPage() {
     return <p className="rounded-2xl border border-rose-500/30 bg-rose-500/10 p-6 text-rose-300">Falta <code>SUPABASE_SECRET_KEY</code> en el servidor.</p>;
   }
 
-  const [sitesResult, productsResult, membersResult, keysResult, clientsResult, intakesResult] = await Promise.all([
+  const [sitesResult, productsResult, membersResult, keysResult, clientsResult, intakesResult, intakeFilesResult] = await Promise.all([
     service.from('sites').select('id, client_id, slug, name, logo_url, primary_domain, repository_url, vercel_project, production_url, integration_notes, is_active').order('name'),
     service.from('site_products').select('site_id, name, price').eq('is_active', true),
     service.from('site_members').select('site_id, email, display_name').order('email'),
     service.from('site_api_keys').select('id, site_id, prefix, label, last_used_at, revoked_at').order('created_at', { ascending: false }),
     service.from('clients').select('id, name, legal_name, contact_name, contact_email, contact_phone, plan, monthly_fee, billing_day, status, onboarding_status, next_invoice_date, notes').order('name'),
-    service.from('intake_requests').select('id, site_id, provisional_name, slug, status, answers, expires_at, submitted_at, created_at').order('created_at', { ascending: false }),
+    service.from('intake_requests').select('id, site_id, provisional_name, slug, status, answers, expires_at, submitted_at, created_at, updated_at').order('created_at', { ascending: false }),
+    service.from('intake_files').select('request_id, status, size_bytes, created_at, stored_at'),
   ]);
+
+  const intakeStats = new Map((intakesResult.data ?? []).map((intake) => {
+    const files = (intakeFilesResult.data ?? []).filter((file) => file.request_id === intake.id);
+    const lastFileActivity = files.reduce<string | null>((latest, file) => {
+      const candidate = file.stored_at ?? file.created_at;
+      return !latest || candidate > latest ? candidate : latest;
+    }, null);
+    const answers = intakeAnswersSchema.parse(intake.answers ?? {});
+    return [intake.id, {
+      fileCount: files.length,
+      storedFileCount: files.filter((file) => file.status === 'stored').length,
+      totalBytes: files.reduce((total, file) => total + file.size_bytes, 0),
+      lastActivityAt: lastFileActivity && lastFileActivity > intake.updated_at ? lastFileActivity : intake.updated_at,
+      hasProgress: Object.entries(answers).some(([key, value]) => key !== 'consent' && String(value).trim().length > 0),
+    }];
+  }));
 
   const clientById = new Map((clientsResult.data ?? []).map((client) => [client.id, client]));
   const sites: ClientSite[] = (sitesResult.data ?? []).map((site) => {
@@ -48,12 +64,17 @@ export default async function PlatformPage() {
       keys: (keysResult.data ?? []).filter((row) => row.site_id === site.id).map((row) => ({ id: row.id, prefix: row.prefix, label: row.label, lastUsedAt: row.last_used_at, revokedAt: row.revoked_at })),
       intake: (() => {
         const row = (intakesResult.data ?? []).find((item) => item.site_id === site.id);
+        const stats = row ? intakeStats.get(row.id) : null;
         return row ? {
           id: row.id,
           status: row.status,
           expiresAt: row.expires_at,
           submittedAt: row.submitted_at,
           createdAt: row.created_at,
+          fileCount: stats?.fileCount ?? 0,
+          storedFileCount: stats?.storedFileCount ?? 0,
+          lastActivityAt: stats?.lastActivityAt ?? row.updated_at,
+          hasProgress: stats?.hasProgress ?? false,
         } : null;
       })(),
       account: client ? {
@@ -85,6 +106,13 @@ export default async function PlatformPage() {
       submittedAt: intake.submitted_at,
       createdAt: intake.created_at,
       answers: intakeAnswersSchema.parse(intake.answers ?? {}),
+      ...(intakeStats.get(intake.id) ?? {
+        fileCount: 0,
+        storedFileCount: 0,
+        totalBytes: 0,
+        lastActivityAt: intake.updated_at,
+        hasProgress: false,
+      }),
     }));
   const billed = clients.reduce((total, client) => total + (client.monthly_fee ?? 0), 0);
   const incomplete = clients.filter((client) => client.onboarding_status !== 'activo').length;
@@ -101,12 +129,6 @@ export default async function PlatformPage() {
           <NewSiteForm />
         </div>
       </header>
-
-      {!driveIsConfigured() && (
-        <p className="mb-6 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-200">
-          Nitro Intake puede guardar borradores, pero no copiar archivos todavía. Configura la carpeta y la autenticación de Google Drive antes de enviar un enlace al cliente.
-        </p>
-      )}
 
       <div className="mb-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Summary value={String(clients.length)} label="Clientes" />

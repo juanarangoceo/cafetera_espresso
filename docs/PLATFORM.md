@@ -156,7 +156,7 @@ También sigue disponible el alta manual desde `/platform`:
    agente diseña desde la evidencia del cliente y conserva el núcleo Nitro.
    Instrucciones completas en `docs/LANDING_FACTORY.md`.
 
-### Nitro Intake: recibir el material sin enseñar Drive
+### Nitro Intake: recibir y revisar el material en Supabase
 
 Se puede crear un intake global antes del alta o emitirlo desde la pestaña
 **Brief** de un cliente existente. Al crear un enlace:
@@ -165,17 +165,17 @@ Se puede crear un intake global antes del alta o emitirlo desde la pestaña
 - un enlace nuevo revoca el borrador anterior del mismo sitio; los intakes
   independientes pueden renovarse y el enlace anterior deja de funcionar;
 - el cliente completa seis pasos con guardado automático desde el celular;
-- las cargas se firman por archivo, pasan por un bucket privado y terminan en
-  `openclaw/clientes/<slug>/01_marca` a `05_legal`;
-- al entregar se generan `BRIEF.md` e `intake.json` en la raíz del cliente.
+- cada carga recibe una firma para un único path y queda permanentemente en el
+  bucket privado `nitro-intake`, organizada por solicitud y categoría;
+- `/platform` muestra si el cliente no empezó, está completando o ya entregó,
+  junto con actividad, cantidad de archivos y el detalle completo;
+- la revisión permite abrir o descargar cada archivo mediante una URL firmada
+  de 60 segundos y exportar `BRIEF.md` e `intake.json` bajo demanda.
 
-El enlace dura 30 días y puede cerrarse manualmente. El cliente no ve ni puede
-enumerar Drive. Si una copia se interrumpe, puede reintentar o quitar ese
-archivo; un pendiente no obliga a empezar el formulario de nuevo.
-
-La escritura real en Drive requiere `OPENCLAW_CLIENTS_FOLDER_ID` y uno de los
-dos métodos de servidor documentados en `DEPLOYMENT.md`. Mientras falten, la
-plataforma muestra una advertencia y no se debe enviar el enlace.
+El enlace dura 30 días y puede cerrarse manualmente. El cliente no puede
+enumerar Storage ni leer archivos de otra solicitud. Si una carga se interrumpe,
+puede reintentar o quitar ese archivo; un pendiente no obliga a empezar el
+formulario de nuevo. Nitro Intake ya no requiere Google Drive ni OAuth.
 
 Si el diseño ya existe en otro repositorio, no se copia la interfaz de la
 plantilla. Se prepara ese repositorio desde aquí:
