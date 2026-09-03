@@ -2,12 +2,15 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(158);
+select plan(217);
 
 select has_table('public', 'orders_cod', 'orders table exists');
 select has_table('public', 'leads', 'leads table exists');
 select has_table('public', 'chat_sessions', 'chat sessions table exists');
 select has_table('public', 'chat_messages', 'chat messages table exists');
+select has_table('public', 'legal_documents', 'versioned legal documents table exists');
+select has_table('public', 'client_legal_acceptances', 'client legal evidence table exists');
+select has_function('public', 'publish_legal_document', 'atomic legal publication function exists');
 
 select col_is_pk('public', 'orders_cod', 'id', 'orders have a primary key');
 select col_is_pk('public', 'leads', 'id', 'leads have a primary key');
@@ -18,6 +21,8 @@ select ok((select relrowsecurity from pg_class where oid = 'public.orders_cod'::
 select ok((select relrowsecurity from pg_class where oid = 'public.leads'::regclass), 'RLS enabled on leads');
 select ok((select relrowsecurity from pg_class where oid = 'public.chat_sessions'::regclass), 'RLS enabled on chat sessions');
 select ok((select relrowsecurity from pg_class where oid = 'public.chat_messages'::regclass), 'RLS enabled on chat messages');
+select ok((select relrowsecurity from pg_class where oid = 'public.legal_documents'::regclass), 'RLS enabled on legal documents');
+select ok((select relrowsecurity from pg_class where oid = 'public.client_legal_acceptances'::regclass), 'RLS enabled on legal evidence');
 
 select policies_are(
   'public',
@@ -96,8 +101,10 @@ select throws_ok(
 
 select has_table('public', 'sites', 'sites table exists');
 select has_table('public', 'site_channels', 'site channels table exists');
+select has_table('public', 'site_tracking', 'per-site tracking settings table exists');
 select has_table('public', 'platform_admins', 'platform admin allowlist exists');
-select has_table('public', 'site_members', 'site membership table exists');
+select has_table('public', 'client_members', 'client membership table exists');
+select hasnt_table('public', 'site_members', 'per-landing membership model is gone');
 select has_table('public', 'site_products', 'per-site products table exists');
 select has_table('public', 'site_api_keys', 'per-site ingest keys table exists');
 select has_table('public', 'clients', 'corporate client table exists');
@@ -112,8 +119,9 @@ select has_column('public', 'sites', 'client_id', 'landings belong to a corporat
 
 select ok((select relrowsecurity from pg_class where oid = 'public.sites'::regclass), 'RLS enabled on sites');
 select ok((select relrowsecurity from pg_class where oid = 'public.site_channels'::regclass), 'RLS enabled on site channels');
+select ok((select relrowsecurity from pg_class where oid = 'public.site_tracking'::regclass), 'RLS enabled on site tracking');
 select ok((select relrowsecurity from pg_class where oid = 'public.platform_admins'::regclass), 'RLS enabled on platform admins');
-select ok((select relrowsecurity from pg_class where oid = 'public.site_members'::regclass), 'RLS enabled on site members');
+select ok((select relrowsecurity from pg_class where oid = 'public.client_members'::regclass), 'RLS enabled on client members');
 select ok((select relrowsecurity from pg_class where oid = 'public.site_products'::regclass), 'RLS enabled on site products');
 select ok((select relrowsecurity from pg_class where oid = 'public.site_api_keys'::regclass), 'RLS enabled on ingest keys');
 select ok((select relrowsecurity from pg_class where oid = 'public.clients'::regclass), 'RLS enabled on corporate clients');
@@ -133,14 +141,73 @@ select policies_are(
   'channel configuration is public to read and editable only by its own site'
 );
 select policies_are(
+  'public', 'site_tracking',
+  array[
+    'anon_can_read_site_tracking',
+    'members_can_read_their_site_tracking',
+    'members_can_update_their_site_tracking'
+  ],
+  'tracking is public to landings and tenant-scoped for client updates'
+);
+select col_is_pk('public', 'site_tracking', 'site_id', 'tracking is keyed by site');
+select col_has_default('public', 'site_tracking', 'meta_pixel_enabled', 'new Pixels start disabled');
+-- La guía viaja desde Nitro Bot, que escribe con service_role. La sesión del
+-- cliente puede LEERLA —el panel viejo sigue de respaldo— pero no fijarla: dos
+-- sitios escribiendo el mismo despacho son dos verdades.
+select column_privs_are(
+  'public', 'orders_cod', 'tracking_number', 'authenticated', array['SELECT'],
+  'client sessions can read the tracking number but never write it'
+);
+select column_privs_are(
+  'public', 'orders_cod', 'tracking_carrier', 'authenticated', array['SELECT'],
+  'client sessions can read the carrier but never write it'
+);
+select column_privs_are(
+  'public', 'order_status_events', 'note', 'authenticated', array['SELECT'],
+  'the reason a status moved is readable, and only the server writes it'
+);
+select column_privs_are(
+  'public', 'orders_cod', 'tracking_number', 'anon', array[]::text[],
+  'a landing visitor cannot read anyone tracking number'
+);
+
+select column_privs_are(
+  'public', 'site_tracking', 'site_id', 'anon', array['SELECT'],
+  'anonymous landings can resolve the public tracking row'
+);
+select column_privs_are(
+  'public', 'site_tracking', 'meta_pixel_enabled', 'anon', array['SELECT'],
+  'anonymous landings can read whether Meta is enabled'
+);
+select column_privs_are(
+  'public', 'site_tracking', 'meta_pixel_id', 'anon', array['SELECT'],
+  'anonymous landings can read the public Pixel ID'
+);
+select column_privs_are(
+  'public', 'site_tracking', 'site_id', 'authenticated', array['SELECT'],
+  'client sessions can identify their tracking row but not move it'
+);
+select column_privs_are(
+  'public', 'site_tracking', 'meta_pixel_enabled', 'authenticated', array['SELECT', 'UPDATE'],
+  'client sessions can read and toggle Meta for their own landing'
+);
+select column_privs_are(
+  'public', 'site_tracking', 'meta_pixel_id', 'authenticated', array['SELECT', 'UPDATE'],
+  'client sessions can read and change their own public Pixel ID'
+);
+select column_privs_are(
+  'public', 'site_tracking', 'updated_at', 'authenticated', array[]::text[],
+  'client sessions cannot forge the tracking update timestamp'
+);
+select policies_are(
   'public', 'platform_admins',
   array['platform_can_read_platform_admins'],
   'the platform allowlist is readable only by the platform'
 );
 select policies_are(
-  'public', 'site_members',
-  array['members_can_read_their_site_members'],
-  'members see their own teammates and nobody else'
+  'public', 'client_members',
+  array['members_can_read_their_client_members'],
+  'members see teammates from their own client and nobody else'
 );
 
 -- Las llaves de ingesta no tienen ninguna política a propósito: con RLS activo
@@ -465,15 +532,39 @@ select is(
 -- imposible: la base rechazaba cualquier importe que no fuera 490000.
 insert into public.clients (id, name)
 values ('00000000-0000-4000-8000-00000000e001', 'Cliente A'),
-       ('00000000-0000-4000-8000-00000000e002', 'Cliente B');
+       ('00000000-0000-4000-8000-00000000e002', 'Cliente B'),
+       ('00000000-0000-4000-8000-00000000e099', 'Cliente sin landing');
 
 insert into public.sites (id, client_id, slug, name)
 values ('00000000-0000-4000-8000-00000000e001', '00000000-0000-4000-8000-00000000e001', 'inquilino-a', 'Inquilino A'),
-       ('00000000-0000-4000-8000-00000000e002', '00000000-0000-4000-8000-00000000e002', 'inquilino-b', 'Inquilino B');
+       ('00000000-0000-4000-8000-00000000e002', '00000000-0000-4000-8000-00000000e002', 'inquilino-b', 'Inquilino B'),
+       ('00000000-0000-4000-8000-00000000e003', '00000000-0000-4000-8000-00000000e001', 'inquilino-a-dos', 'Segunda landing A');
 
 insert into public.site_channels (site_id)
 values ('00000000-0000-4000-8000-00000000e001'),
-       ('00000000-0000-4000-8000-00000000e002');
+       ('00000000-0000-4000-8000-00000000e002'),
+       ('00000000-0000-4000-8000-00000000e003');
+
+select lives_ok(
+  $$ insert into public.site_tracking (site_id, meta_pixel_id)
+     values ('00000000-0000-4000-8000-00000000e001', '1234567890') $$,
+  'a numeric Meta Pixel ID is accepted'
+);
+select throws_ok(
+  $$ update public.site_tracking set meta_pixel_id = '<script>alert(1)</script>'
+     where site_id = '00000000-0000-4000-8000-00000000e001' $$,
+  '23514', null,
+  'arbitrary scripts cannot be stored as a Pixel ID'
+);
+select throws_ok(
+  $$ insert into public.site_tracking (site_id, meta_pixel_enabled)
+     values ('00000000-0000-4000-8000-00000000e002', true) $$,
+  '23514', null,
+  'Meta cannot be enabled without a Pixel ID'
+);
+insert into public.site_tracking (site_id, meta_pixel_id)
+values ('00000000-0000-4000-8000-00000000e002', null),
+       ('00000000-0000-4000-8000-00000000e003', '3333333333');
 
 insert into public.site_products (id, site_id, name, price)
 values ('00000000-0000-4000-8000-00000000f001', '00000000-0000-4000-8000-00000000e001', 'Producto A', 120000),
@@ -517,7 +608,8 @@ insert into public.orders_cod (full_name, email, phone, city, address, total_pri
 values ('Compra B', 'compra.b@example.com', '3200000004', 'Bogotá', 'Calle B 1-2',
         350000, '00000000-0000-4000-8000-00000000e002');
 
--- Dos cuentas confirmadas, cada una miembro de un solo sitio.
+-- Dos cuentas confirmadas, cada una miembro de un cliente. La primera debe
+-- heredar automáticamente las dos landings presentes y cualquier futura.
 insert into auth.users (
   id, instance_id, aud, role, email, email_confirmed_at, created_at, updated_at
 )
@@ -525,13 +617,25 @@ values
   ('00000000-0000-4000-8000-00000000ee01', '00000000-0000-0000-0000-000000000000',
    'authenticated', 'authenticated', 'duena.a@example.com', now(), now(), now()),
   ('00000000-0000-4000-8000-00000000ee02', '00000000-0000-0000-0000-000000000000',
-   'authenticated', 'authenticated', 'dueno.b@example.com', now(), now(), now());
+   'authenticated', 'authenticated', 'dueno.b@example.com', now(), now(), now()),
+  ('00000000-0000-4000-8000-00000000ee99', '00000000-0000-0000-0000-000000000000',
+   'authenticated', 'authenticated', 'sin.landing@example.com', now(), now(), now());
 
-insert into public.site_members (site_id, email)
+insert into public.client_members (client_id, email)
 values ('00000000-0000-4000-8000-00000000e001', 'duena.a@example.com'),
-       ('00000000-0000-4000-8000-00000000e002', 'dueno.b@example.com');
+       ('00000000-0000-4000-8000-00000000e002', 'dueno.b@example.com'),
+       ('00000000-0000-4000-8000-00000000e099', 'sin.landing@example.com');
 
 set local role authenticated;
+set local request.jwt.claims = '{"sub":"00000000-0000-4000-8000-00000000ee99","role":"authenticated"}';
+
+select is(
+  (select count(*)::int from public.client_members
+    where email = 'sin.landing@example.com'),
+  1,
+  'a confirmed client member can identify their account before the first landing exists'
+);
+
 set local request.jwt.claims = '{"sub":"00000000-0000-4000-8000-00000000ee01","role":"authenticated"}';
 
 select is(
@@ -547,10 +651,40 @@ select is(
 );
 select is(
   (select count(*)::int from public.sites
-    where id <> '00000000-0000-4000-8000-00000000e001'),
+    where client_id <> '00000000-0000-4000-8000-00000000e001'),
   0,
   'a tenant cannot even enumerate the other clients of the platform'
 );
+select is(
+  (select count(*)::int from public.sites),
+  2,
+  'one client membership automatically exposes every landing of that client'
+);
+select is(
+  (select count(*)::int from public.site_tracking),
+  2,
+  'a client reads tracking only for every landing of its own company'
+);
+select lives_ok(
+  $$ update public.site_tracking set meta_pixel_enabled = true
+     where site_id = '00000000-0000-4000-8000-00000000e003' $$,
+  'a client can enable Meta on its own landing'
+);
+select lives_ok(
+  $$ update public.site_tracking set meta_pixel_id = '9999999999'
+     where site_id = '00000000-0000-4000-8000-00000000e002' $$,
+  'an update aimed at another tenant reveals no authorization error'
+);
+
+reset role;
+select is(
+  (select meta_pixel_id from public.site_tracking
+    where site_id = '00000000-0000-4000-8000-00000000e002'),
+  null,
+  'RLS prevents changing another tenant Pixel ID'
+);
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"00000000-0000-4000-8000-00000000ee01","role":"authenticated"}';
 select is(
   (select count(*)::int from public.contacts
     where site_id <> '00000000-0000-4000-8000-00000000e001'),
@@ -785,5 +919,148 @@ select lives_ok(
      ) $$,
   'a verified Storage object can be marked as permanently stored'
 );
+
+-- Evidencia legal: ningún navegador puede consultar ni fabricar aceptaciones.
+-- Solo el servidor de plataforma las registra después de volver a comprobar
+-- la sesión y la pertenencia del usuario al cliente.
+select policies_are('public', 'legal_documents', array[]::text[], 'legal documents have no browser policies');
+select policies_are('public', 'client_legal_acceptances', array[]::text[], 'legal evidence has no browser policies');
+select table_privs_are('public', 'legal_documents', 'anon', array[]::text[], 'anonymous users cannot read legal documents');
+select table_privs_are('public', 'legal_documents', 'authenticated', array[]::text[], 'client sessions cannot query legal documents directly');
+select table_privs_are('public', 'client_legal_acceptances', 'anon', array[]::text[], 'anonymous users cannot read legal evidence');
+select table_privs_are('public', 'client_legal_acceptances', 'authenticated', array[]::text[], 'client sessions cannot query legal evidence directly');
+select function_privs_are(
+  'public', 'publish_legal_document', array['text', 'text', 'text', 'text', 'text'],
+  'authenticated', array[]::text[],
+  'client sessions cannot publish legal text'
+);
+select col_not_null('public', 'client_legal_acceptances', 'document_sha256', 'an acceptance always identifies exact content');
+select col_not_null('public', 'client_legal_acceptances', 'accepted_at', 'an acceptance always has a server timestamp');
+select has_index('public', 'client_legal_acceptances', 'client_legal_acceptances_user_idx', 'legal evidence indexes the accepting user');
+
+select lives_ok(
+  $$ insert into public.legal_documents
+       (id, document_type, version, title, body_markdown, content_sha256, status, published_at, created_by)
+     values (
+       '00000000-0000-4000-8000-00000000a001', 'service_terms', '2026-08',
+       'Términos del servicio', repeat('Texto revisado. ', 10), repeat('a', 64),
+       'published', now(), 'platform@example.com'
+     ) $$,
+  'a reviewed legal document can be published'
+);
+select throws_ok(
+  $$ insert into public.legal_documents
+       (document_type, version, title, body_markdown, content_sha256, status, published_at, created_by)
+     values (
+       'service_terms', '2026-09', 'Otros términos', repeat('Texto revisado. ', 10), repeat('b', 64),
+       'published', now(), 'platform@example.com'
+     ) $$,
+  '23505', null,
+  'only one version of each document type can be current'
+);
+select lives_ok(
+  $$ insert into public.client_legal_acceptances
+       (client_id, document_id, document_type, document_version, document_title,
+        document_sha256, user_id, accepted_email, acceptance_statement)
+     values (
+       '00000000-0000-4000-8000-00000000e001',
+       '00000000-0000-4000-8000-00000000a001', 'service_terms', '2026-08',
+       'Términos del servicio', repeat('a', 64),
+       '00000000-0000-4000-8000-00000000ee01', 'duena.a@example.com',
+       'Declaro que tengo autorización para aceptar en nombre del cliente.'
+     ) $$,
+  'the server can append acceptance evidence'
+);
+select is(
+  (select document_sha256 from public.client_legal_acceptances
+    where document_id = '00000000-0000-4000-8000-00000000a001'),
+  repeat('a', 64),
+  'the database snapshots the published hash instead of trusting the caller'
+);
+select throws_ok(
+  $$ update public.client_legal_acceptances
+       set accepted_email = 'otra@example.com'
+     where document_id = '00000000-0000-4000-8000-00000000a001' $$,
+  '55000', null,
+  'acceptance evidence cannot be rewritten'
+);
+select throws_ok(
+  $$ delete from public.client_legal_acceptances
+     where document_id = '00000000-0000-4000-8000-00000000a001' $$,
+  '55000', null,
+  'acceptance evidence cannot be deleted'
+);
+select throws_ok(
+  $$ update public.legal_documents set body_markdown = repeat('Alterado. ', 20)
+     where id = '00000000-0000-4000-8000-00000000a001' $$,
+  '55000', null,
+  'published legal content cannot be rewritten'
+);
+select throws_ok(
+  $$ delete from public.legal_documents
+     where id = '00000000-0000-4000-8000-00000000a001' $$,
+  '55000', null,
+  'published legal content cannot be deleted'
+);
+-- Campos opcionales del formulario de pedido -------------------------------
+select col_is_null('public', 'orders_cod', 'email', 'the order email can be absent');
+select col_is_null('public', 'orders_cod', 'city', 'the order city can be absent');
+select col_not_null('public', 'orders_cod', 'full_name', 'the buyer name is never optional');
+select col_not_null('public', 'orders_cod', 'phone', 'the buyer phone is never optional');
+select col_not_null('public', 'orders_cod', 'address', 'the delivery address is never optional');
+select col_has_default('public', 'site_channels', 'require_email', 'sites ask for email unless told otherwise');
+select col_has_default('public', 'site_channels', 'require_city', 'sites ask for city unless told otherwise');
+
+select lives_ok(
+  $$ insert into public.orders_cod
+       (site_id, product_id, full_name, email, phone, city, address, total_price, status)
+     values (
+       'c0ffee00-0000-4000-8000-000000000001',
+       'c0ffee00-0000-4000-8000-000000000101',
+       'Compradora Sin Correo', null, '3009998877', null,
+       'Calle 1 # 2-3', 490000, 'pending'
+     ) $$,
+  'an order can be stored without email or city'
+);
+
+-- Aflojar la obligatoriedad no afloja el formato: un correo presente sigue
+-- teniendo que ser un correo.
+select throws_ok(
+  $$ insert into public.orders_cod
+       (site_id, product_id, full_name, email, phone, city, address, total_price, status)
+     values (
+       'c0ffee00-0000-4000-8000-000000000001',
+       'c0ffee00-0000-4000-8000-000000000101',
+       'Compradora Con Correo Roto', 'esto-no-es-un-correo', '3009998866', 'Pereira',
+       'Calle 1 # 2-3', 490000, 'pending'
+     ) $$,
+  '23514', null,
+  'a present email still has to look like an email'
+);
+
+-- Permisos por columna de lo añadido hoy ------------------------------------
+-- Este esquema concede `select` columna por columna: sin el grant, la consulta
+-- entera falla y el panel concluye que el cliente no tiene landings.
+select column_privs_are(
+  'public', 'sites', 'production_url', 'authenticated', array['SELECT'],
+  'the client can read the public address of its own landing'
+);
+select column_privs_are(
+  'public', 'site_channels', 'require_email', 'authenticated', array['SELECT', 'UPDATE'],
+  'the client can read and change whether email is required'
+);
+select column_privs_are(
+  'public', 'site_channels', 'require_city', 'authenticated', array['SELECT', 'UPDATE'],
+  'the client can read and change whether city is required'
+);
+select column_privs_are(
+  'public', 'site_channels', 'require_email', 'anon', array['SELECT'],
+  'the shared-deployment landing can read its own field requirements'
+);
+select column_privs_are(
+  'public', 'sites', 'production_url', 'anon', array[]::text[],
+  'anonymous visitors have no business reading deployment addresses'
+);
+
 select * from finish();
 rollback;
