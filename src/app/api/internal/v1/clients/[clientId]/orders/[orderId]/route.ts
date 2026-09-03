@@ -107,18 +107,32 @@ export async function PATCH(
     return NextResponse.json({ ok: false, error: 'write_failed' }, { status: 500 });
   }
 
-  // La auditoría es best-effort: el hecho ya ocurrió y perder la fila del
-  // historial no puede convertirse en un error que haga al bot reintentar y
-  // mover el pedido dos veces.
-  const { error: eventError } = await service.from('order_status_events').insert({
-    order_id: orderId,
-    from_status: from,
-    to_status: parsed.data.status,
-    changed_by: parsed.data.changedBy.toLowerCase(),
-    note: parsed.data.note ?? null,
-  });
-  if (eventError) {
-    console.error('[nitro-bot] estado movido pero sin auditoría:', eventError.message);
+  // El historial lo escribe el trigger `orders_cod_record_status_event`, no
+  // este endpoint. Insertar aquí también dejaba DOS filas por cada despacho.
+  //
+  // Lo que el trigger no puede saber es quién lo movió —usa
+  // `private.verified_email()`, que es NULL escribiendo con `service_role`— ni
+  // por qué. Así que se completa su fila en vez de duplicarla.
+  //
+  // Best-effort: el hecho ya ocurrió y perder la autoría no puede convertirse
+  // en un error que haga al bot reintentar y mover el pedido otra vez.
+  const { data: event } = await service
+    .from('order_status_events')
+    .select('id')
+    .eq('order_id', orderId)
+    .eq('to_status', parsed.data.status)
+    .order('id', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (event) {
+    const { error: eventError } = await service
+      .from('order_status_events')
+      .update({ changed_by: parsed.data.changedBy.toLowerCase(), note: parsed.data.note ?? null })
+      .eq('id', event.id);
+    if (eventError) {
+      console.error('[nitro-bot] estado movido pero sin autoría:', eventError.message);
+    }
   }
 
   return nitroBotJson(requestId, { orderId, status: parsed.data.status, changed: true });
