@@ -97,8 +97,31 @@ Nitro Bot ──HMAC──> /api/internal/v1/clients/…  ──> Supabase Landi
 | Ruta | Para qué |
 |---|---|
 | `GET /api/internal/v1/clients` | Listar clientes, para vincular uno con un tenant del bot |
+| `POST /api/internal/v1/clients` | Alta de cliente desde Nitro Admin |
 | `GET /api/internal/v1/clients/:id/summary` | Lo que pinta la pantalla del cliente |
 | `GET /api/internal/v1/clients/:id/changes?since=` | Pedidos y contactos cambiados, para proyectar |
+| `POST /api/internal/v1/clients/:id/sites` | Alta de landing, con su llave de ingesta |
+| `PATCH /api/internal/v1/clients/:id/sites/:siteId` | Canales, Meta Pixel y pausa |
+| `POST /api/internal/v1/clients/:id/intakes` | Emitir el enlace del brief |
+| `GET /api/internal/v1/clients/:id/intakes` | En qué va cada solicitud |
+| `PATCH /api/internal/v1/clients/:id/orders/:orderId` | Estado y guía del pedido |
+| `PATCH /api/internal/v1/clients/:id/contacts/:contactId` | Etapa, seguimiento y nota |
+
+La landing, el pedido y el contacto van **anidados bajo su cliente** en la ruta:
+es la declaración de alcance de Nitro Bot, y aquí se comprueba la pertenencia
+contra `sites.client_id`. Un id filtrado no alcanza lo de otro cliente.
+
+**El historial de estados lo escribe el trigger**
+`orders_cod_record_status_event`, no el endpoint. Insertar también dejaba dos
+filas por despacho. Lo que el trigger no puede saber —quién lo movió, porque usa
+`private.verified_email()` que es NULL con `service_role`, ni por qué— se
+completa después sobre su misma fila.
+
+**El formulario del brief no se duplica en Nitro Bot.** Sigue en
+`/intake/{token}`, que es una página pública con token y no un panel. Pedir dos
+veces el mismo brief reemite el enlace de la solicitud abierta en vez de crear
+otra: del token solo se guarda el hash, así que rechazarlo dejaría al cliente
+sin forma de volver.
 
 Está **separada de `/api/v1`** a propósito. Aquella es la ingesta que usan las
 landings con su llave de sitio y solo alcanza su propio sitio; esta lee datos
