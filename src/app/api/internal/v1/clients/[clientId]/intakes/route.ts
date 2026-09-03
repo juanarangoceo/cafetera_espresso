@@ -108,6 +108,44 @@ export async function POST(
     return NextResponse.json({ ok: false, error: 'slug_taken' }, { status: 409 });
   }
 
+  // Pedir dos veces lo mismo es lo normal cuando alguien cierra la pestaña. En
+  // vez de rechazarlo —y dejar al cliente sin enlace, porque del token solo
+  // guardamos el hash— se REEMITE el de la solicitud abierta. Es la misma
+  // solicitud, con un enlace nuevo; no se crea un brief a medias más.
+  const { data: open } = await service
+    .from('intake_requests')
+    .select('id, expires_at')
+    .eq('client_id', clientId)
+    .eq('slug', parsed.data.slug)
+    .eq('status', 'draft')
+    .is('site_id', null)
+    .maybeSingle();
+
+  if (open) {
+    const reissued = generateIntakeToken();
+    const { error: reissueError } = await service
+      .from('intake_requests')
+      .update({
+        token_hash: hashIntakeToken(reissued),
+        // El plazo vuelve a contar: si el anterior estaba por caducar, el
+        // cliente no debería heredar tres días para llenar el brief.
+        expires_at: new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString(),
+      })
+      .eq('id', open.id);
+    if (reissueError) {
+      console.error('[nitro-bot] no se pudo reemitir el intake:', reissueError.message);
+      return NextResponse.json({ ok: false, error: 'write_failed' }, { status: 500 });
+    }
+    return nitroBotJson(requestId, {
+      intake: {
+        id: open.id,
+        expiresAt: new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString(),
+        path: `/intake/${reissued}`,
+        reissued: true,
+      },
+    });
+  }
+
   const token = generateIntakeToken();
   const { data, error } = await service
     .from('intake_requests')
@@ -131,6 +169,6 @@ export async function POST(
   }
 
   return nitroBotJson(requestId, {
-    intake: { id: data.id, expiresAt: data.expires_at, path: `/intake/${token}` },
+    intake: { id: data.id, expiresAt: data.expires_at, path: `/intake/${token}`, reissued: false },
   });
 }
