@@ -88,7 +88,7 @@ export async function GET(
       .limit(limit),
     service
       .from('contacts')
-      .select('id, site_id, full_name, email, phone, city, stage, source, created_at, updated_at')
+      .select('id, site_id, full_name, email, phone, city, stage, source, next_follow_up, created_at, updated_at')
       .in('site_id', siteIds)
       .gte('updated_at', since)
       .order('updated_at', { ascending: true })
@@ -131,6 +131,7 @@ export async function GET(
     city: contact.city,
     stage: contact.stage,
     source: contact.source,
+    nextFollowUp: contact.next_follow_up,
     createdAt: contact.created_at,
     updatedAt: contact.updated_at,
   }));
