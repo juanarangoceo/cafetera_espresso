@@ -1,6 +1,6 @@
 # Nitro Landing — la plataforma multi-cliente
 
-**Última actualización: 20 de agosto de 2026.**
+**Última actualización: 26 de agosto de 2026.**
 
 Cómo Nitro Landing gestiona varias landings de varios clientes sobre una sola
 base de datos. Para las reglas de trabajo ve a `../AGENTS.md`; para el panel en
@@ -40,7 +40,7 @@ llamada a la API ya es de servidor a servidor.
 | Tabla | Quién | Alcance |
 |---|---|---|
 | `platform_admins` | La central corporativa de Nitro | Fichas y configuración por acciones de servidor; sin pedidos ni CRM. |
-| `site_members` | El cliente y su equipo | Solo los sitios donde tiene fila. |
+| `client_members` | El cliente y su equipo | Todas las landings actuales y futuras del cliente. |
 
 `admin_users` **ya no existe**. Era una sola lista global: cualquier cuenta en
 ella leía los pedidos, los contactos y las métricas de todos los sitios. Con un
@@ -81,6 +81,50 @@ modo que arrastran la frontera sin necesitar política propia. Hay una prueba
 pgTAP que lo comprueba: si alguien las recreara sin esa opción, entregarían
 agregados de todos los clientes sin que ninguna política lo impidiera.
 
+## La API interna que consume Nitro Bot
+
+Nitro Bot presenta las landings de un cliente dentro de su propio dashboard, para
+que el cliente vea **un solo producto** con una sola cuenta. Nitro Landing no
+cede nada por ello: conserva su base, su renderer, su editor, sus dominios y sus
+publicaciones. Lo que entrega es lectura, por contrato.
+
+```text
+Nitro Bot ──HMAC──> /api/internal/v1/clients/…  ──> Supabase Landing
+   │
+   └─ proyecta pedidos y contactos en SU base (Pedidos, CRM, Métricas)
+```
+
+| Ruta | Para qué |
+|---|---|
+| `GET /api/internal/v1/clients` | Listar clientes, para vincular uno con un tenant del bot |
+| `GET /api/internal/v1/clients/:id/summary` | Lo que pinta la pantalla del cliente |
+| `GET /api/internal/v1/clients/:id/changes?since=` | Pedidos y contactos cambiados, para proyectar |
+
+Está **separada de `/api/v1`** a propósito. Aquella es la ingesta que usan las
+landings con su llave de sitio y solo alcanza su propio sitio; esta lee datos
+comerciales de cualquier cliente. Mezclarlas haría que un error de autorización
+en una abriera la otra.
+
+Autoriza `NITRO_BOT_INTEGRATION_SECRET` mediante HMAC sobre
+`timestamp.método.ruta.sha256(cuerpo)`, con ventana de cinco minutos. No es una
+llave estática como las de sitio porque el alcance es mucho mayor: una llave que
+viaja tal cual se reutiliza tal cual si alguien la ve en un log.
+`NITRO_BOT_INTEGRATION_SECRET_PREVIOUS` existe solo para rotar sin caída.
+
+**El vínculo tenant ↔ cliente NO vive aquí, sino en Nitro Bot.** Es lo que
+permite que esta integración no necesite ni una migración en Nitro Landing, y
+que vincular a un cliente no dependa de que este despliegue esté en pie.
+
+La sincronización es *pull* con cursor sobre `updated_at`, comparado con `>=` y
+no con `>`: con `>` se perdería en silencio cualquier fila que compartiera el
+milisegundo del corte. La fila del borde se reenvía y la descarta la
+idempotencia del consumidor. Perder un pedido es peor que repetirlo.
+
+**Lo que esta API no puede dar, y no hay que buscarlo:** visitas, sesiones,
+scroll ni tasa de conversión. Nitro Landing no guarda analítica de
+comportamiento —eso vive en Meta Pixel, del lado del navegador—, así que las
+únicas cifras que entrega salen de los pedidos.
+
 ## El precio vive en la base, por sitio
 
 `orders_cod` tenía `check (total_price = 490000)`. Con eso, un segundo cliente
@@ -100,6 +144,45 @@ Ahora el precio está en `site_products` y lo hace cumplir
 > de la landing de Coffee Maker Pro, y `site_products` lo es del cobro. Mientras
 > compartan despliegue deben coincidir; `createOrder` lo comprueba y prefiere no
 > vender antes que vender al precio equivocado.
+
+## Campos opcionales del formulario
+
+`orders_cod` exigía los cinco datos del comprador. Servía con una landing; con
+varias, no: cada mercado pide lo suyo.
+
+Ahora `email` y `city` aceptan nulo, y `site_channels.require_email` /
+`require_city` deciden por sitio. Ambas nacen en `true`, así que ninguna landing
+existente cambia de comportamiento hasta que alguien las apague.
+
+**Solo esos dos.** Nombre, celular y dirección siguen siendo `not null` en la
+base: sin ellos no se puede despachar un contraentrega, y el celular además
+sostiene el límite antiabuso y la unión con el contacto.
+
+Relajar la obligatoriedad no relaja el formato. Los checks pasaron a "nulo o
+válido": un correo presente sigue teniendo que estar en minúsculas y con forma
+de correo.
+
+La comprobación real vive en `createOrderForSite`, no en el formulario. El
+navegador se puede modificar; ese camino no. Sin fila de canales se exige todo:
+un sitio a medio configurar debe pedir de más, no de menos.
+
+Se configura desde la pestaña **Canales** de `/platform` y desde
+**Ajustes de la landing** en el panel del cliente. `/api/v1/site` lo entrega en
+`form.requireEmail` y `form.requireCity`.
+
+## Medición por landing
+
+`site_tracking` guarda el ID numérico público de Meta Pixel y su interruptor.
+No admite scripts ni tokens de Conversions API. La lectura es pública porque el
+ID termina en la landing; la escritura usa RLS y solo alcanza las landings del
+cliente autenticado. La central actualiza mediante una acción protegida con
+`requirePlatformAdmin()` y `service_role`.
+
+`/api/v1/site` entrega `tracking.metaPixelEnabled` y
+`tracking.metaPixelId`. Sin fila, ID válido o activación, las plantillas fallan
+cerradas. El navegador exige consentimiento antes de cargar Meta y vuelve a
+comprobarlo en `InitiateCheckout` y `Purchase`; retirarlo impide eventos nuevos.
+Coffee Maker somete además Google Analytics y Speed Insights a esa decisión.
 
 ## Llaves de ingesta
 
@@ -124,6 +207,19 @@ inactivo. Distinguirlos lo convertiría en un oráculo de llaves válidas.
 
 ## Recibir el brief y dar de alta un cliente
 
+Antes de usar `/admin`, el cliente acepta por separado los términos del servicio
+y la autorización de tratamiento de datos. El layout bloquea todas las rutas,
+salvo aceptar o cerrar sesión. `legal_documents` conserva versiones publicadas
+inmutables; `client_legal_acceptances` guarda cliente, usuario autenticado,
+correo, fecha del servidor, versión, SHA-256, declaración, IP y user-agent. Una
+versión nueva obliga a aceptar de nuevo. El superadmin publica texto revisado y
+audita cada evidencia desde la pestaña **Términos**; no puede editarla o borrarla.
+
+Los intakes independientes siguen disponibles antes del alta porque todavía no
+existe una identidad corporativa a la cual atribuir la aceptación. Deben
+convertirse en cliente, crear su usuario y obtener aceptación antes de iniciar
+el trabajo operativo de la landing.
+
 El alta ya no tiene que ocurrir antes de hablar con el prospecto:
 
 1. **Intake independiente.** En `/platform`, pulsa **Nuevo intake** y escribe
@@ -131,7 +227,7 @@ El alta ya no tiene que ocurrir antes de hablar con el prospecto:
    producto ni precio. Comparte el enlace privado que aparece una sola vez.
 2. **Brief recibido.** Cuando el cliente entrega los seis pasos, la solicitud
    aparece como lista en **Solicitudes antes del alta**. El botón **Crear cliente
-   desde el brief** crea `clients` + `sites` + `site_channels` + `site_products`
+   desde el brief** crea `clients` + `sites` + `site_channels` + `site_tracking` + `site_products`
    con la información confirmada. La landing queda desconectada hasta terminar
    su configuración. La conversión automática admite por ahora precios en COP.
 3. **Usuario.** `npm run admin:create -- --site <slug> correo 'Clave' 'Nombre'`.
@@ -142,7 +238,7 @@ El alta ya no tiene que ocurrir antes de hablar con el prospecto:
 También sigue disponible el alta manual desde `/platform`:
 
 1. **Cliente y primera landing.** Crea `clients` + `sites` + `site_channels` +
-   `site_products` de una vez. Las cuatro filas van juntas: un sitio sin producto no puede
+   `site_tracking` + `site_products` de una vez. Las cinco filas van juntas: un sitio sin producto no puede
    vender y uno sin canales no puede pintar la landing. El panel revierte el
    alta si alguna falla, para no dejar un cliente a medio crear. En el mismo
    formulario se define el nombre visible y se puede subir un logo opcional.
@@ -251,6 +347,14 @@ Eso es lo que permite que Coffee Maker Pro siga compartiendo despliegue con la
 plataforma mientras los clientes nuevos ya no lo hacen.
 
 ## Lo que sigue sin resolverse
+
+- **El límite antiabuso de pedidos no filtra por sitio.**
+  `private.enforce_order_rate_limit()` cuenta pedidos recientes con
+  `where (email = new.email or phone = new.phone)`, sin `site_id`. Con un solo
+  inquilino daba igual; con dos, el tráfico de un cliente puede bloquear al
+  comprador de otro, y deja adivinar si un teléfono ya compró en otra tienda.
+  Detectado el 25 de agosto de 2026; no se cambió porque tocar la regla
+  antiabuso merece su propia decisión.
 
 - **El panel comparte despliegue con la landing de Coffee Maker Pro.** Un cliente
   entra a su panel por el dominio de otra tienda. Funciona, pero es incómodo de
