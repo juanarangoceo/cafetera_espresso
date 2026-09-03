@@ -14,6 +14,12 @@ import { NITRO_BOT_CONTRACT_VERSION, verifyNitroBotRequest } from './nitro-bot-a
 export type NitroBotContext = {
   service: NonNullable<ReturnType<typeof createServiceClient>>;
   requestId: string;
+  /**
+   * El cuerpo crudo, tal cual se firmó. Se devuelve porque `Request` no se
+   * puede consumir dos veces: si la ruta volviera a leerlo obtendría vacío, y
+   * si se parseara aquí se validaría algo distinto de lo que se firmó.
+   */
+  body: string;
 };
 
 type Guarded =
@@ -45,7 +51,7 @@ export async function guardNitroBotRequest(request: Request): Promise<Guarded> {
     };
   }
 
-  return { ok: true, context: { service, requestId: auth.requestId } };
+  return { ok: true, context: { service, requestId: auth.requestId, body } };
 }
 
 export function nitroBotJson(requestId: string, payload: Record<string, unknown>) {

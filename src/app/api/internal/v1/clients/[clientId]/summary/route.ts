@@ -44,6 +44,17 @@ export async function GET(
     .order('name');
 
   const siteIds = (sites ?? []).map((site) => site.id);
+
+  // Canales y medición viajan con el resumen para que Nitro Bot pueda pintar el
+  // formulario de ajustes relleno sin una segunda vuelta por la red.
+  const [{ data: channelRows }, { data: trackingRows }] = siteIds.length
+    ? await Promise.all([
+        service.from('site_channels').select('*').in('site_id', siteIds),
+        service.from('site_tracking').select('*').in('site_id', siteIds),
+      ])
+    : [{ data: [] }, { data: [] }];
+  const channelBySite = new Map((channelRows ?? []).map((row) => [row.site_id, row]));
+  const trackingBySite = new Map((trackingRows ?? []).map((row) => [row.site_id, row]));
   const since = new Date(Date.now() - WINDOW_DAYS * 24 * 3600 * 1000).toISOString();
 
   // Sin landings no hay nada que agregar, y un `.in()` con lista vacía es una
@@ -102,6 +113,22 @@ export async function GET(
       createdAt: site.created_at,
       updatedAt: site.updated_at,
       metrics30d: metricsFor(orders.filter((order) => order.site_id === site.id)),
+      // Sin fila de canales el renderer exige TODOS los campos y apaga los
+      // botones: un sitio a medio configurar debe pedir de más, no de menos.
+      // El valor por defecto que se devuelve refleja eso, no lo contrario.
+      channels: {
+        chatEnabled: channelBySite.get(site.id)?.chat_enabled ?? false,
+        voiceEnabled: channelBySite.get(site.id)?.voice_enabled ?? false,
+        whatsappEnabled: channelBySite.get(site.id)?.whatsapp_enabled ?? false,
+        whatsappPhone: channelBySite.get(site.id)?.whatsapp_phone ?? null,
+        whatsappMessage: channelBySite.get(site.id)?.whatsapp_message ?? null,
+        requireEmail: channelBySite.get(site.id)?.require_email ?? true,
+        requireCity: channelBySite.get(site.id)?.require_city ?? true,
+      },
+      tracking: {
+        metaPixelEnabled: trackingBySite.get(site.id)?.meta_pixel_enabled ?? false,
+        metaPixelId: trackingBySite.get(site.id)?.meta_pixel_id ?? null,
+      },
     })),
     totals30d: metricsFor(orders),
     recentOrders: recent.map((order) => ({
