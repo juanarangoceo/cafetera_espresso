@@ -111,15 +111,23 @@ export default function IntakeWizard({
   brand,
   initialAnswers,
   initialFiles,
+  prefilled = [],
   state,
 }: {
   token: string;
   brand: { name: string; logoUrl: string | null };
   initialAnswers: IntakeAnswers;
   initialFiles: IntakeFile[];
+  /**
+   * Campos que llegaron ya escritos desde Nitro Bot. No se ocultan —el cliente
+   * responde por lo que entrega— pero se agrupan aparte: mezclarlos con lo que
+   * sí hay que contestar convierte un formulario de tres preguntas nuevas en
+   * uno de dieciséis, que es exactamente lo que se quería evitar.
+   */
+  prefilled?: string[];
   state: 'open' | 'submitted' | 'expired';
 }) {
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(state === 'submitted' ? 4 : 0);
   const [answers, setAnswers] = useState<IntakeAnswers>({ ...EMPTY_INTAKE_ANSWERS, ...initialAnswers });
   const [files, setFiles] = useState<IntakeFile[]>(initialFiles);
   const [category, setCategory] = useState<IntakeCategory>('fotos_videos');
@@ -128,9 +136,11 @@ export default function IntakeWizard({
   const [message, setMessage] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(state === 'submitted');
   const [submitting, setSubmitting] = useState(false);
+  const [reviewOpen, setReviewOpen] = useState<Record<number, boolean>>({});
   const firstRender = useRef(true);
+  const prefilledKeys = new Set(prefilled);
 
-  const progress = Math.round(((step + 1) / steps.length) * 100);
+  const progress = submitted ? 100 : Math.round(((step + 1) / steps.length) * 100);
   const storedFiles = files.filter((file) => file.status === 'stored');
   const incompleteFiles = files.filter((file) => file.status !== 'stored');
   const summary = [
@@ -142,6 +152,7 @@ export default function IntakeWizard({
   ];
 
   useEffect(() => {
+    if (submitted) return;
     if (firstRender.current) {
       firstRender.current = false;
       return;
@@ -156,11 +167,8 @@ export default function IntakeWizard({
       setSaveState(response.ok ? 'saved' : 'error');
     }, 800);
     return () => window.clearTimeout(timeout);
-  }, [answers, token]);
+  }, [answers, submitted, token]);
 
-  if (submitted) {
-    return <StatusScreen brand={brand} title="Material recibido" description="Tu información y tus archivos quedaron organizados. Ya podemos comenzar la revisión para diseñar tu landing." />;
-  }
   if (state === 'expired') {
     return <StatusScreen brand={brand} title="Este enlace ya cerró" description="Pídele a tu contacto de Nitro un enlace nuevo para continuar." />;
   }
@@ -169,6 +177,24 @@ export default function IntakeWizard({
     setAnswers((current) => ({ ...current, [key]: value }));
     setSaveState('idle');
     setMessage(null);
+  }
+
+  const stepFields = steps[step].fields ?? [];
+  const knownFields = stepFields.filter((field) => prefilledKeys.has(field.key));
+  const pendingFields = stepFields.filter((field) => !prefilledKeys.has(field.key));
+
+  function renderField(field: Field) {
+    return (
+      <label key={field.key} className={field.type === 'textarea' ? 'md:col-span-2' : ''}>
+        <span className="mb-1.5 block text-sm font-bold text-slate-800">{field.label}{field.required ? ' *' : ''}</span>
+        {field.type === 'textarea' ? (
+          <textarea rows={4} value={String(answers[field.key])} onChange={(event) => update(field.key, event.target.value)} placeholder={field.placeholder} className={`${fieldClass} resize-y`} />
+        ) : (
+          <input type={field.type ?? 'text'} value={String(answers[field.key])} onChange={(event) => update(field.key, event.target.value)} placeholder={field.placeholder} className={fieldClass} />
+        )}
+        {field.hint && <span className="mt-1.5 block text-xs leading-5 text-slate-500">{field.hint}</span>}
+      </label>
+    );
   }
 
   async function uploadFile(file: File) {
@@ -261,8 +287,11 @@ export default function IntakeWizard({
       body: JSON.stringify(answers),
     });
     const result = await response.json();
-    if (response.ok) setSubmitted(true);
-    else setMessage(result.error || 'No pudimos completar la entrega.');
+    if (response.ok) {
+      setSubmitted(true);
+      setStep(4);
+      setMessage('Brief entregado correctamente. Puedes seguir agregando material desde este enlace.');
+    } else setMessage(result.error || 'No pudimos completar la entrega.');
     setSubmitting(false);
   }
 
@@ -297,10 +326,10 @@ export default function IntakeWizard({
 
         <section className="grid overflow-hidden rounded-[28px] border border-white bg-white shadow-[0_24px_80px_rgba(15,23,42,0.10)] lg:grid-cols-[270px_1fr]">
           <aside className="bg-slate-950 p-6 text-white sm:p-8">
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-emerald-400">Paso {step + 1} de {steps.length}</p>
-            <h1 className="mt-3 text-2xl font-bold leading-tight tracking-tight">{steps[step].title}</h1>
-            <p className="mt-3 text-sm leading-6 text-slate-400">Responde con lo que sabes. Si algo no está confirmado, puedes dejarlo pendiente y volver más tarde.</p>
-            <div className="mt-8 hidden space-y-3 lg:block">
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-emerald-400">{submitted ? 'Brief entregado' : `Paso ${step + 1} de ${steps.length}`}</p>
+            <h1 className="mt-3 text-2xl font-bold leading-tight tracking-tight">{submitted ? 'Agrega más material' : steps[step].title}</h1>
+            <p className="mt-3 text-sm leading-6 text-slate-400">{submitted ? 'Tu información ya fue recibida. Este enlace seguirá disponible para añadir fotos, videos o documentos hasta su vencimiento.' : 'Responde con lo que sabes. Si algo no está confirmado, puedes dejarlo pendiente y volver más tarde.'}</p>
+            {!submitted && <div className="mt-8 hidden space-y-3 lg:block">
               {steps.map((item, index) => (
                 <div key={item.eyebrow} className={`flex items-center gap-3 text-sm ${index === step ? 'font-bold text-white' : index < step ? 'text-emerald-400' : 'text-slate-600'}`}>
                   <span className={`flex h-7 w-7 items-center justify-center rounded-full border ${index <= step ? 'border-emerald-500/50 bg-emerald-500/10' : 'border-slate-800'}`}>
@@ -309,14 +338,14 @@ export default function IntakeWizard({
                   {item.eyebrow}
                 </div>
               ))}
-            </div>
+            </div>}
           </aside>
 
           <div className="min-w-0 p-5 sm:p-8 lg:p-10">
             <div className="mb-7 flex items-center justify-between gap-3">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-600">{steps[step].eyebrow}</p>
-                <p className="mt-1 text-sm text-slate-500">Los campos con * son necesarios para entregar el brief.</p>
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-600">{submitted ? 'Material adicional' : steps[step].eyebrow}</p>
+                <p className="mt-1 text-sm text-slate-500">{submitted ? 'Puedes volver a este enlace y agregar más archivos mientras siga vigente.' : 'Los campos con * son necesarios para entregar el brief.'}</p>
               </div>
               <span className="text-xs text-slate-400" aria-live="polite">
                 {saveState === 'saving' ? 'Guardando…' : saveState === 'saved' ? 'Avance guardado' : saveState === 'error' ? 'Sin guardar' : ''}
@@ -324,18 +353,48 @@ export default function IntakeWizard({
             </div>
 
             {steps[step].fields && (
-              <div className="grid gap-5 md:grid-cols-2">
-                {steps[step].fields!.map((field) => (
-                  <label key={field.key} className={field.type === 'textarea' ? 'md:col-span-2' : ''}>
-                    <span className="mb-1.5 block text-sm font-bold text-slate-800">{field.label}{field.required ? ' *' : ''}</span>
-                    {field.type === 'textarea' ? (
-                      <textarea rows={4} value={String(answers[field.key])} onChange={(event) => update(field.key, event.target.value)} placeholder={field.placeholder} className={`${fieldClass} resize-y`} />
+              <div className="space-y-6">
+                {pendingFields.length > 0 && (
+                  <div className="grid gap-5 md:grid-cols-2">{pendingFields.map(renderField)}</div>
+                )}
+
+                {knownFields.length > 0 && (
+                  <section className="rounded-3xl border border-emerald-200 bg-emerald-50/70 p-5">
+                    <button
+                      type="button"
+                      onClick={() => setReviewOpen((current) => ({ ...current, [step]: !current[step] }))}
+                      className="flex w-full items-start justify-between gap-4 text-left"
+                      aria-expanded={Boolean(reviewOpen[step])}
+                    >
+                      <span>
+                        <span className="flex items-center gap-2 text-sm font-bold text-emerald-900">
+                          <Sparkles size={16} /> Esto ya lo sabemos ({knownFields.length})
+                        </span>
+                        <span className="mt-1 block text-xs leading-5 text-emerald-800">
+                          Lo trajimos de tu cuenta y de tu catálogo en Nitro. Si está bien, sigue; si algo cambió, ábrelo y corrígelo.
+                        </span>
+                      </span>
+                      <span className="shrink-0 pt-0.5 text-xs font-bold uppercase tracking-wide text-emerald-700">
+                        {reviewOpen[step] ? 'Ocultar' : 'Revisar'}
+                      </span>
+                    </button>
+
+                    {reviewOpen[step] ? (
+                      <div className="mt-5 grid gap-5 md:grid-cols-2">{knownFields.map(renderField)}</div>
                     ) : (
-                      <input type={field.type ?? 'text'} value={String(answers[field.key])} onChange={(event) => update(field.key, event.target.value)} placeholder={field.placeholder} className={fieldClass} />
+                      <dl className="mt-4 grid gap-3 sm:grid-cols-2">
+                        {knownFields.map((field) => (
+                          <div key={field.key} className="min-w-0">
+                            <dt className="text-[11px] font-bold uppercase tracking-wide text-emerald-700">{field.label}</dt>
+                            <dd className="truncate text-sm text-emerald-950" title={String(answers[field.key])}>
+                              {String(answers[field.key]).trim() || '—'}
+                            </dd>
+                          </div>
+                        ))}
+                      </dl>
                     )}
-                    {field.hint && <span className="mt-1.5 block text-xs leading-5 text-slate-500">{field.hint}</span>}
-                  </label>
-                ))}
+                  </section>
+                )}
               </div>
             )}
 
@@ -401,7 +460,11 @@ export default function IntakeWizard({
 
             {message && <p className={`mt-5 rounded-2xl px-4 py-3 text-sm ${message.includes('correctamente') ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`} role="status">{message}</p>}
 
-            <div className="mt-8 flex items-center justify-between gap-3 border-t border-slate-100 pt-5">
+            {submitted ? (
+              <div className="mt-8 flex items-center gap-2 border-t border-slate-100 pt-5 text-sm font-semibold text-emerald-700">
+                <CheckCircle2 size={18} /> Tu brief ya fue entregado. Los archivos nuevos se guardan automáticamente.
+              </div>
+            ) : <div className="mt-8 flex items-center justify-between gap-3 border-t border-slate-100 pt-5">
               <button type="button" onClick={() => setStep((value) => Math.max(0, value - 1))} disabled={step === 0} className="flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-bold text-slate-600 transition hover:bg-slate-100 disabled:invisible">
                 <ArrowLeft size={17} /> Atrás
               </button>
@@ -415,7 +478,7 @@ export default function IntakeWizard({
                   Entregar material
                 </button>
               )}
-            </div>
+            </div>}
           </div>
         </section>
         <p className="mt-5 text-center text-xs text-slate-500">Tu material se usa únicamente para preparar este proyecto. No compartas este enlace.</p>

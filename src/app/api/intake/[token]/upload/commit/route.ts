@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { INTAKE_BUCKET } from '@/lib/intake';
-import { intakeIsOpen, resolveIntakeToken } from '@/lib/intake-server';
+import { intakeAcceptsFiles, resolveIntakeToken } from '@/lib/intake-server';
 import { createServiceClient } from '@/utils/supabase/service';
 
 const commitSchema = z.object({ fileId: z.string().uuid() });
@@ -9,7 +9,7 @@ const commitSchema = z.object({ fileId: z.string().uuid() });
 export async function POST(request: Request, context: { params: Promise<{ token: string }> }) {
   const { token } = await context.params;
   const intake = await resolveIntakeToken(token);
-  if (!intake || !intakeIsOpen(intake)) {
+  if (!intake || !intakeAcceptsFiles(intake)) {
     return NextResponse.json({ error: 'Este enlace ya no está disponible.' }, { status: 404 });
   }
 

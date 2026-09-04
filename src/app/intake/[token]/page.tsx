@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import IntakeWizard from '@/components/intake/IntakeWizard';
-import { intakeIsOpen, resolveIntakeToken } from '@/lib/intake-server';
+import { intakeAcceptsFiles, intakeIsOpen, resolveIntakeToken } from '@/lib/intake-server';
 import { createServiceClient } from '@/utils/supabase/service';
 
 export const dynamic = 'force-dynamic';
@@ -24,6 +24,7 @@ export default async function IntakePage({ params }: { params: Promise<{ token: 
       token={token}
       brand={{ name: intake.siteName, logoUrl: intake.logoUrl }}
       initialAnswers={intake.answers}
+      prefilled={intake.prefill?.keys ?? []}
       initialFiles={(files ?? []).map((file) => ({
         id: file.id,
         name: file.original_name,
@@ -33,7 +34,7 @@ export default async function IntakePage({ params }: { params: Promise<{ token: 
         error: file.error_message,
       }))}
       state={
-        intake.status === 'submitted'
+        intake.status === 'submitted' && intakeAcceptsFiles(intake)
           ? 'submitted'
           : intakeIsOpen(intake)
             ? 'open'

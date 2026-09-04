@@ -119,6 +119,70 @@ export const allowedIntakeMimeTypes = new Set([
   'application/zip',
 ]);
 
+/**
+ * Lo que un brief puede traer ya escrito, y de dónde vino.
+ *
+ * `consent` NO está y no puede estarlo: es la declaración de que el material es
+ * veraz y autorizado, y la firma un humano. Prellenarla sería firmar por él.
+ */
+export const intakePrefillSchema = z.object({
+  source: z.enum(['catalog', 'account']),
+  productRef: z.string().trim().max(160).nullable().optional(),
+  answers: intakeDraftSchema,
+});
+
+export type IntakePrefill = z.infer<typeof intakePrefillSchema>;
+
+export type IntakePrefillMeta = {
+  source: 'catalog' | 'account';
+  productRef: string | null;
+  keys: string[];
+};
+
+const NEVER_PREFILLED = new Set<string>(['consent']);
+
+/**
+ * Mezcla lo prellenado sobre lo que ya hay, y devuelve QUÉ campos se llenaron
+ * de verdad.
+ *
+ * Dos reglas, las dos por el mismo motivo —el borrador del cliente es sagrado—:
+ * un campo que él ya escribió no se pisa, y un valor vacío no cuenta como
+ * prellenado. La segunda importa al reemitir el enlace: sin ella, un campo que
+ * el cliente borró a propósito volvería a aparecer «lleno» cada vez que pide el
+ * enlace otra vez.
+ */
+export function mergeIntakePrefill(
+  current: IntakeAnswers,
+  incoming: Partial<IntakeAnswers>,
+): { answers: IntakeAnswers; keys: string[] } {
+  const draft: Record<string, unknown> = { ...current };
+  const keys: string[] = [];
+
+  for (const [key, value] of Object.entries(incoming)) {
+    if (NEVER_PREFILLED.has(key)) continue;
+    if (typeof value !== 'string') continue;
+    const text = value.trim();
+    if (!text) continue;
+    if (String(draft[key] ?? '').trim()) continue;
+    draft[key] = text;
+    keys.push(key);
+  }
+
+  return { answers: intakeAnswersSchema.parse(draft), keys };
+}
+
+export function parseIntakePrefillMeta(input: unknown): IntakePrefillMeta | null {
+  if (!input || typeof input !== 'object') return null;
+  const raw = input as Record<string, unknown>;
+  const keys = Array.isArray(raw.keys) ? raw.keys.filter((key): key is string => typeof key === 'string') : [];
+  if (!keys.length) return null;
+  return {
+    source: raw.source === 'catalog' ? 'catalog' : 'account',
+    productRef: typeof raw.productRef === 'string' ? raw.productRef : null,
+    keys,
+  };
+}
+
 export function generateIntakeToken() {
   return randomBytes(32).toString('base64url');
 }

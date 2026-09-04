@@ -1,7 +1,14 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { guardNitroBotRequest, isUuid, nitroBotJson } from '@/lib/nitro-bot-api';
-import { generateIntakeToken, hashIntakeToken } from '@/lib/intake';
+import {
+  EMPTY_INTAKE_ANSWERS,
+  generateIntakeToken,
+  hashIntakeToken,
+  intakePrefillSchema,
+  mergeIntakePrefill,
+  intakeAnswersSchema,
+} from '@/lib/intake';
 
 /**
  * El brief de una landing nueva, pedido desde Nitro Bot.
@@ -25,6 +32,10 @@ const newIntakeSchema = z.object({
     .trim()
     .regex(/^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])$/, 'El identificador va en minúsculas, sin espacios.'),
   createdBy: z.string().trim().email().max(320),
+  // Opcional a propósito: un Nitro Bot anterior a esta versión sigue pidiendo
+  // briefs en blanco y este endpoint sigue emitiéndolos. La ausencia de
+  // prellenado no es un error, es el caso «empezar de cero».
+  prefill: intakePrefillSchema.optional(),
 });
 
 export async function GET(
@@ -114,7 +125,7 @@ export async function POST(
   // solicitud, con un enlace nuevo; no se crea un brief a medias más.
   const { data: open } = await service
     .from('intake_requests')
-    .select('id, expires_at')
+    .select('id, expires_at, answers, prefill')
     .eq('client_id', clientId)
     .eq('slug', parsed.data.slug)
     .eq('status', 'draft')
@@ -123,6 +134,19 @@ export async function POST(
 
   if (open) {
     const reissued = generateIntakeToken();
+    // El prellenado de una reemisión solo RELLENA HUECOS. Quien vuelve a pedir
+    // el enlace suele traer ya medio brief escrito, y pisarlo con lo que sabe
+    // el catálogo sería castigarlo por haber cerrado la pestaña.
+    const merged = parsed.data.prefill
+      ? mergeIntakePrefill(
+          intakeAnswersSchema.parse(open.answers ?? {}),
+          parsed.data.prefill.answers,
+        )
+      : null;
+    const previousKeys = Array.isArray((open.prefill as { keys?: unknown } | null)?.keys)
+      ? ((open.prefill as { keys?: string[] }).keys ?? [])
+      : [];
+
     const { error: reissueError } = await service
       .from('intake_requests')
       .update({
@@ -130,6 +154,16 @@ export async function POST(
         // El plazo vuelve a contar: si el anterior estaba por caducar, el
         // cliente no debería heredar tres días para llenar el brief.
         expires_at: new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString(),
+        ...(merged
+          ? {
+              answers: merged.answers,
+              prefill: {
+                source: parsed.data.prefill!.source,
+                productRef: parsed.data.prefill!.productRef ?? null,
+                keys: Array.from(new Set([...previousKeys, ...merged.keys])),
+              },
+            }
+          : {}),
       })
       .eq('id', open.id);
     if (reissueError) {
@@ -142,11 +176,16 @@ export async function POST(
         expiresAt: new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString(),
         path: `/intake/${reissued}`,
         reissued: true,
+        prefilledCount: merged?.keys.length ?? 0,
       },
     });
   }
 
   const token = generateIntakeToken();
+  const prefilled = parsed.data.prefill
+    ? mergeIntakePrefill(EMPTY_INTAKE_ANSWERS, parsed.data.prefill.answers)
+    : null;
+
   const { data, error } = await service
     .from('intake_requests')
     .insert({
@@ -156,6 +195,16 @@ export async function POST(
       slug: parsed.data.slug,
       token_hash: hashIntakeToken(token),
       created_by: parsed.data.createdBy.toLowerCase(),
+      ...(prefilled && prefilled.keys.length
+        ? {
+            answers: prefilled.answers,
+            prefill: {
+              source: parsed.data.prefill!.source,
+              productRef: parsed.data.prefill!.productRef ?? null,
+              keys: prefilled.keys,
+            },
+          }
+        : {}),
     })
     .select('id, expires_at')
     .single();
@@ -169,6 +218,12 @@ export async function POST(
   }
 
   return nitroBotJson(requestId, {
-    intake: { id: data.id, expiresAt: data.expires_at, path: `/intake/${token}`, reissued: false },
+    intake: {
+      id: data.id,
+      expiresAt: data.expires_at,
+      path: `/intake/${token}`,
+      reissued: false,
+      prefilledCount: prefilled?.keys.length ?? 0,
+    },
   });
 }

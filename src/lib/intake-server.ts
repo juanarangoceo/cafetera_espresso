@@ -6,7 +6,9 @@ import {
   INTAKE_BUCKET,
   intakeAnswersSchema,
   MAX_INTAKE_FILE_BYTES,
+  parseIntakePrefillMeta,
   type IntakeAnswers,
+  type IntakePrefillMeta,
 } from './intake';
 import { createServiceClient } from '@/utils/supabase/service';
 
@@ -20,6 +22,8 @@ export type IntakeRequest = {
   expiresAt: string;
   submittedAt: string | null;
   answers: IntakeAnswers;
+  /** Qué llegó ya escrito desde Nitro Bot. NULL si el brief nació en blanco. */
+  prefill: IntakePrefillMeta | null;
 };
 
 export async function resolveIntakeToken(token: string): Promise<IntakeRequest | null> {
@@ -30,7 +34,7 @@ export async function resolveIntakeToken(token: string): Promise<IntakeRequest |
 
   const { data, error } = await service
     .from('intake_requests')
-    .select('id, site_id, provisional_name, slug, status, answers, expires_at, submitted_at, sites(slug, name, logo_url)')
+    .select('id, site_id, provisional_name, slug, status, answers, prefill, expires_at, submitted_at, sites(slug, name, logo_url)')
     .eq('token_hash', hashIntakeToken(token))
     .maybeSingle();
 
@@ -47,11 +51,16 @@ export async function resolveIntakeToken(token: string): Promise<IntakeRequest |
     expiresAt: data.expires_at,
     submittedAt: data.submitted_at,
     answers: intakeAnswersSchema.parse(data.answers ?? {}),
+    prefill: parseIntakePrefillMeta(data.prefill),
   };
 }
 
 export function intakeIsOpen(request: IntakeRequest) {
   return request.status === 'draft' && new Date(request.expiresAt).getTime() > Date.now();
+}
+
+export function intakeAcceptsFiles(request: IntakeRequest) {
+  return request.status !== 'revoked' && new Date(request.expiresAt).getTime() > Date.now();
 }
 
 /**

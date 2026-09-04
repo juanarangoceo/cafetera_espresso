@@ -9,7 +9,7 @@ import {
   MAX_INTAKE_TOTAL_BYTES,
   safeFileName,
 } from '@/lib/intake';
-import { ensureIntakeBucket, intakeIsOpen, resolveIntakeToken } from '@/lib/intake-server';
+import { ensureIntakeBucket, intakeAcceptsFiles, resolveIntakeToken } from '@/lib/intake-server';
 import { createServiceClient } from '@/utils/supabase/service';
 
 const uploadSchema = z.object({
@@ -22,7 +22,7 @@ const uploadSchema = z.object({
 export async function POST(request: Request, context: { params: Promise<{ token: string }> }) {
   const { token } = await context.params;
   const intake = await resolveIntakeToken(token);
-  if (!intake || !intakeIsOpen(intake)) {
+  if (!intake || !intakeAcceptsFiles(intake)) {
     return NextResponse.json({ error: 'Este enlace ya no está disponible.' }, { status: 404 });
   }
 
@@ -83,7 +83,7 @@ const deleteSchema = z.object({ fileId: z.string().uuid() });
 export async function DELETE(request: Request, context: { params: Promise<{ token: string }> }) {
   const { token } = await context.params;
   const intake = await resolveIntakeToken(token);
-  if (!intake || !intakeIsOpen(intake)) {
+  if (!intake || !intakeAcceptsFiles(intake)) {
     return NextResponse.json({ error: 'Este enlace ya no está disponible.' }, { status: 404 });
   }
   const parsed = deleteSchema.safeParse(await request.json().catch(() => null));
